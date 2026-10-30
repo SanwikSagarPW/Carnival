@@ -46,16 +46,26 @@ let bgMusicStep = 0;
    ========================================================================== */
 let activeDialogue = null;
 
-function playDialogue(src) {
-  if (!soundOn) return;
+function playDialogue(src, onEnded = null) {
+  if (!soundOn) return null;
   try {
     stopDialogue();
     const audio = new Audio(src);
     activeDialogue = audio;
     audio.addEventListener('play', () => { getAudio(); }, { once: true });
+    if (typeof onEnded === 'function') {
+      audio.addEventListener('ended', () => {
+        if (activeDialogue === audio) {
+          activeDialogue = null;
+          if (!resolved) onEnded();
+        }
+      }, { once: true });
+    }
     audio.play().catch(() => {});
+    return audio;
   } catch (err) {
     // Missing file or autoplay blocked — never crash the game
+    return null;
   }
 }
 
@@ -63,6 +73,7 @@ function stopDialogue() {
   try {
     if (activeDialogue) {
       activeDialogue.pause();
+      activeDialogue.currentTime = 0;
       activeDialogue = null;
     }
   } catch (err) {}
@@ -525,7 +536,7 @@ function startSkill() {
   if (skill.key === 'shapes') return renderShapes(skill);
   if (skill.key === 'more') return renderMore(skill);
 
-  // Play intro dialogue for this skill then schedule a guide
+  // Play intro dialogue for this skill, then when it ends and child hasn't answered, schedule a gentle guide
   try {
     const introMap = {
       different: DIALOGUES.different.intro[0],
@@ -533,8 +544,16 @@ function startSkill() {
       longest:   DIALOGUES.longest.intro[0],
     };
     const introSrc = introMap[skill.key];
-    if (introSrc) playDialogue(introSrc);
-    later(() => scheduleGuide(skill.key, 0), 4000);
+    if (introSrc) {
+      playDialogue(introSrc, () => {
+        later(() => {
+          if (!resolved) {
+            const clip = pickRandom(DIALOGUES[skill.key]?.guide);
+            if (clip) playDialogue(clip);
+          }
+        }, 4000);
+      });
+    }
   } catch (err) {}
 
   const isLongest = skill.key === 'longest';
@@ -630,10 +649,16 @@ function makeOptions(skill) {
 }
 
 function renderMore(skill) {
-  // Play intro dialogue then schedule a guide
+  // Play intro dialogue, then when it naturally finishes schedule a guide
   try {
-    playDialogue(DIALOGUES.more.intro[0]);
-    later(() => scheduleGuide('more', 0), 4000);
+    playDialogue(DIALOGUES.more.intro[0], () => {
+      later(() => {
+        if (!resolved) {
+          const clip = pickRandom(DIALOGUES.more?.guide);
+          if (clip) playDialogue(clip);
+        }
+      }, 4000);
+    });
   } catch (err) {}
   const round = bank[skillIndex][counters[skillIndex] % ASSET_COUNT];
   const seed = round.seed;
@@ -698,10 +723,16 @@ const shapeAssetPools = [
 ];
 
 function renderShapes(skill) {
-  // Play intro dialogue then schedule a guide
+  // Play intro dialogue, then when it naturally finishes schedule a guide
   try {
-    playDialogue(DIALOGUES.shapes.intro[0]);
-    later(() => scheduleGuide('shapes', 0), 4000);
+    playDialogue(DIALOGUES.shapes.intro[0], () => {
+      later(() => {
+        if (!resolved && shapeMatches < 4) {
+          const clip = pickRandom(DIALOGUES.shapes?.guide);
+          if (clip) playDialogue(clip);
+        }
+      }, 4000);
+    });
   } catch (err) {}
   shapeMatches = 0;
   selectedPiece = null;
@@ -809,6 +840,7 @@ function tryMatch(piece, target) {
   const targetShape = Number(target.dataset.target);
 
   if (pieceShape !== targetShape) {
+    stopDialogue();
     playSfx('wrong');
     const correctCfg = shapeConfig[pieceShape];
     const targetCfg = shapeConfig[targetShape];
@@ -816,7 +848,7 @@ function tryMatch(piece, target) {
     target.classList.add('bump');
     later(() => target.classList.remove('bump'), 350);
     animate('try');
-    // Cheerup dialogue for wrong shape match
+    // Cheerup dialogue for WRONG shape match
     try {
       const cheerup = pickRandom(DIALOGUES.shapes.cheerup);
       if (cheerup) playDialogue(cheerup);
@@ -844,23 +876,27 @@ function tryMatch(piece, target) {
   selectedPiece = null;
 
   shapeMatches++;
-  // Play single-match celebration dialogue
-  try {
-    const matchClip = pickRandom(DIALOGUES.shapes.matchSingle);
-    if (matchClip) playDialogue(matchClip);
-  } catch (err) {}
-  say(`A perfect fit! Wonderful! ⭐`, 'good');
-  animate('happy');
 
-  if (shapeMatches === 4) {
+  if (shapeMatches < 4) {
+    // Single-match celebration
+    try {
+      const matchClip = pickRandom(DIALOGUES.shapes.matchSingle);
+      if (matchClip) playDialogue(matchClip);
+    } catch (err) {}
+    say(`A perfect fit! Wonderful! ⭐`, 'good');
+    animate('happy');
+  } else {
+    // All 4 matched celebration
+    resolved = true;
     playSfx('prize');
-    spawnBurst(panel, 'stars', 24);
+    spawnBurst(panel, 'stars', 26);
     say(`Hooray! You matched all four shapes! 🎉`, 'good');
-    // Play all-matched dialogue
+    // Play all-matched victory dialogue: "Wow! Tumne saari chaar shapes match kar li! Shabash!"
     try {
       if (DIALOGUES.shapes.matchAll[0]) playDialogue(DIALOGUES.shapes.matchAll[0]);
     } catch (err) {}
-    later(() => finishSkill(), 650);
+    animate('jump');
+    later(() => finishSkill(), 1200);
   }
 }
 
@@ -868,41 +904,46 @@ function answer(correct, button) {
   if (resolved) return;
 
   if (!correct) {
+    stopDialogue();
     playSfx('wrong');
     button.classList.add('wrong');
     say('Great try! Take another peek! 🌟', 'try');
     later(() => button.classList.remove('wrong'), 500);
     animate('try');
-    // Play a cheerup dialogue for the current skill
+    // Play an encouraging cheerup dialogue ONLY on WRONG answer!
     try {
-      const cheerup = pickRandom(DIALOGUES[SKILLS[skillIndex].key]?.cheerup);
+      const skillCheerup = DIALOGUES[SKILLS[skillIndex].key]?.cheerup || [];
+      const pool = skillCheerup.length > 0 ? skillCheerup : DIALOGUES.welcome.cheerup;
+      const cheerup = pickRandom(pool);
       if (cheerup) playDialogue(cheerup);
     } catch (err) {}
     return;
   }
 
+  // CORRECT ANSWER!
   resolved = true;
+  stopDialogue(); // Immediately silence any intro/guide dialogue!
   playSfx('success');
-  spawnBurst(button, 'stars', 18);
+  spawnBurst(button, 'stars', 20);
   button.classList.add('correct');
   finishSkill();
 }
 
 function finishSkill() {
   resolved = true;
+  // If not shapes (which is playing its all-shapes victory dialogue), silence any lingering intro
+  if (SKILLS[skillIndex].key !== 'shapes') {
+    stopDialogue();
+  }
   addStar();
   const skill = SKILLS[skillIndex];
   panel.classList.add('is-complete');
   feedback.className = 'feedback';
   feedback.textContent = '';
-  speech.textContent = 'Hooray! You did it! High five!';
-  // General celebration dialogue
-  try {
-    const cheerup = pickRandom(DIALOGUES.welcome.cheerup);
-    if (cheerup) playDialogue(cheerup);
-  } catch (err) {}
+  speech.textContent = 'Hooray! You did it! High five! ⭐';
+  playSfx('fanfare');
   animate('happy');
-  spawnBurst(panel, 'stars', 24);
+  spawnBurst(panel, 'stars', 28);
 
   panel.innerHTML = `
     <div class="round-done">
@@ -924,6 +965,7 @@ function finishSkill() {
 }
 
 function advance() {
+  stopDialogue();
   counters[skillIndex] = (counters[skillIndex] + 1) % ASSET_COUNT;
   skillIndex = (skillIndex + 1) % SKILLS.length;
 
@@ -938,18 +980,23 @@ function advance() {
    MINI-GAMES: MYSTERY BOX & BALLOON POP
    ========================================================================== */
 function showMystery() {
+  stopDialogue();
   panel.classList.remove('is-menu');
   mini = 'mystery';
   resolved = false;
   feedback.className = 'feedback';
   feedback.textContent = '';
   speech.textContent = "Ooh! Tap a mystery box to see what's inside!";
-  // Play mystery intro dialogue and schedule a guide
+  // Play mystery intro dialogue and when finished, schedule a guide
   try {
-    playDialogue(DIALOGUES.mystery.intro[0]);
-    later(() => {
-      try { const g = pickRandom(DIALOGUES.mystery.guide); if (g) playDialogue(g); } catch(e) {}
-    }, 3000);
+    playDialogue(DIALOGUES.mystery.intro[0], () => {
+      later(() => {
+        if (!resolved) {
+          const g = pickRandom(DIALOGUES.mystery.guide);
+          if (g) playDialogue(g);
+        }
+      }, 4000);
+    });
   } catch (err) {}
 
   panel.innerHTML = `
@@ -970,6 +1017,7 @@ function showMystery() {
     box.addEventListener('click', () => {
       if (resolved) return;
       resolved = true;
+      stopDialogue();
       addStar();
       playSfx('prize');
       spawnBurst(box, 'stars', 24);
@@ -1006,6 +1054,7 @@ function showMystery() {
 }
 
 function showBalloons() {
+  stopDialogue();
   panel.classList.remove('is-menu');
   mini = 'balloons';
   popped = 0;
@@ -1013,12 +1062,16 @@ function showBalloons() {
   feedback.className = 'feedback';
   feedback.textContent = '';
   speech.textContent = "Let's pop 5 colorful balloons!";
-  // Play balloons intro dialogue and schedule a guide
+  // Play balloons intro dialogue and when finished, schedule a guide
   try {
-    playDialogue(DIALOGUES.balloons.intro[0]);
-    later(() => {
-      try { const g = pickRandom(DIALOGUES.balloons.guide); if (g) playDialogue(g); } catch(e) {}
-    }, 3000);
+    playDialogue(DIALOGUES.balloons.intro[0], () => {
+      later(() => {
+        if (!resolved && popped < 5) {
+          const g = pickRandom(DIALOGUES.balloons.guide);
+          if (g) playDialogue(g);
+        }
+      }, 4000);
+    });
   } catch (err) {}
 
   panel.innerHTML = `
@@ -1119,6 +1172,7 @@ function showBalloons() {
 
         if (popped === 5) {
           resolved = true;
+          stopDialogue();
           addStar();
           later(() => {
             playSfx('fanfare');
@@ -1176,12 +1230,16 @@ function showMainMenu() {
   panel.classList.add('is-menu');
   $('.game-shell').classList.remove('is-playing');
   speech.textContent = 'Welcome! Tap a game or press Play!';
-  // Play welcome intro then schedule a guide after 3s
+  // Play welcome intro, and when it finishes naturally, schedule a friendly guide prompt
   try {
-    playDialogue(DIALOGUES.welcome.intro[0]);
-    later(() => {
-      try { const g = pickRandom(DIALOGUES.welcome.guide); if (g) playDialogue(g); } catch(e) {}
-    }, 3000);
+    playDialogue(DIALOGUES.welcome.intro[0], () => {
+      later(() => {
+        if (panel.classList.contains('is-menu')) {
+          const g = pickRandom(DIALOGUES.welcome.guide);
+          if (g) playDialogue(g);
+        }
+      }, 4000);
+    });
   } catch (err) {}
 
   const menuItems = [
