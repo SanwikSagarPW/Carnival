@@ -548,9 +548,17 @@ const SHAPES = [
   { name: 'oval',     file: 'shape-oval.svg' },
   { name: 'moon',     file: 'shape-moon.svg' },
 ];
+// Which pictures in assets/objects/shapes are which shape (checked against the art sheet,
+// 8 per row: circle oval triangle square rectangle diamond heart star moon...). Same order as SHAPES.
 const SHAPE_ASSET_POOLS = [
-  [0, 9, 18, 27, 36], [2, 11, 20, 29, 38], [3, 12, 21, 30, 39], [7, 16, 25, 34],
-  [6, 15, 24, 33], [5, 14, 23, 32], [1, 10, 19, 28, 37], [8, 17, 26, 35],
+  [0, 9, 18, 27, 35],   // circle
+  [2, 11, 20, 29, 37],  // triangle
+  [3, 12, 21, 30, 38],  // square
+  [7, 16, 25, 34],      // star
+  [6, 15, 24, 33],      // heart
+  [5, 14, 23, 32],      // diamond
+  [1, 10, 19, 28, 36],  // oval
+  [8, 17, 26],          // moon
 ];
 
 function renderShapes(skill) {
@@ -729,8 +737,7 @@ function showMystery() {
         c.classList.add('open', 'correct');
         stage.classList.add('has-answer');
         c.querySelector('.pic').src = './assets/mystery-box-open.svg';
-        const prizes = [35, 28, 36, 37, 38];
-        c.append(pic(objectSrc('biggest', prizes[Math.floor(Math.random() * prizes.length)]), 'prize'));
+        c.append(pic(objectSrc('different', rand(ASSET_COUNT)), 'prize'));
         animate('wow');
         speak(DIALOGUES.mystery.prize[0], { delay: 400 });
         later(() => showNext(() => { audio.sfx('transition'); startSkill(); }, 'Next game'), 1200);
