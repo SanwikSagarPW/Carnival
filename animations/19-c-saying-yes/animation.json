@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "059edd46db23",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      },
+      {
+        "upperY": 428,
+        "fixedY": 513
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 1.0147164234623933,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "19-c-saying-yes",
+  "name": "C_Saying_Yes",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1920,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 3,
+  "frameCount": 17,
+  "atlasFrameCount": 9,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+    0
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 17,
+    "playbackFrames": 17,
+    "storedFrames": 9,
+    "originalGridCells": 20,
+    "gridCells": 12,
+    "originalBytes": 2581564,
+    "bytes": 1123193,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    160,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    120,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    240
+  ],
+  "loop": false,
+  "durationMs": 1080,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "A small downward head nod followed by a return to neutral.",
+  "review": {
+    "status": "redraw_review",
+    "artisticApproval": false
+  },
+  "notes": "Nine built-in imagegen motion stages. Complete-figure alpha extraction; whole-figure scaling stabilizes head size and sole registration fixes the ground anchor. Reusing the same approach drawings in reverse gives an exact recovery path. No separated body parts, mesh deformation, crossfade or optical flow. Readable contact/terminal holds are explicit in timing. New artwork remains subject to visual review. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/19-c-saying-yes/spritesheet-optimized-v1.png"
+}

@@ -1,0 +1,16 @@
+﻿<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="heartGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fbcfe8"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </radialGradient>
+  </defs>
+  <path d="M 50 88 C 22 70 8 52 8 32 C 8 18 20 8 34 8 C 42 8 47 13 50 18 C 53 13 58 8 66 8 C 80 8 92 18 92 32 C 92 52 78 70 50 88 Z" fill="url(#heartGrad)" stroke="#db2777" stroke-width="4.5" stroke-linejoin="round"/>
+  <ellipse cx="32" cy="22" rx="8" ry="4" fill="#ffffff" opacity="0.55" transform="rotate(-30 32 22)"/>
+  <!-- Cute Face -->
+  <circle cx="39" cy="40" r="3.5" fill="#0f172a"/>
+  <circle cx="61" cy="40" r="3.5" fill="#0f172a"/>
+  <ellipse cx="30" cy="46" rx="4" ry="2.2" fill="#e11d48" opacity="0.45"/>
+  <ellipse cx="70" cy="46" rx="4" ry="2.2" fill="#e11d48" opacity="0.45"/>
+  <path d="M 43 47 Q 50 54 57 47" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

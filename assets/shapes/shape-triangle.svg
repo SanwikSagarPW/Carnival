@@ -1,0 +1,15 @@
+﻿<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="triGrad" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#bbf7d0"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </radialGradient>
+  </defs>
+  <path d="M 50 10 L 92 86 A 8 8 0 0 1 85 94 L 15 94 A 8 8 0 0 1 8 86 Z" fill="url(#triGrad)" stroke="#16a34a" stroke-width="4.5" stroke-linejoin="round"/>
+  <!-- Cute Face -->
+  <circle cx="42" cy="58" r="3.5" fill="#0f172a"/>
+  <circle cx="58" cy="58" r="3.5" fill="#0f172a"/>
+  <ellipse cx="34" cy="64" rx="3.5" ry="2" fill="#f43f5e" opacity="0.45"/>
+  <ellipse cx="66" cy="64" rx="3.5" ry="2" fill="#f43f5e" opacity="0.45"/>
+  <path d="M 45 66 Q 50 72 55 66" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+</svg>

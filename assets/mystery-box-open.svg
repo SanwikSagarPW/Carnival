@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="100%" height="100%">
+  <defs>
+    <linearGradient id="openBoxBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="50%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+    <linearGradient id="openRibbon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+    <linearGradient id="burstGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Golden Ray Burst out of box -->
+  <g opacity="0.85">
+    <polygon points="90,75 70,10 82,8" fill="#fde047"/>
+    <polygon points="90,75 110,10 98,8" fill="#fde047"/>
+    <polygon points="90,75 40,30 48,22" fill="#fde047"/>
+    <polygon points="90,75 140,30 132,22" fill="#fde047"/>
+    <polygon points="90,75 20,60 22,50" fill="#fde047"/>
+    <polygon points="90,75 160,60 158,50" fill="#fde047"/>
+  </g>
+
+  <!-- Stars flying out -->
+  <path d="M 50 25 L 53 32 L 60 34 L 54 39 L 56 46 L 50 42 L 44 46 L 46 39 L 40 34 L 47 32 Z" fill="#fbbf24"/>
+  <path d="M 125 18 L 128 24 L 134 26 L 129 30 L 131 36 L 125 33 L 119 36 L 121 30 L 116 26 L 122 24 Z" fill="#fbbf24"/>
+  <circle cx="90" cy="18" r="5" fill="#f43f5e"/>
+  <circle cx="72" cy="38" r="4" fill="#3b82f6"/>
+  <circle cx="112" cy="36" r="4.5" fill="#10b981"/>
+
+  <!-- Open Lid Flying Up -->
+  <g transform="translate(15, -15) rotate(-16 90 55)">
+    <rect x="22" y="38" width="115" height="20" rx="8" fill="#c084fc" stroke="#581c87" stroke-width="3.5"/>
+    <rect x="68" y="38" width="22" height="20" fill="url(#openRibbon)" stroke="#ca8a04" stroke-width="2.5"/>
+    <!-- Left Loop -->
+    <path d="M 72 38 C 52 24 44 10 60 18 C 72 24 78 34 76 39 Z" fill="url(#openRibbon)" stroke="#ca8a04" stroke-width="2.5"/>
+    <!-- Right Loop -->
+    <path d="M 88 38 C 108 24 116 10 100 18 C 88 24 82 34 84 39 Z" fill="url(#openRibbon)" stroke="#ca8a04" stroke-width="2.5"/>
+    <circle cx="80" cy="38" r="7" fill="#fde047" stroke="#ca8a04" stroke-width="2.5"/>
+  </g>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="90" cy="168" rx="60" ry="8" fill="#581c87" opacity="0.25"/>
+
+  <!-- Main Box Body -->
+  <rect x="35" y="85" width="110" height="75" rx="14" fill="url(#openBoxBody)" stroke="#581c87" stroke-width="4"/>
+  <!-- Polka Dots -->
+  <circle cx="55" cy="102" r="4.5" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="125" cy="102" r="4.5" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="50" cy="138" r="4" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="130" cy="138" r="4" fill="#e9d5ff" opacity="0.6"/>
+
+  <!-- Vertical Ribbon -->
+  <rect x="78" y="85" width="24" height="75" fill="url(#openRibbon)" stroke="#ca8a04" stroke-width="3"/>
+  <line x1="85" y1="85" x2="85" y2="160" stroke="#fff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Star Icon on Front -->
+  <circle cx="90" cy="122" r="18" fill="#fffdf5" stroke="#facc15" stroke-width="3"/>
+  <polygon points="90,111 93,119 101,120 95,125 97,133 90,129 83,133 85,125 79,120 87,119" fill="#f59e0b"/>
+</svg>

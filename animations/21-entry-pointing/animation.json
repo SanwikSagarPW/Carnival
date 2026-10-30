@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "6476da9d3506",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      },
+      {
+        "upperY": 406,
+        "fixedY": 491
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 0.9814332957306513,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "21-entry-pointing",
+  "name": "Entry_Pointing",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "atlasFrameCount": 8,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 8,
+    "playbackFrames": 8,
+    "storedFrames": 8,
+    "originalGridCells": 8,
+    "gridCells": 8,
+    "originalBytes": 1251118,
+    "bytes": 1046378,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    185,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    655
+  ],
+  "loop": false,
+  "durationMs": 1170,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Raise and extend one arm to point right, then hold.",
+  "review": {
+    "status": "redraw_review",
+    "artisticApproval": false
+  },
+  "notes": "Built-in imagegen whole-character motion stages. Whole-figure scale registration stabilizes character volume. Ground contacts are fixed; genuine airborne run/jump stages retain explicit vertical clearance. Recovery and loop ordering use reviewed source stages. No separated head/body, frame crossfade or optical flow. New drawings require visual review. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/21-entry-pointing/spritesheet-optimized-v1.png"
+}

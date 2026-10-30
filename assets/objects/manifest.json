@@ -1,0 +1,31 @@
+{
+  "description": "Forty individually cropped transparent PNG objects per activity.",
+  "schemaVersion": 1,
+  "atlases": [
+    {
+      "Key": "different",
+      "File": "different-one-40.png",
+      "Rows": 5
+    },
+    {
+      "Key": "biggest",
+      "File": "biggest-one-40.png",
+      "Rows": 8
+    },
+    {
+      "Key": "more",
+      "File": "which-has-more-40.png",
+      "Rows": 5
+    },
+    {
+      "Key": "longest",
+      "File": "longest-one-40.png",
+      "Rows": 7
+    },
+    {
+      "Key": "shapes",
+      "File": "match-shapes-40.png",
+      "Rows": 5
+    }
+  ]
+}

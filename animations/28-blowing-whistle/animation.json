@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "85e769bca8c6",
+  "breathEffect": {
+    "enabled": false,
+    "baked": false,
+    "reason": "Whistle prop motion is baked; the grip and mouthpiece remain fixed. No audio is bundled."
+  },
+  "scaleLock": {
+    "factor": 1.0070028194971272,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "28-blowing-whistle",
+  "name": "Blowing_Whistle",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 4096,
+  "sheetHeight": 3840,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 8,
+  "rows": 6,
+  "frameCount": 47,
+  "atlasFrameCount": 46,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    0
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 60,
+    "playbackFrames": 47,
+    "storedFrames": 46,
+    "originalGridCells": 64,
+    "gridCells": 48,
+    "originalBytes": 1752570,
+    "bytes": 1111820,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        17
+      ],
+      [
+        18
+      ],
+      [
+        19
+      ],
+      [
+        20
+      ],
+      [
+        21
+      ],
+      [
+        22
+      ],
+      [
+        23
+      ],
+      [
+        24
+      ],
+      [
+        25
+      ],
+      [
+        26
+      ],
+      [
+        27
+      ],
+      [
+        28
+      ],
+      [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      [
+        37
+      ],
+      [
+        38
+      ],
+      [
+        39
+      ],
+      [
+        40
+      ],
+      [
+        41
+      ],
+      [
+        42
+      ],
+      [
+        43
+      ],
+      [
+        44
+      ],
+      [
+        45
+      ],
+      [
+        46
+      ],
+      [
+        47
+      ],
+      [
+        48
+      ],
+      [
+        49
+      ],
+      [
+        50
+      ],
+      [
+        51
+      ],
+      [
+        52
+      ],
+      [
+        53
+      ],
+      [
+        54
+      ],
+      [
+        55
+      ],
+      [
+        56
+      ],
+      [
+        57,
+        58,
+        59
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    167,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    266,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    33,
+    34,
+    33,
+    100
+  ],
+  "loop": true,
+  "durationMs": 2000,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Sparky blows a rainbow party whistle: the paper tube extends, holds its curled tip, and retracts in a repeating cycle.",
+  "review": {
+    "status": "new_party_whistle_review",
+    "artisticApproval": false
+  },
+  "notes": "One intact generated Sparky blowing pose. Character, mouthpiece, grip, clothes and feet are byte-identical throughout. Only the paper tube beyond the glove changes length; its curled tip retains its original size. An eased unroll, short fully-open hold and smooth recoil are rendered at 30 fps. Paper stripes are revealed at original width, and the curled tip moves at subpixel precision instead of integer steps. The 2000 ms cycle is losslessly deduplicated for export. No audio is bundled. The character model is scaled once and normalized to the library reference before publishing. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/28-blowing-whistle/spritesheet-optimized-v1.png"
+}

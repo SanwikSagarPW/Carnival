@@ -1,0 +1,15 @@
+﻿<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="diamGrad" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#a5f3fc"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </radialGradient>
+  </defs>
+  <path d="M 50 8 L 92 50 L 50 92 L 8 50 Z" fill="url(#diamGrad)" stroke="#0891b2" stroke-width="4.5" stroke-linejoin="round"/>
+  <!-- Cute Face -->
+  <circle cx="41" cy="47" r="3.5" fill="#0f172a"/>
+  <circle cx="59" cy="47" r="3.5" fill="#0f172a"/>
+  <ellipse cx="32" cy="53" rx="3.5" ry="2" fill="#f43f5e" opacity="0.45"/>
+  <ellipse cx="68" cy="53" rx="3.5" ry="2" fill="#f43f5e" opacity="0.45"/>
+  <path d="M 45 54 Q 50 60 55 54" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+</svg>

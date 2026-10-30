@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="boxBodyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="50%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+    <linearGradient id="boxLidGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="ribbonGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+    <filter id="boxDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#581c87" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="80" cy="148" rx="55" ry="8" fill="#581c87" opacity="0.25"/>
+
+  <!-- Main Box Body -->
+  <g filter="url(#boxDropShadow)">
+    <rect x="25" y="65" width="110" height="75" rx="14" fill="url(#boxBodyGrad)" stroke="#581c87" stroke-width="4"/>
+  </g>
+
+  <!-- Polka Dots on Box -->
+  <circle cx="45" cy="82" r="4.5" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="115" cy="82" r="4.5" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="40" cy="118" r="4" fill="#e9d5ff" opacity="0.6"/>
+  <circle cx="120" cy="118" r="4" fill="#e9d5ff" opacity="0.6"/>
+
+  <!-- Vertical Ribbon -->
+  <rect x="68" y="65" width="24" height="75" fill="url(#ribbonGrad)" stroke="#ca8a04" stroke-width="3"/>
+  <!-- Ribbon stripe highlight -->
+  <line x1="75" y1="65" x2="75" y2="140" stroke="#fff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Box Lid -->
+  <rect x="18" y="44" width="124" height="24" rx="10" fill="url(#boxLidGrad)" stroke="#581c87" stroke-width="4"/>
+  <!-- Lid Ribbon -->
+  <rect x="68" y="44" width="24" height="24" fill="url(#ribbonGrad)" stroke="#ca8a04" stroke-width="3"/>
+
+  <!-- Big Bow on Top -->
+  <!-- Left Loop -->
+  <path d="M 72 45 C 50 30 42 12 60 22 C 72 28 78 40 76 46 Z" fill="url(#ribbonGrad)" stroke="#ca8a04" stroke-width="3"/>
+  <!-- Right Loop -->
+  <path d="M 88 45 C 110 30 118 12 100 22 C 88 28 82 40 84 46 Z" fill="url(#ribbonGrad)" stroke="#ca8a04" stroke-width="3"/>
+  <!-- Center Knot -->
+  <circle cx="80" cy="45" r="9" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
+
+  <!-- Question Mark Badge -->
+  <circle cx="80" cy="102" r="22" fill="#fffdf5" stroke="#facc15" stroke-width="4"/>
+  <text x="80" y="112" font-family="'Baloo 2', 'Nunito', sans-serif" font-weight="900" font-size="30" fill="#7e22ce" text-anchor="middle">?</text>
+
+  <!-- Sparkles around box -->
+  <path d="M 22 36 L 25 43 L 32 46 L 25 49 L 22 56 L 19 49 L 12 46 L 19 43 Z" fill="#fde047"/>
+  <path d="M 136 32 L 138 37 L 143 39 L 138 41 L 136 46 L 134 41 L 129 39 L 134 37 Z" fill="#fde047"/>
+</svg>

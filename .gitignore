@@ -1,0 +1,47 @@
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Build outputs
+dist/
+build/
+out/
+*.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# Test and debug files
+coverage/
+.nyc_output/
+
+# Generated assets and screenshots (keep original source assets)
+screen_*.png
+*test*.png
+*_test.png
+*inspect*.png
+*generate*.ps1
+
+# Tool scripts (development utilities only)
+tools/
+
+# Node modules
+node_modules/
+
+# Cache
+.cache/

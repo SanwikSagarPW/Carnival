@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "5b597fde3507",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      },
+      {
+        "upperY": 414,
+        "fixedY": 499
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 1.0015382550700849,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "22-lu-air-hugs",
+  "name": "Lu_Air_Hugs",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 15,
+  "atlasFrameCount": 8,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+    0
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 15,
+    "playbackFrames": 15,
+    "storedFrames": 8,
+    "originalGridCells": 16,
+    "gridCells": 8,
+    "originalBytes": 2404518,
+    "bytes": 1025124,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    185,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    255,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    275
+  ],
+  "loop": false,
+  "durationMs": 1375,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Open the arms, give a gentle hug and release.",
+  "review": {
+    "status": "redraw_review",
+    "artisticApproval": false
+  },
+  "notes": "Built-in imagegen whole-character motion stages. Whole-figure scale registration stabilizes character volume. Ground contacts are fixed; genuine airborne run/jump stages retain explicit vertical clearance. Recovery and loop ordering use reviewed source stages. No separated head/body, frame crossfade or optical flow. New drawings require visual review. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/22-lu-air-hugs/spritesheet-optimized-v1.png"
+}

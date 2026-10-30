@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "00e7b9b59238",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      },
+      {
+        "upperY": 404,
+        "fixedY": 489
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 0.9902556861184418,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "05-room-game-lu-n-look-right",
+  "name": "Room_Game/Lu_N_Look_Right",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1920,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 3,
+  "frameCount": 22,
+  "atlasFrameCount": 12,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    10,
+    9,
+    8,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 22,
+    "playbackFrames": 22,
+    "storedFrames": 12,
+    "originalGridCells": 24,
+    "gridCells": 12,
+    "originalBytes": 2011184,
+    "bytes": 927465,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        17
+      ],
+      [
+        18
+      ],
+      [
+        19
+      ],
+      [
+        20
+      ],
+      [
+        21
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    480,
+    60,
+    40,
+    25,
+    35,
+    40,
+    45,
+    20,
+    55,
+    60,
+    80,
+    730,
+    60,
+    55,
+    20,
+    45,
+    40,
+    35,
+    25,
+    40,
+    60,
+    80
+  ],
+  "loop": true,
+  "durationMs": 2130,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Turn the head right, hold, then return.",
+  "review": {
+    "status": "registration_review",
+    "artisticApproval": false
+  },
+  "notes": "Existing complete playback cells and their timing are preserved. Integer-pixel vertical translation aligns each opaque sole/floor baseline to y592, without repainting, resizing, body-part separation or changing the breathing/blink/look motion. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/05-room-game-lu-n-look-right/spritesheet-optimized-v1.png"
+}

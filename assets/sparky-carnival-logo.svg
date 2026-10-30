@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 210">
+  <defs>
+    <linearGradient id="r" x1="0" x2="0" y2="1"><stop stop-color="#ff8a7e"/><stop offset="1" stop-color="#ed3d67"/></linearGradient>
+    <linearGradient id="y" x1="0" x2="0" y2="1"><stop stop-color="#ffe979"/><stop offset="1" stop-color="#ffc337"/></linearGradient>
+  </defs>
+  <path d="M73 16 84 47l31 1-25 19 9 31-26-18-27 18 10-31L31 48l31-1z" fill="url(#y)" stroke="#fff8dc" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M117 26c73-22 245-24 352 16 48 18 72 52 65 93-7 43-44 60-103 60H171c-57 0-97-25-100-67-3-44 18-79 46-102Z" fill="url(#r)" stroke="#fff8dc" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M119 27c82-20 242-23 347 16" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="7" stroke-linecap="round"/>
+  <text x="132" y="98" fill="#ffe04e" stroke="#754247" stroke-width="8" paint-order="stroke" font-family="Arial Rounded MT Bold, Nunito, sans-serif" font-size="69" font-weight="900">Sparky's</text>
+  <text x="158" y="164" fill="#fff" stroke="#754247" stroke-width="7" paint-order="stroke" font-family="Arial Rounded MT Bold, Nunito, sans-serif" font-size="52" font-weight="900">Carnival Quest</text>
+</svg>

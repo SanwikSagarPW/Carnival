@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "be15b254772b",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      },
+      {
+        "upperY": 419,
+        "fixedY": 504
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 1.0487375011373057,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "12-smiling",
+  "name": "Smiling",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "atlasFrameCount": 8,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 8,
+    "playbackFrames": 8,
+    "storedFrames": 8,
+    "originalGridCells": 8,
+    "gridCells": 8,
+    "originalBytes": 1169254,
+    "bytes": 980995,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    180,
+    80,
+    80,
+    100,
+    140,
+    220,
+    360,
+    600
+  ],
+  "loop": false,
+  "durationMs": 1760,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "A gentle smile grows into a broad cheerful grin and settles.",
+  "review": {
+    "status": "new_variant_review",
+    "artisticApproval": false
+  },
+  "notes": "Eight complete built-in imagegen drawings. Whole-figure extraction and uniform per-drawing registration; no cutout rig, body warping, frame blending or optical flow. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/12-smiling/spritesheet-optimized-v1.png"
+}

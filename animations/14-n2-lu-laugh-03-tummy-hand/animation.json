@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "88af00632e47",
+  "breathEffect": {
+    "enabled": false,
+    "baked": false,
+    "reason": "The action supplies its own body motion; no extra breathing deformation during locomotion, laughter, flight or waking."
+  },
+  "scaleLock": {
+    "factor": 0.9869841261641867,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "14-n2-lu-laugh-03-tummy-hand",
+  "name": "N2/Lu_Laugh_03_Tummy_Hand",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 1536,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 3,
+  "rows": 2,
+  "frameCount": 8,
+  "atlasFrameCount": 5,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    3,
+    2,
+    1
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 8,
+    "playbackFrames": 8,
+    "storedFrames": 5,
+    "originalGridCells": 8,
+    "gridCells": 6,
+    "originalBytes": 1165611,
+    "bytes": 611862,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    105,
+    45,
+    45,
+    45,
+    115,
+    45,
+    45,
+    45
+  ],
+  "loop": true,
+  "durationMs": 490,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "A gentle laugh beat with a hand on the tummy, followed by recovery.",
+  "review": {
+    "status": "redraw_review",
+    "artisticApproval": false
+  },
+  "notes": "Nine built-in imagegen motion stages. Complete-figure alpha extraction; whole-figure scaling stabilizes head size and sole registration fixes the ground anchor. Reusing the same approach drawings in reverse gives an exact recovery path. No separated body parts, mesh deformation, crossfade or optical flow. Readable contact/terminal holds are explicit in timing. New artwork remains subject to visual review. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/14-n2-lu-laugh-03-tummy-hand/spritesheet-optimized-v1.png"
+}

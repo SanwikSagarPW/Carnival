@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "ed8869cde89b",
+  "breathEffect": {
+    "enabled": true,
+    "baked": false,
+    "amplitudePx": 1.5,
+    "periodMs": 3600,
+    "poses": [
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      },
+      {
+        "upperY": 415,
+        "fixedY": 500
+      }
+    ],
+    "stableBands": true,
+    "method": "One fixed anatomical mapping per stationary clip; subtle rigid upper pose lift, C1 chest extension and unchanged lower contacts. Independent continuous clock across loops and terminal holds. No per-frame band changes."
+  },
+  "scaleLock": {
+    "factor": 0.9821969814207254,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "04-room-game-lu-n-look-left",
+  "name": "Room_Game/Lu_N_Look_Left",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 1536,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 3,
+  "rows": 2,
+  "frameCount": 10,
+  "atlasFrameCount": 6,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    4,
+    3,
+    2,
+    1
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 10,
+    "playbackFrames": 10,
+    "storedFrames": 6,
+    "originalGridCells": 10,
+    "gridCells": 6,
+    "originalBytes": 929421,
+    "bytes": 489411,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    600,
+    70,
+    70,
+    70,
+    90,
+    1000,
+    90,
+    70,
+    70,
+    70
+  ],
+  "loop": true,
+  "durationMs": 2200,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Turn the head left, hold, then return.",
+  "review": {
+    "status": "registration_review",
+    "artisticApproval": false
+  },
+  "notes": "Existing complete playback cells and their timing are preserved. Integer-pixel vertical translation aligns each opaque sole/floor baseline to y592, without repainting, resizing, body-part separation or changing the breathing/blink/look motion. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/04-room-game-lu-n-look-left/spritesheet-optimized-v1.png"
+}

@@ -1,0 +1,2228 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800;900&family=Nunito:wght@700;800;900;1000&display=swap');
+
+/* ==========================================================================
+   CARNIVAL PALETTE — WARM, VIBRANT, TACTILE & CHILD-FRIENDLY
+   ========================================================================== */
+:root {
+  --carnival-sky-top:     #38bdf8;
+  --carnival-sky-mid:     #7dd3fc;
+  --carnival-sky-bottom:  #bae6fd;
+  --carnival-hills-back:  #86efac;
+  --carnival-hills-front: #4ade80;
+  
+  --carnival-red:         #ff3b5c;
+  --carnival-red-dark:    #c81e3a;
+  --carnival-gold:        #ffc820;
+  --carnival-gold-dark:   #d99b06;
+  --carnival-orange:      #fb923c;
+  --carnival-orange-dark: #ea580c;
+  --carnival-green:       #22c55e;
+  --carnival-green-dark:  #15803d;
+  --carnival-blue:        #0284c7;
+  --carnival-blue-dark:   #0369a1;
+  --carnival-pink:        #f43f5e;
+  --carnival-pink-dark:   #be123c;
+  --carnival-purple:      #a855f7;
+  --carnival-purple-dark: #7e22ce;
+  
+  --carnival-cream:       #fffdf8;
+  --carnival-cream-dark:  #fef3c7;
+  --carnival-wood:        #d97706;
+  --carnival-wood-dark:   #92400e;
+  --carnival-ink:         #1e293b;
+  --carnival-ink-muted:   #475569;
+
+  font-family: 'Baloo 2', 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--carnival-ink);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--carnival-sky-top);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  touch-action: manipulation;
+}
+
+button:focus-visible {
+  outline: 4px solid var(--carnival-gold);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   GAME SHELL & SUNNY CARNIVAL MIDWAY ATMOSPHERE
+   ========================================================================== */
+.game-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 35%, #bbf7d0 80%, #86efac 100%);
+}
+
+/* Scenery Layer */
+.scenery-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle Carnival Midway Skyline in Background */
+.scenery-midway {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: clamp(140px, 32vh, 320px);
+  background-image: url('./assets/carnival-midway.png');
+  background-repeat: repeat-x;
+  background-position: center bottom;
+  background-size: auto 100%;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glowing Carnival Marquee Bulbs String across the top */
+.carnival-lights {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 12px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.bulb {
+  width: clamp(10px, 1.2vw, 15px);
+  height: clamp(13px, 1.5vw, 19px);
+  border-radius: 50% 50% 45% 45%;
+  margin-top: -2px;
+  box-shadow: 0 4px 8px currentColor;
+  animation: bulbGlow 1.8s ease-in-out infinite alternate;
+}
+
+.bulb-red    { background: #ff4d6d; color: #ff4d6d; animation-delay: 0s; }
+.bulb-yellow { background: #ffd128; color: #ffd128; animation-delay: 0.3s; }
+.bulb-green  { background: #38ef7d; color: #38ef7d; animation-delay: 0.6s; }
+.bulb-blue   { background: #38bdf8; color: #38bdf8; animation-delay: 0.9s; }
+.bulb-pink   { background: #f472b6; color: #f472b6; animation-delay: 1.2s; }
+
+@keyframes bulbGlow {
+  0%   { opacity: 0.65; transform: scale(0.9); }
+  100% { opacity: 1;    transform: scale(1.1); filter: drop-shadow(0 0 6px currentColor); }
+}
+
+/* Smiling Sun with gentle rotating rays */
+.scenery-sun-wrap {
+  position: absolute;
+  top: -20px;
+  right: 5%;
+  width: clamp(120px, 15vw, 180px);
+  height: clamp(120px, 15vw, 180px);
+  animation: sunFloat 7s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+.scenery-sun-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: sunRaySpin 45s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes sunRaySpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes sunFloat {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(10px) scale(1.03); }
+}
+
+/* Pastel Rainbow */
+.scenery-rainbow {
+  position: absolute;
+  top: 15px;
+  left: 2%;
+  width: clamp(180px, 22vw, 340px);
+  height: auto;
+  opacity: 0.85;
+  filter: drop-shadow(0 6px 12px rgba(2, 132, 199, 0.18));
+  animation: rainbowDrift 10s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes rainbowDrift {
+  from { transform: translateY(0) rotate(-1deg); }
+  to   { transform: translateY(8px) rotate(1.5deg); }
+}
+
+/* Fluttering Bunting Garland */
+.scenery-bunting {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(26px, 4.5vh, 40px);
+  width: 100%;
+  pointer-events: none;
+  z-index: 7;
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.12));
+  animation: buntingSway 6s ease-in-out infinite alternate;
+  transform-origin: top center;
+}
+
+@keyframes buntingSway {
+  from { transform: rotate(-0.5deg) scaleY(0.98); }
+  to   { transform: rotate(0.5deg) scaleY(1.02); }
+}
+
+/* Drifting Happy Puffy Clouds */
+.scenery-cloud {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 12px rgba(2, 132, 199, 0.16));
+  z-index: 1;
+}
+
+.cloud-1 {
+  top: 9%;
+  left: 18%;
+  width: clamp(110px, 14vw, 200px);
+  animation: cloudFloat1 9s ease-in-out infinite alternate;
+}
+
+.cloud-2 {
+  top: 16%;
+  right: 20%;
+  width: clamp(90px, 12vw, 160px);
+  animation: cloudFloat2 11s ease-in-out infinite alternate -3s;
+}
+
+.cloud-3 {
+  top: 4%;
+  left: 52%;
+  width: clamp(75px, 9vw, 130px);
+  opacity: 0.85;
+  animation: cloudFloat1 13s ease-in-out infinite alternate -6s;
+}
+
+.cloud-4 {
+  top: 30%;
+  left: 3%;
+  width: clamp(80px, 10vw, 140px);
+  opacity: 0.75;
+  animation: cloudFloat2 10s ease-in-out infinite alternate -2s;
+}
+
+@keyframes cloudFloat1 {
+  from { transform: translateY(0) translateX(-6px); }
+  to   { transform: translateY(12px) translateX(8px); }
+}
+
+@keyframes cloudFloat2 {
+  from { transform: translateY(0) translateX(6px); }
+  to   { transform: translateY(14px) translateX(-7px); }
+}
+
+/* Lush Green Rolling Hills with Daisies */
+.scenery-hills {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  right: -5%;
+  height: clamp(80px, 16vh, 140px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.scenery-hills svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hill-flowers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.daisy {
+  position: absolute;
+  width: clamp(24px, 3.2vw, 42px);
+  height: auto;
+  filter: drop-shadow(0 3px 2px rgba(22, 101, 52, 0.2));
+  animation: daisySway 4s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+.daisy-1 { bottom: 18px; left: 8%;  animation-delay: 0s; }
+.daisy-2 { bottom: 35px; left: 24%; animation-delay: -1.2s; }
+.daisy-3 { bottom: 25px; left: 52%; animation-delay: -2.5s; }
+.daisy-4 { bottom: 40px; right: 28%; animation-delay: -0.7s; }
+.daisy-5 { bottom: 20px; right: 9%;  animation-delay: -1.8s; }
+
+@keyframes daisySway {
+  from { transform: rotate(-6deg); }
+  to   { transform: rotate(6deg); }
+}
+
+/* ==========================================================================
+   INTERACTIVE SOAP BUBBLE FIELD (POP THEM FOR FUN!)
+   ========================================================================== */
+.bubble-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.toddler-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(255, 255, 255, 0.45) 25%, 
+    var(--bubble-tint, rgba(147, 197, 253, 0.5)) 75%, 
+    rgba(244, 114, 182, 0.65) 100%);
+  box-shadow: 
+    inset 0 -4px 8px rgba(168, 85, 247, 0.35),
+    inset 0 4px 8px rgba(255, 255, 255, 0.95),
+    0 4px 14px rgba(56, 189, 248, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  pointer-events: auto;
+  cursor: pointer;
+  animation: bubbleRiseWobble var(--rise-duration, 14s) ease-in-out infinite;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toddler-bubble:hover {
+  transform: scale(1.2) !important;
+}
+
+.toddler-bubble::before {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 18%;
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes bubbleRiseWobble {
+  0% {
+    transform: translateY(105vh) translateX(0) scale(0.85);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.95;
+  }
+  25% {
+    transform: translateY(75vh) translateX(12px) scale(0.95);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-10px) scale(1.02);
+  }
+  75% {
+    transform: translateY(25vh) translateX(15px) scale(0.98);
+  }
+  92% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-90px) translateX(var(--drift-x, 25px)) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   TOP HUD — CHUNKY CARNIVAL MARQUEE HEADER
+   ========================================================================== */
+.top-hud {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  min-height: 64px;
+  gap: 12px;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Carnival Marquee Button (Chunky 3D Toy Button) */
+.bubble-btn {
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fefce8 65%, #fef08a 100%);
+  border: 3.5px solid #ffffff;
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 6px rgba(234, 179, 8, 0.25),
+    0 5px 0 #ca8a04,
+    0 10px 18px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+}
+
+.bubble-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.bubble-btn:active {
+  transform: translateY(3px) scale(0.95);
+  box-shadow: 0 1px 0 #ca8a04;
+}
+
+/* Brand Logo Button */
+.hud-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px 4px 6px;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fff1f2 65%, #ffe4e6 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    0 5px 0 #e11d48,
+    0 10px 18px rgba(225, 29, 72, 0.16);
+}
+
+.hud-logo:active {
+  box-shadow: 0 1px 0 #e11d48;
+}
+
+.hud-logo-icon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  object-fit: contain;
+  animation: logoBob 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoBob {
+  from { transform: rotate(-3deg) scale(0.98); }
+  to   { transform: rotate(3deg) scale(1.02); }
+}
+
+.hud-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.hud-logo-title {
+  font-size: clamp(14px, 1.8vw, 19px);
+  font-weight: 900;
+  color: #ff3b5c;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.hud-logo-sub {
+  font-size: 11px;
+  font-weight: 900;
+  color: #0284c7;
+  letter-spacing: 1.5px;
+}
+
+/* Center HUD Title Badge */
+.hud-center {
+  display: flex;
+  align-items: center;
+}
+
+.hud-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff3b5c, #ff6b8b);
+  border: 3px solid #ffffff;
+  color: #ffffff;
+  font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 0 #be123c, 0 8px 16px rgba(244, 63, 94, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Golden Star Bank Pill */
+.cloud-pill {
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3.5px solid #ffffff;
+  box-shadow: 0 4px 0 #facc15, 0 8px 16px rgba(202, 138, 4, 0.16);
+}
+
+.hud-stars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 16px 4px 8px;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fefce8 60%, #fef08a 100%);
+  border: 3.5px solid #ffffff;
+  box-shadow: 0 4px 0 #eab308, 0 8px 16px rgba(234, 179, 8, 0.2);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hud-stars.star-celebrate {
+  animation: starCelebrate 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes starCelebrate {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.35) rotate(8deg); box-shadow: 0 0 22px #facc15, 0 6px 0 #ca8a04; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.star-icon-spin {
+  width: 28px;
+  height: 28px;
+  animation: starPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes starPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15) rotate(6deg); }
+}
+
+.hud-stars-count {
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 900;
+  color: #b45309;
+}
+
+/* Action Buttons */
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-btn {
+  display: grid;
+  place-items: center;
+  width: clamp(48px, 5.2vw, 58px);
+  height: clamp(48px, 5.2vw, 58px);
+  border-radius: 50%;
+  border: 3.5px solid #ffffff;
+}
+
+.hud-btn img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.hud-btn-sound {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #fef9c3 60%, #fef08a 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    0 5px 0 #eab308,
+    0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.hud-btn-sound:active {
+  box-shadow: 0 1px 0 #eab308;
+}
+
+.hud-btn-sound.is-muted {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f1f5f9 60%, #e2e8f0 100%);
+  box-shadow: 0 5px 0 #94a3b8;
+}
+
+.hud-btn-home {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #ffe4e6 60%, #fecdd3 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    0 5px 0 #f43f5e,
+    0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.hud-btn-home:active {
+  box-shadow: 0 1px 0 #f43f5e;
+}
+
+.hud-btn-restart {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #e0f2fe 60%, #bae6fd 100%);
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    0 5px 0 #0284c7,
+    0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.hud-btn-restart:active {
+  box-shadow: 0 1px 0 #0284c7;
+}
+
+.game-shell:not(.is-playing) .hud-btn-home,
+.game-shell:not(.is-playing) .hud-btn-restart {
+  display: none;
+}
+
+/* ==========================================================================
+   PLAY AREA — SPARKY CHARACTER & CARNIVAL BOOTH
+   ========================================================================== */
+.play-area {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(200px, 0.4fr) minmax(0, 1.6fr);
+  align-items: center;
+  padding: 6px 24px 12px 18px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Sparky the Lion Character Wrap */
+.character-wrap {
+  position: relative;
+  grid-column: 1;
+  align-self: end;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 320px);
+  height: min(480px, 68vh);
+  cursor: pointer;
+}
+
+.character-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 8px rgba(22, 101, 52, 0.28));
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.character-wrap:hover canvas {
+  transform: scale(1.04);
+}
+
+.character-wrap:active canvas {
+  transform: scale(0.96) rotate(-2deg);
+}
+
+.character-shadow {
+  position: absolute;
+  bottom: 6px;
+  width: 65%;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(22, 101, 52, 0.35);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+/* Comic-Style Playful Speech Bubble for Sparky */
+.cloud-bubble {
+  position: absolute;
+  z-index: 12;
+  top: 8%;
+  left: 55%;
+  transform: translateX(-50%);
+  width: clamp(170px, 22vw, 250px);
+  padding: 12px 18px;
+  background: #ffffff;
+  border: 4.5px solid #ffffff;
+  border-radius: 30px;
+  box-shadow: 
+    inset 0 4px 10px rgba(255, 255, 255, 0.9),
+    0 6px 0 #38bdf8, 
+    0 14px 26px rgba(2, 132, 199, 0.18);
+  color: #1e293b;
+  font-size: clamp(14px, 1.35vw, 16px);
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: none;
+  animation: speechPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Downward Speech Bubble Tail pointing towards Sparky */
+.cloud-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 45%;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-right: 4px solid #ffffff;
+  border-bottom: 4px solid #ffffff;
+  box-shadow: 3px 3px 0 #38bdf8;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes speechPop {
+  0%   { transform: translateX(-50%) scale(0.7) translateY(12px); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1) translateY(0); opacity: 1; }
+}
+
+.cloud-bubble p {
+  margin: 0;
+}
+
+/* ==========================================================================
+   CARNIVAL BOOTH ACTIVITY PANEL (WARM IVORY WITH CIRCUS CANOPY)
+   ========================================================================== */
+.content-panel {
+  position: relative;
+  grid-column: 2;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(940px, 100%);
+  max-height: 100%;
+  padding: clamp(16px, 2.8vh, 30px) clamp(18px, 2.8vw, 40px);
+  text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.content-panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Carnival Tent Frame & Warm Cream Backing */
+.content-panel:not(.is-menu):not(:has(.round-done))::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 15%, #ffffff 60%, #fffdf8 100%);
+  border: 5.5px solid #ffffff;
+  border-radius: 42px;
+  box-shadow: 
+    inset 0 8px 18px rgba(255, 255, 255, 0.95),
+    0 12px 0 #7dd3fc, 
+    0 24px 44px rgba(2, 132, 199, 0.2);
+}
+
+/* Festive Carnival Awning Stripe Accent across the Top */
+.content-panel:not(.is-menu):not(:has(.round-done))::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 12px;
+  border-radius: 0 0 12px 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ff3b5c 0,
+    #ff3b5c 22px,
+    #ffffff 22px,
+    #ffffff 44px
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: -1;
+}
+
+.content-panel.enter {
+  animation: panelBounceIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes panelBounceIn {
+  0%   { opacity: 0; transform: scale(0.92) translateY(12px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Round Kicker Header Badge */
+.round-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 22px;
+  background: linear-gradient(135deg, #ff3b5c, #ff6b8b);
+  border: 3.5px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: 
+    inset 0 3px 6px rgba(255, 255, 255, 0.4),
+    0 5px 0 #be123c, 
+    0 8px 16px rgba(244, 63, 94, 0.25);
+  color: #ffffff;
+  font-size: clamp(12px, 1.25vw, 15px);
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.booth-tag {
+  color: #ffffff;
+}
+
+.round-count {
+  background: #fef08a;
+  color: #854d0e;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  text-shadow: none;
+}
+
+.round-title {
+  margin: 12px 0 3px;
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: clamp(28px, 3.6vw, 46px);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #1e293b;
+  text-shadow: 0 2px 0 #ffffff;
+}
+
+.round-subtitle {
+  margin-bottom: clamp(12px, 2vh, 20px);
+  font-size: clamp(14px, 1.35vw, 18px);
+  font-weight: 800;
+  color: #475569;
+}
+
+.image-hint {
+  margin-top: clamp(10px, 1.6vh, 16px);
+  font-size: clamp(14px, 1.3vw, 17px);
+  font-weight: 900;
+  color: #0284c7;
+}
+
+/* ==========================================================================
+   CHOICES GRID — CHUNKY TACTILE TOY CARDS (DIFFERENT, BIGGEST, LONGEST)
+   ========================================================================== */
+.choices {
+  display: grid;
+  width: min(820px, 100%);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.6vw, 18px);
+}
+
+/* Tactile 3D Toy Choice Card */
+.choice {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 0.95;
+  width: 100%;
+  padding: clamp(10px, 1.4vw, 18px);
+  border-radius: 34px;
+  border: 4.5px solid #ffffff;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #e0f2fe 65%, #bae6fd 100%);
+  box-shadow: 
+    inset 0 8px 16px rgba(255, 255, 255, 0.95),
+    inset 0 -5px 10px rgba(56, 189, 248, 0.25),
+    0 8px 0 var(--choice-shadow, #0284c7), 
+    0 14px 24px rgba(2, 132, 199, 0.16);
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+}
+
+/* Specular Curved Highlight for Toy Gloss */
+.choice::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 12%;
+  width: 32%;
+  height: 24%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+}
+
+/* Cheerful Color Variants for Choice Cards */
+.choice:nth-child(1) {
+  --choice-shadow: #0284c7;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #e0f2fe 65%, #bae6fd 100%);
+}
+
+.choice:nth-child(2) {
+  --choice-shadow: #ca8a04;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fefce8 65%, #fef08a 100%);
+}
+
+.choice:nth-child(3) {
+  --choice-shadow: #16a34a;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f0fdf4 65%, #bbf7d0 100%);
+}
+
+.choice:nth-child(4) {
+  --choice-shadow: #e11d48;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fff1f2 65%, #fecdd3 100%);
+}
+
+.choice:nth-child(5) {
+  --choice-shadow: #7e22ce;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #faf5ff 65%, #e9d5ff 100%);
+}
+
+.choice:hover {
+  transform: translateY(-6px) scale(1.05);
+}
+
+.choice:active {
+  transform: translateY(4px) scale(0.96);
+  box-shadow: 0 2px 0 var(--choice-shadow, #0284c7);
+}
+
+.choice.correct {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #dcfce7 65%, #86efac 100%) !important;
+  box-shadow: 0 8px 0 #16a34a !important;
+  animation: answerSquashPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.choice.wrong {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #ffe4e6 65%, #fecdd3 100%) !important;
+  box-shadow: 0 6px 0 #f43f5e !important;
+  animation: toddlerNudge 0.35s ease;
+}
+
+/* Number Badge on Card */
+.choice-number {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fef08a;
+  border: 2px solid #ca8a04;
+  color: #78350f;
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.sprite-art {
+  display: block;
+  max-width: 90%;
+  max-height: 85%;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.14));
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   FIND THE BIGGEST ONE (CLEAR SCALE DIFFERENCES FOR TODDLERS)
+   ========================================================================== */
+.choices.is-biggest {
+  width: min(860px, 100%);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.5vw, 18px);
+}
+
+.choices.is-biggest .choice {
+  aspect-ratio: 1 / 1.1;
+  padding: 10px;
+}
+
+.choice .size-art {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 160px);
+  max-height: 85%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.16));
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   FIND THE LONGEST ONE (TRACK VIEW WITH START FLAG & FINISH STAR)
+   ========================================================================== */
+.choices.is-longest {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 780px;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.choices.is-longest .choice {
+  aspect-ratio: 2.3 / 1;
+  padding: 12px 18px;
+}
+
+.longest-track {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 12px;
+}
+
+.track-start {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1;
+  flex: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
+}
+
+.longest-art-wrap {
+  position: relative;
+  flex: 1;
+  height: clamp(54px, 8.5vh, 74px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  border-bottom: 4px dashed rgba(2, 132, 199, 0.45);
+  padding-bottom: 2px;
+}
+
+.choice .long-art {
+  display: block;
+  width: var(--art-width, 70%);
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.16));
+}
+
+.track-goal {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1;
+  flex: none;
+  filter: drop-shadow(0 2px 4px rgba(234, 179, 8, 0.4));
+  animation: starPulse 2.5s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   WHICH HAS MORE (CARNIVAL TOY CRATES)
+   ========================================================================== */
+.group-board {
+  display: flex;
+  width: min(780px, 100%);
+  gap: clamp(14px, 2.4vw, 26px);
+  justify-content: center;
+}
+
+.group-choice {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: clamp(180px, 29vh, 240px);
+  padding: clamp(14px, 2vw, 22px);
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f0f9ff 65%, #bae6fd 100%);
+  border: 5.5px solid #ffffff;
+  border-radius: 38px;
+  box-shadow: 
+    inset 0 8px 16px rgba(255, 255, 255, 0.95),
+    0 9px 0 #0284c7, 
+    0 18px 28px rgba(2, 132, 199, 0.16);
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+}
+
+.group-choice:nth-child(2) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fff7ed 65%, #fed7aa 100%);
+  box-shadow: 
+    inset 0 8px 16px rgba(255, 255, 255, 0.95),
+    0 9px 0 #ea580c, 
+    0 18px 28px rgba(234, 88, 12, 0.16);
+}
+
+.group-choice:hover {
+  transform: translateY(-6px) scale(1.03);
+}
+
+.group-choice:active {
+  transform: translateY(4px) scale(0.97);
+}
+
+.group-choice.correct {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #dcfce7 65%, #86efac 100%) !important;
+  box-shadow: 0 9px 0 #16a34a !important;
+  animation: answerSquashPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.group-choice.wrong {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #ffe4e6 65%, #fecdd3 100%) !important;
+  box-shadow: 0 7px 0 #f43f5e !important;
+  animation: toddlerNudge 0.35s ease;
+}
+
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(4, clamp(30px, 4.4vw, 48px));
+  gap: clamp(5px, 0.9vw, 12px);
+  justify-content: center;
+  align-content: center;
+}
+
+.group-grid .sprite-art {
+  width: clamp(28px, 4.2vw, 46px);
+  height: clamp(28px, 4.2vw, 46px);
+}
+
+.group-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 20px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  font-size: clamp(16px, 1.7vw, 23px);
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   MATCH THE SHAPES (CHUNKY PUZZLE BOARD & CUTOUT TOY PIECES)
+   ========================================================================== */
+.shape-board {
+  display: grid;
+  width: min(760px, 100%);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.5vw, 18px);
+}
+
+.shape-match-card {
+  padding: 8px 6px 12px;
+  background: #ffffff;
+  border: 4.5px solid #ffffff;
+  border-radius: 30px;
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.9),
+    0 8px 0 #7dd3fc, 
+    0 14px 22px rgba(2, 132, 199, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shape-target {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: clamp(84px, 15vh, 120px);
+  padding: 8px;
+  border: 3.5px dashed var(--shape-color, #a855f7);
+  border-radius: 24px;
+  background: var(--shape-bg, radial-gradient(circle at 50% 40%, #ffffff 0%, #faf5ff 100%));
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: relative;
+}
+
+.shape-target:hover {
+  transform: translateY(-2px);
+}
+
+.shape-target.target-hint {
+  border-style: solid;
+  border-width: 4px;
+  border-color: var(--shape-color, #f59e0b);
+  box-shadow: 0 0 18px var(--shape-color, #f59e0b), inset 0 0 10px rgba(255, 255, 255, 0.85);
+  animation: shapeTargetPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes shapeTargetPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+.shape-silhouette {
+  width: clamp(52px, 7.2vw, 72px);
+  height: clamp(52px, 7.2vw, 72px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.12));
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+.shape-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  font-size: clamp(11px, 1.15vw, 13px);
+  font-weight: 900;
+  color: var(--shape-color, #64748b);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  border: 1.5px solid var(--shape-color, #cbd5e1);
+  pointer-events: none;
+  letter-spacing: 0.4px;
+}
+
+.shape-target.matched {
+  border-style: solid;
+  border-color: #22c55e !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);
+  animation: answerSquashPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.shape-target.matched .shape-silhouette {
+  display: none;
+}
+
+.shape-target.matched .matched-toy {
+  width: clamp(54px, 7.8vw, 80px);
+  height: clamp(54px, 7.8vw, 80px);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.16));
+}
+
+.shape-target.matched .match-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+  animation: answerSquashPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.shape-target.bump {
+  animation: shapeBump 0.35s ease;
+}
+
+@keyframes shapeBump {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px) rotate(-3deg); }
+  75%      { transform: translateX(6px) rotate(3deg); }
+}
+
+.shape-toys {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(12px, 1.8vw, 20px);
+  margin-top: clamp(12px, 2vh, 20px);
+}
+
+.shape-piece {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: clamp(86px, 11.5vw, 116px);
+  min-height: clamp(78px, 13vh, 102px);
+  padding: 8px;
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fefce8 65%, #fef08a 100%);
+  border: 4.5px solid #ffffff;
+  border-radius: 30px;
+  box-shadow: 
+    inset 0 6px 12px rgba(255, 255, 255, 0.95),
+    0 8px 0 #ca8a04, 
+    0 14px 22px rgba(234, 179, 8, 0.2);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+  position: relative;
+}
+
+.shape-piece:hover {
+  transform: translateY(-5px) scale(1.06);
+}
+
+.shape-piece:active {
+  transform: translateY(3px) scale(0.96);
+}
+
+.shape-piece.selected {
+  transform: translateY(-8px) scale(1.12);
+  border-color: #ffffff;
+  box-shadow: 0 10px 0 #ea580c, 0 0 0 4.5px #f97316, 0 16px 26px rgba(249, 115, 22, 0.35);
+  animation: selectedWiggle 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes selectedWiggle {
+  from { transform: translateY(-8px) scale(1.12) rotate(-2deg); }
+  to   { transform: translateY(-8px) scale(1.12) rotate(2deg); }
+}
+
+.shape-piece.matched {
+  opacity: 0.35;
+  pointer-events: none;
+  transform: scale(0.88);
+  filter: grayscale(0.5);
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+
+.shape-piece .sprite-art {
+  width: clamp(52px, 7.5vw, 76px);
+  height: clamp(52px, 7.5vw, 76px);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.16));
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   MINI-GAMES: MYSTERY BOX & BALLOON POP
+   ========================================================================== */
+.mini-scene {
+  display: flex;
+  min-height: clamp(140px, 24vh, 190px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 2.8vw, 32px);
+}
+
+.mystery-box {
+  position: relative;
+  width: clamp(105px, 14.5vw, 150px);
+  height: clamp(105px, 14.5vw, 150px);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: boxHoverWobble 3s ease-in-out infinite alternate;
+}
+
+.mystery-box:nth-child(2) { animation-delay: -1s; }
+.mystery-box:nth-child(3) { animation-delay: -2s; }
+
+@keyframes boxHoverWobble {
+  0%   { transform: rotate(-2deg) translateY(0); }
+  100% { transform: rotate(2deg) translateY(-5px); }
+}
+
+.mystery-box:hover {
+  transform: translateY(-8px) scale(1.1) !important;
+}
+
+.mystery-box.open {
+  transform: translateY(-6px) scale(1.1);
+  pointer-events: none;
+  animation: none;
+}
+
+.box-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.2));
+}
+
+.box-prize {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: clamp(68px, 9.5vw, 95px) !important;
+  height: auto !important;
+  transform: translate(-50%, -40%);
+  animation: prizeBounceUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  z-index: 10;
+  filter: drop-shadow(0 8px 12px rgba(234, 179, 8, 0.45));
+}
+
+@keyframes prizeBounceUp {
+  0%   { transform: translate(-50%, 20%) scale(0.3); opacity: 0; }
+  60%  { transform: translate(-50%, -55%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -40%) scale(1); opacity: 1; }
+}
+
+/* Balloon Pop Arena — Sunny, Joyful & Toddler-Friendly */
+.balloon-row {
+  position: relative;
+  width: min(740px, 100%);
+  height: clamp(210px, 34vh, 290px);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(186, 230, 253, 0.6) 0%, rgba(224, 242, 254, 0.85) 70%, rgba(187, 247, 208, 0.9) 100%);
+  border: 5.5px solid #ffffff;
+  border-radius: 38px;
+  box-shadow: 
+    inset 0 6px 14px rgba(2, 132, 199, 0.12),
+    0 8px 0 #7dd3fc,
+    0 16px 26px rgba(2, 132, 199, 0.16);
+}
+
+.balloon-row .balloon {
+  position: absolute;
+  bottom: -60px;
+  left: var(--start-x);
+  width: var(--balloon-width, 84px);
+  height: calc(var(--balloon-width, 84px) * 1.35);
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  animation: balloonFloatUp var(--float-time, 6s) linear forwards;
+  z-index: 5;
+}
+
+.balloon-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+  transition: transform 0.12s ease;
+}
+
+.balloon:hover .balloon-art {
+  transform: scale(1.15);
+}
+
+.balloon.popped {
+  animation: balloonPopExplode 0.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards !important;
+  pointer-events: none;
+}
+
+@keyframes balloonFloatUp {
+  0% { 
+    transform: translate(0, 0) rotate(-6deg); 
+  }
+  30% {
+    transform: translate(calc(var(--drift) * 0.4), calc(var(--lift) * 0.35)) rotate(5deg);
+  }
+  65% {
+    transform: translate(calc(var(--drift) * 0.8), calc(var(--lift) * 0.7)) rotate(-4deg);
+  }
+  100% { 
+    transform: translate(var(--drift), var(--lift)) rotate(6deg); 
+  }
+}
+
+@keyframes balloonPopExplode {
+  0%   { transform: scale(1); opacity: 1; }
+  40%  { transform: scale(1.65); opacity: 0.9; filter: brightness(1.4); }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes floatScore {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  30%  { transform: translateY(-16px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-48px) scale(1); opacity: 0; }
+}
+
+.balloon-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.progress-balloons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-balloon {
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 4.4vw, 48px);
+  height: clamp(42px, 5.5vw, 58px);
+  padding: 4px;
+  background: #ffffff;
+  border: 3.5px solid #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 #7dd3fc;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-balloon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.progress-balloon.is-popped {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fefce8 65%, #fde047 100%);
+  box-shadow: 0 5px 0 #eab308;
+  transform: scale(1.2) rotate(6deg);
+}
+
+.balloon-progress strong {
+  font-size: clamp(18px, 2.3vw, 25px);
+  font-weight: 900;
+  color: #0284c7;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================================
+   MAIN MENU SCREEN (CARNIVAL FAIRGROUND MARQUEE)
+   ========================================================================== */
+.main-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(920px, 100%);
+  padding: clamp(18px, 2.8vh, 32px) clamp(18px, 2.8vw, 36px);
+  background: radial-gradient(ellipse at 50% 15%, #ffffff 65%, #fffdf8 100%);
+  border: 5.5px solid #ffffff;
+  border-radius: 46px;
+  box-shadow: 
+    inset 0 8px 18px rgba(255, 255, 255, 0.95),
+    0 12px 0 #7dd3fc, 
+    0 24px 44px rgba(2, 132, 199, 0.22);
+  text-align: center;
+  position: relative;
+}
+
+/* Red & White Circus Tent Trim on Top of Main Menu */
+.main-menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 12px;
+  border-radius: 0 0 12px 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ff3b5c 0,
+    #ff3b5c 22px,
+    #ffffff 22px,
+    #ffffff 44px
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 20px;
+  background: #fef08a;
+  border: 2.5px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 3px 0 #eab308;
+  color: #a16207;
+  font-size: clamp(12px, 1.25vw, 15px);
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.main-menu h1 {
+  margin: 10px 0 3px;
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: clamp(32px, 4.2vw, 54px);
+  font-weight: 900;
+  line-height: 1;
+  color: #0284c7;
+  text-shadow: 0 2px 0 #ffffff;
+}
+
+.main-menu h1 span {
+  color: #0284c7;
+}
+
+.main-menu h1 strong {
+  color: #ff3b5c;
+  margin-left: 8px;
+}
+
+.menu-intro {
+  margin: 4px 0 clamp(14px, 2.2vh, 20px);
+  font-size: clamp(14px, 1.35vw, 18px);
+  font-weight: 800;
+  color: #475569;
+}
+
+.menu-games {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 16px);
+}
+
+.menu-game {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: clamp(110px, 17vh, 145px);
+  padding: 12px 8px;
+  border: 4.5px solid #ffffff;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 
+    inset 0 6px 12px rgba(255, 255, 255, 0.95),
+    0 8px 0 var(--game-shadow, #4ade80), 
+    0 14px 22px rgba(0, 0, 0, 0.1);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
+}
+
+.menu-game:nth-child(1) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f0fdf4 65%, #bbf7d0 100%);
+  --game-shadow: #16a34a;
+}
+
+.menu-game:nth-child(2) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fefce8 65%, #fef08a 100%);
+  --game-shadow: #ca8a04;
+}
+
+.menu-game:nth-child(3) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #f0f9ff 65%, #bae6fd 100%);
+  --game-shadow: #0284c7;
+}
+
+.menu-game:nth-child(4) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #fff1f2 65%, #fbcfe8 100%);
+  --game-shadow: #e11d48;
+}
+
+.menu-game:nth-child(5) {
+  background: radial-gradient(circle at 35% 25%, #ffffff 0%, #faf5ff 65%, #e9d5ff 100%);
+  --game-shadow: #7e22ce;
+}
+
+.menu-game:hover {
+  transform: translateY(-6px) scale(1.05);
+}
+
+.menu-game:active {
+  transform: translateY(4px) scale(0.96);
+  box-shadow: 0 2px 0 var(--game-shadow, #4ade80);
+}
+
+.menu-game img {
+  width: clamp(52px, 6.5vw, 76px);
+  height: clamp(52px, 6.5vw, 76px);
+  object-fit: contain;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.14));
+}
+
+.menu-game b {
+  font-size: clamp(12px, 1.15vw, 15px);
+  font-weight: 900;
+  color: #1e293b;
+  line-height: 1.15;
+}
+
+/* Big Juicy Play Button */
+.menu-play, .continue-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: clamp(54px, 7.8vh, 68px);
+  padding: 10px clamp(26px, 4vw, 44px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ff4767 0%, #e11d48 100%);
+  border: 4.5px solid #ffffff;
+  box-shadow: 
+    inset 0 4px 8px rgba(255, 255, 255, 0.4),
+    0 8px 0 #9f1239, 
+    0 16px 28px rgba(225, 29, 72, 0.35);
+  color: #ffffff;
+  font-size: clamp(19px, 2.3vw, 27px);
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+}
+
+.menu-play {
+  margin-top: clamp(16px, 2.4vh, 24px);
+  min-width: min(340px, 85%);
+}
+
+.menu-play:hover, .continue-button:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.menu-play:active, .continue-button:active {
+  transform: translateY(4px) scale(0.96);
+  box-shadow: 0 2px 0 #9f1239;
+}
+
+.menu-play img, .continue-button img {
+  width: clamp(24px, 2.5vw, 32px);
+  height: clamp(24px, 2.5vw, 32px);
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   ROUND COMPLETION CARD ("YOU DID IT!")
+   ========================================================================== */
+.round-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6vh, 16px);
+  width: min(600px, 100%);
+  padding: clamp(22px, 3.2vh, 34px) clamp(22px, 4vw, 46px);
+  background: radial-gradient(ellipse at 50% 20%, #ffffff 65%, #fffbeb 100%);
+  border: 5.5px solid #ffffff;
+  border-radius: 46px;
+  box-shadow: 
+    inset 0 8px 18px rgba(255, 255, 255, 0.95),
+    0 12px 0 #fde047, 
+    0 24px 45px rgba(234, 179, 8, 0.28);
+  animation: celebrationPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes celebrationPop {
+  0%   { transform: scale(0.7) rotate(-3deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.done-badge-wrap {
+  font-size: clamp(64px, 10.5vh, 94px);
+  line-height: 1;
+  animation: starPulse 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(234, 179, 8, 0.45));
+}
+
+.round-done h2 {
+  font-family: 'Baloo 2', 'Nunito', sans-serif;
+  font-size: clamp(36px, 5.8vw, 60px);
+  font-weight: 900;
+  line-height: 1;
+  color: #ff3b5c;
+  text-shadow: 0 3px 0 #fef08a, 0 5px 0 #ffffff;
+}
+
+.round-done p {
+  font-size: clamp(16px, 1.9vw, 22px);
+  font-weight: 800;
+  color: #334155;
+}
+
+.round-done .continue-button {
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   FEEDBACK TOAST & PARTICLES
+   ========================================================================== */
+.feedback {
+  position: absolute;
+  z-index: 20;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px) scale(0.85);
+  padding: 10px 28px;
+  color: #0f172a;
+  font-size: clamp(16px, 1.7vw, 20px);
+  font-weight: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedback.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.feedback.good {
+  background: #f0fdf4;
+  box-shadow: 0 6px 0 #4ade80, 0 10px 20px rgba(34, 197, 94, 0.22);
+  color: #15803d;
+}
+
+.feedback.try {
+  background: #fff1f2;
+  box-shadow: 0 6px 0 #fb7185, 0 10px 20px rgba(244, 63, 94, 0.22);
+  color: #be123c;
+}
+
+.feedback.hint {
+  background: #fefce8;
+  box-shadow: 0 6px 0 #facc15, 0 10px 20px rgba(234, 179, 8, 0.22);
+  color: #854d0e;
+}
+
+.effects-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.fx-bit {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.85);
+  animation: particleBurst 0.75s cubic-bezier(0.16, 0.72, 0.25, 1) both;
+}
+
+.fx-bit.is-star {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes particleBurst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.2) rotate(0deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--sx), var(--sy)) scale(1.2) rotate(var(--st));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(var(--turn));
+  }
+}
+
+@keyframes answerSquashPop {
+  0%   { transform: scale(0.92); }
+  45%  { transform: scale(1.1); }
+  75%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+@keyframes toddlerNudge {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-8px) rotate(-2deg); }
+  75%      { transform: translateX(8px) rotate(2deg); }
+}
+
+/* ==========================================================================
+   BOTTOM FOOTER BAR
+   ========================================================================== */
+.bottom-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 20px;
+  min-height: 40px;
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 3.5px solid #ffffff;
+  color: #475569;
+  font-size: clamp(12px, 1.15vw, 14px);
+  font-weight: 800;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.bubble-pill {
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 0 #cbd5e1;
+}
+
+.restart-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  color: #334155;
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.restart-button img {
+  width: 16px;
+  height: 16px;
+}
+
+.restart-button:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.game-shell:not(.is-playing) #main-menu-btn,
+.game-shell:not(.is-playing) #restart {
+  display: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS FOR PHONES & TABLETS
+   ========================================================================== */
+@media (max-width: 960px) {
+  .play-area {
+    grid-template-columns: minmax(150px, 0.35fr) minmax(0, 1.65fr);
+    padding: 6px 14px 10px 10px;
+  }
+  
+  .character-wrap {
+    width: min(100%, 220px);
+    height: min(360px, 55vh);
+  }
+  
+  .cloud-bubble {
+    left: 45%;
+    width: clamp(140px, 20vw, 190px);
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .menu-games {
+    gap: 8px;
+  }
+  
+  .menu-game {
+    min-height: 100px;
+  }
+}
+
+/* Mobile Portrait (< 680px) */
+@media (max-width: 680px) {
+  .top-hud {
+    padding: 6px 10px;
+    min-height: 52px;
+  }
+
+  .hud-center {
+    display: none;
+  }
+  
+  .hud-logo-sub {
+    display: none;
+  }
+  
+  .play-area {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 8px 8px;
+    justify-content: center;
+  }
+  
+  .character-wrap {
+    position: absolute;
+    bottom: 38px;
+    left: 4px;
+    width: clamp(70px, 18vw, 110px);
+    height: clamp(85px, 20vh, 130px);
+    z-index: 15;
+  }
+  
+  .cloud-bubble {
+    display: none;
+  }
+  
+  .content-panel {
+    width: 100%;
+    padding: 12px 8px;
+  }
+  
+  .main-menu {
+    padding: 16px 10px;
+    border-radius: 34px;
+  }
+  
+  .menu-games {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  
+  .menu-game {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 8px 12px;
+    min-height: 66px;
+    gap: 10px;
+  }
+  
+  .menu-game:nth-child(5) {
+    grid-column: 1 / -1;
+    width: min(220px, 85%);
+    margin: 0 auto;
+  }
+  
+  .menu-game img {
+    width: 44px;
+    height: 44px;
+    flex: none;
+  }
+  
+  .menu-game b {
+    text-align: left;
+    font-size: 13px;
+  }
+  
+  .choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: min(360px, 100%);
+  }
+  
+  .choices.is-longest {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  
+  .choice {
+    aspect-ratio: 1 / 0.88;
+  }
+  
+  .group-board {
+    gap: 8px;
+  }
+  
+  .group-choice {
+    min-height: 140px;
+    padding: 8px;
+  }
+  
+  .group-grid {
+    grid-template-columns: repeat(4, 26px);
+    gap: 3px;
+  }
+  
+  .group-grid .sprite-art {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .shape-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  
+  .shape-target {
+    min-height: 68px;
+  }
+  
+  .shape-target .sprite-art {
+    width: 46px;
+    height: 46px;
+  }
+  
+  .shape-piece {
+    width: 72px;
+    min-height: 64px;
+  }
+  
+  .shape-piece .sprite-art {
+    width: 46px;
+    height: 46px;
+  }
+  
+  .bottom-bar {
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+  
+  .bottom-bar > span {
+    max-width: 55%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Mobile Landscape (height <= 520px) */
+@media (orientation: landscape) and (max-height: 520px) {
+  .top-hud {
+    padding: 4px 12px;
+    min-height: 46px;
+  }
+  
+  .hud-center {
+    display: none;
+  }
+  
+  .hud-logo {
+    padding: 2px 10px 2px 4px;
+  }
+  
+  .hud-logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .hud-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .play-area {
+    padding: 4px 12px 6px;
+    grid-template-columns: minmax(140px, 0.32fr) minmax(0, 1.68fr);
+  }
+  
+  .character-wrap {
+    width: min(100%, 150px);
+    height: min(240px, 62vh);
+  }
+  
+  .cloud-bubble {
+    display: none;
+  }
+  
+  .content-panel {
+    padding: 6px 14px;
+  }
+  
+  .round-title {
+    margin: 4px 0 2px;
+    font-size: clamp(20px, 4.6vh, 30px);
+  }
+  
+  .round-subtitle {
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  
+  .choices {
+    gap: 8px;
+    width: min(600px, 100%);
+  }
+  
+  .choices.is-longest {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  
+  .choice {
+    aspect-ratio: 1.3 / 1;
+    padding: 6px;
+  }
+  
+  .group-board {
+    gap: 12px;
+  }
+  
+  .group-choice {
+    min-height: clamp(110px, 35vh, 150px);
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .group-grid {
+    grid-template-columns: repeat(4, clamp(22px, 5vh, 32px));
+    gap: 3px;
+  }
+  
+  .group-grid .sprite-art {
+    width: clamp(20px, 5vh, 30px);
+    height: clamp(20px, 5vh, 30px);
+  }
+  
+  .shape-target {
+    min-height: clamp(54px, 16vh, 70px);
+  }
+  
+  .shape-target .sprite-art {
+    width: clamp(40px, 9vh, 52px);
+    height: clamp(40px, 9vh, 52px);
+  }
+  
+  .shape-toys {
+    gap: 8px;
+    margin-top: 6px;
+  }
+  
+  .shape-piece {
+    width: clamp(56px, 12vw, 80px);
+    min-height: clamp(50px, 14vh, 66px);
+  }
+  
+  .shape-piece .sprite-art {
+    width: clamp(38px, 8vh, 48px);
+    height: clamp(38px, 8vh, 48px);
+  }
+  
+  .mini-scene {
+    min-height: clamp(90px, 26vh, 120px);
+  }
+  
+  .mystery-box {
+    width: clamp(75px, 20vh, 105px);
+    height: clamp(75px, 20vh, 105px);
+  }
+  
+  .balloon-row {
+    height: clamp(110px, 32vh, 150px);
+  }
+  
+  .main-menu {
+    padding: 8px 16px;
+  }
+  
+  .menu-games {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+  
+  .menu-game {
+    min-height: clamp(65px, 18vh, 85px);
+    gap: 2px;
+    padding: 4px;
+  }
+  
+  .menu-game img {
+    width: clamp(34px, 8vh, 46px);
+    height: clamp(34px, 8vh, 46px);
+  }
+  
+  .menu-game b {
+    font-size: 11px;
+  }
+  
+  .menu-play {
+    margin-top: 8px;
+    min-height: 44px;
+    font-size: 17px;
+  }
+  
+  .bottom-bar {
+    min-height: 28px;
+    padding: 2px 14px;
+    font-size: 10px;
+  }
+}

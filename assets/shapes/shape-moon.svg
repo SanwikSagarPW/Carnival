@@ -1,0 +1,16 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="moonGrad" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#f3e8ff"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </radialGradient>
+  </defs>
+  <!-- Chunky Friendly Crescent Moon -->
+  <path d="M 68 10 C 26 12 12 48 30 84 C 44 94 62 90 76 80 C 46 72 38 42 62 24 C 66 20 70 14 68 10 Z" fill="url(#moonGrad)" stroke="#9333ea" stroke-width="4.5" stroke-linejoin="round"/>
+  <!-- Gloss shine -->
+  <ellipse cx="36" cy="32" rx="6" ry="3" fill="#ffffff" opacity="0.6" transform="rotate(-35 36 32)"/>
+  <!-- Cute Sleeping/Smiling Face -->
+  <path d="M 38 46 Q 42 42 46 46" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <ellipse cx="35" cy="53" rx="3.5" ry="2" fill="#f43f5e" opacity="0.45"/>
+  <path d="M 40 55 Q 46 61 52 55" stroke="#0f172a" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+</svg>

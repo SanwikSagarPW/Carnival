@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ribbonLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff477e"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="ribbonRight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff477e"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="badgeGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#881337" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Hanging Ribbons -->
+  <polygon points="34,60 20,95 35,88 44,95 40,65" fill="url(#ribbonLeft)"/>
+  <polygon points="66,60 60,65 56,95 65,88 80,95" fill="url(#ribbonRight)"/>
+
+  <!-- Round Rosette Badge -->
+  <circle cx="50" cy="48" r="38" fill="#52c41a" stroke="#15803d" stroke-width="4" filter="url(#badgeShadow)"/>
+  <circle cx="50" cy="48" r="32" fill="#fffdf5" stroke="#facc15" stroke-width="3"/>
+
+  <!-- Golden Smiling Star -->
+  <path d="M 50 24 L 56 38 L 71 40 L 60 50 L 63 65 L 50 57 L 37 65 L 40 50 L 29 40 L 44 38 Z"
+        fill="url(#badgeGold)" stroke="#d97706" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Eyes -->
+  <circle cx="46" cy="45" r="2" fill="#371e03"/>
+  <circle cx="54" cy="45" r="2" fill="#371e03"/>
+  <!-- Smile -->
+  <path d="M 47 48 Q 50 52 53 48" stroke="#371e03" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+</svg>

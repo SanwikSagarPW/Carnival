@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "10d4862564b6",
+  "breathEffect": {
+    "enabled": false,
+    "baked": false,
+    "reason": "The action supplies its own body motion; no extra breathing deformation during locomotion, laughter, flight or waking."
+  },
+  "scaleLock": {
+    "factor": 0.9791083274807806,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "25-sequence-4-sleep-wakeup",
+  "name": "Sequence/4/Sleep_Wakeup",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1920,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 3,
+  "frameCount": 9,
+  "atlasFrameCount": 9,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 9,
+    "playbackFrames": 9,
+    "storedFrames": 9,
+    "originalGridCells": 12,
+    "gridCells": 12,
+    "originalBytes": 1224189,
+    "bytes": 1028315,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    215,
+    85,
+    85,
+    85,
+    85,
+    85,
+    85,
+    85,
+    685
+  ],
+  "loop": false,
+  "durationMs": 1495,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Wake from lying to a supported cross-legged seated pose.",
+  "review": {
+    "status": "redraw_review",
+    "artisticApproval": false
+  },
+  "notes": "Built-in imagegen whole-character motion stages. Whole-figure scale registration stabilizes character volume. Ground contacts are fixed; genuine airborne run/jump stages retain explicit vertical clearance. Recovery and loop ordering use reviewed source stages. No separated head/body, frame crossfade or optical flow. New drawings require visual review. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/25-sequence-4-sleep-wakeup/spritesheet-optimized-v1.png"
+}

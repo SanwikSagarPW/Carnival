@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "assetRevision": "d4ae3e679f51",
+  "breathEffect": {
+    "enabled": false,
+    "baked": false,
+    "reason": "The action supplies its own body motion; no extra breathing deformation during locomotion, laughter, flight or waking."
+  },
+  "scaleLock": {
+    "factor": 0.9512377499759149,
+    "targetHeadArea": 31602,
+    "perFrameScale": false
+  },
+  "id": "10-running-animation",
+  "name": "Running_Animation",
+  "sheet": "spritesheet-optimized-v1.png",
+  "sheetWidth": 2048,
+  "sheetHeight": 1280,
+  "cellWidth": 512,
+  "cellHeight": 640,
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "atlasFrameCount": 8,
+  "frameMap": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "optimization": {
+    "lossless": true,
+    "originalFrames": 8,
+    "playbackFrames": 8,
+    "storedFrames": 8,
+    "originalGridCells": 8,
+    "gridCells": 8,
+    "originalBytes": 1142220,
+    "bytes": 959590,
+    "originalFile": "scale-v6/spritesheet.png",
+    "originalIndices": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ]
+    ]
+  },
+  "frameDurationsMs": [
+    80,
+    65,
+    65,
+    110,
+    80,
+    65,
+    65,
+    110
+  ],
+  "loop": true,
+  "durationMs": 640,
+  "root": [
+    256,
+    592
+  ],
+  "frameOrder": "frameMap indexes row-major atlas cells",
+  "description": "Right-facing run with a stable horizontal head anchor, alternating supports and two flight phases.",
+  "review": {
+    "status": "run_registration_review",
+    "artisticApproval": false
+  },
+  "notes": "Original eight complete drawings translated by integer pixels using the midpoint of the warm flame-head bounds. The old neck detector selected arm pixels in flight, producing 46–52 px horizontal jumps. Vertical placement, original RGBA, connected anatomy, scale and airborne clearance are preserved. Both four-pose steps use matching contact/compression/passing/flight exposures of 80/65/65/110 ms (640 ms loop). No body slicing, repainting, morphing or added breathing transform. This registration repair does not redraw residual pose-to-pose anatomy changes. Scale v6: one fixed whole-character transform per clip, matched to the standing-idle median opaque head silhouette area. It includes eyes/mouth, so blinking does not change the scale estimate. No frame-specific scaling, head/body cuts, or pose-height normalization. Grounded contacts remain y592; flight clearance is transformed about the shared root. Pose projection, breathing and original drawing proportions remain intact.",
+  "source": "animations/10-running-animation/spritesheet-optimized-v1.png"
+}

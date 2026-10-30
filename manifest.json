@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "title": "Sparky selected animation pack",
+  "animations": [
+    {
+      "id": "01-idle",
+      "name": "Idle",
+      "metadata": "animations/01-idle/animation.json",
+      "sheet": "animations/01-idle/spritesheet-optimized-v1.png",
+      "guide": "animations/01-idle/animation.md"
+    },
+    {
+      "id": "02-idle-eb",
+      "name": "Idle_EB",
+      "metadata": "animations/02-idle-eb/animation.json",
+      "sheet": "animations/02-idle-eb/spritesheet-optimized-v1.png",
+      "guide": "animations/02-idle-eb/animation.md"
+    },
+    {
+      "id": "03-intro-lucas-room-touch-lu-wondering",
+      "name": "Intro/Lucas_Room_Touch/Lu_Wondering",
+      "metadata": "animations/03-intro-lucas-room-touch-lu-wondering/animation.json",
+      "sheet": "animations/03-intro-lucas-room-touch-lu-wondering/spritesheet-optimized-v1.png",
+      "guide": "animations/03-intro-lucas-room-touch-lu-wondering/animation.md"
+    },
+    {
+      "id": "04-room-game-lu-n-look-left",
+      "name": "Room_Game/Lu_N_Look_Left",
+      "metadata": "animations/04-room-game-lu-n-look-left/animation.json",
+      "sheet": "animations/04-room-game-lu-n-look-left/spritesheet-optimized-v1.png",
+      "guide": "animations/04-room-game-lu-n-look-left/animation.md"
+    },
+    {
+      "id": "05-room-game-lu-n-look-right",
+      "name": "Room_Game/Lu_N_Look_Right",
+      "metadata": "animations/05-room-game-lu-n-look-right/animation.json",
+      "sheet": "animations/05-room-game-lu-n-look-right/spritesheet-optimized-v1.png",
+      "guide": "animations/05-room-game-lu-n-look-right/animation.md"
+    },
+    {
+      "id": "06-common-walk-lu-walk-left",
+      "name": "Common/Walk/Lu_Walk_Left",
+      "metadata": "animations/06-common-walk-lu-walk-left/animation.json",
+      "sheet": "animations/06-common-walk-lu-walk-left/spritesheet-optimized-v1.png",
+      "guide": "animations/06-common-walk-lu-walk-left/animation.md"
+    },
+    {
+      "id": "07-common-walk-lu-walk-right",
+      "name": "Common/Walk/Lu_Walk_Right",
+      "metadata": "animations/07-common-walk-lu-walk-right/animation.json",
+      "sheet": "animations/07-common-walk-lu-walk-right/spritesheet-optimized-v1.png",
+      "guide": "animations/07-common-walk-lu-walk-right/animation.md"
+    },
+    {
+      "id": "08-common-happy-walk-lu-happy-walk-left",
+      "name": "Common/Happy_Walk/Lu_Happy_Walk_Left",
+      "metadata": "animations/08-common-happy-walk-lu-happy-walk-left/animation.json",
+      "sheet": "animations/08-common-happy-walk-lu-happy-walk-left/spritesheet-optimized-v1.png",
+      "guide": "animations/08-common-happy-walk-lu-happy-walk-left/animation.md"
+    },
+    {
+      "id": "09-common-happy-walk-lu-happy-walk-right",
+      "name": "Common/Happy_Walk/Lu_Happy_Walk_Right",
+      "metadata": "animations/09-common-happy-walk-lu-happy-walk-right/animation.json",
+      "sheet": "animations/09-common-happy-walk-lu-happy-walk-right/spritesheet-optimized-v1.png",
+      "guide": "animations/09-common-happy-walk-lu-happy-walk-right/animation.md"
+    },
+    {
+      "id": "10-running-animation",
+      "name": "Running_Animation",
+      "metadata": "animations/10-running-animation/animation.json",
+      "sheet": "animations/10-running-animation/spritesheet-optimized-v1.png",
+      "guide": "animations/10-running-animation/animation.md"
+    },
+    {
+      "id": "11-toy-garden-happy-jumping",
+      "name": "Toy_Garden/Happy_Jumping",
+      "metadata": "animations/11-toy-garden-happy-jumping/animation.json",
+      "sheet": "animations/11-toy-garden-happy-jumping/spritesheet-optimized-v1.png",
+      "guide": "animations/11-toy-garden-happy-jumping/animation.md"
+    },
+    {
+      "id": "12-smiling",
+      "name": "Smiling",
+      "metadata": "animations/12-smiling/animation.json",
+      "sheet": "animations/12-smiling/spritesheet-optimized-v1.png",
+      "guide": "animations/12-smiling/animation.md"
+    },
+    {
+      "id": "13-wow",
+      "name": "Wow",
+      "metadata": "animations/13-wow/animation.json",
+      "sheet": "animations/13-wow/spritesheet-optimized-v1.png",
+      "guide": "animations/13-wow/animation.md"
+    },
+    {
+      "id": "14-n2-lu-laugh-03-tummy-hand",
+      "name": "N2/Lu_Laugh_03_Tummy_Hand",
+      "metadata": "animations/14-n2-lu-laugh-03-tummy-hand/animation.json",
+      "sheet": "animations/14-n2-lu-laugh-03-tummy-hand/spritesheet-optimized-v1.png",
+      "guide": "animations/14-n2-lu-laugh-03-tummy-hand/animation.md"
+    },
+    {
+      "id": "15-lu-brave",
+      "name": "Lu_Brave",
+      "metadata": "animations/15-lu-brave/animation.json",
+      "sheet": "animations/15-lu-brave/spritesheet-optimized-v1.png",
+      "guide": "animations/15-lu-brave/animation.md"
+    },
+    {
+      "id": "16-entry-thumbs-up",
+      "name": "Entry_Thumbs_Up",
+      "metadata": "animations/16-entry-thumbs-up/animation.json",
+      "sheet": "animations/16-entry-thumbs-up/spritesheet-optimized-v1.png",
+      "guide": "animations/16-entry-thumbs-up/animation.md"
+    },
+    {
+      "id": "17-clapping",
+      "name": "Clapping",
+      "metadata": "animations/17-clapping/animation.json",
+      "sheet": "animations/17-clapping/spritesheet-optimized-v1.png",
+      "guide": "animations/17-clapping/animation.md"
+    },
+    {
+      "id": "18-front-hi",
+      "name": "Front_Hi",
+      "metadata": "animations/18-front-hi/animation.json",
+      "sheet": "animations/18-front-hi/spritesheet-optimized-v1.png",
+      "guide": "animations/18-front-hi/animation.md"
+    },
+    {
+      "id": "19-c-saying-yes",
+      "name": "C_Saying_Yes",
+      "metadata": "animations/19-c-saying-yes/animation.json",
+      "sheet": "animations/19-c-saying-yes/spritesheet-optimized-v1.png",
+      "guide": "animations/19-c-saying-yes/animation.md"
+    },
+    {
+      "id": "20-saying-no",
+      "name": "Saying_No",
+      "metadata": "animations/20-saying-no/animation.json",
+      "sheet": "animations/20-saying-no/spritesheet-optimized-v1.png",
+      "guide": "animations/20-saying-no/animation.md"
+    },
+    {
+      "id": "21-entry-pointing",
+      "name": "Entry_Pointing",
+      "metadata": "animations/21-entry-pointing/animation.json",
+      "sheet": "animations/21-entry-pointing/spritesheet-optimized-v1.png",
+      "guide": "animations/21-entry-pointing/animation.md"
+    },
+    {
+      "id": "22-lu-air-hugs",
+      "name": "Lu_Air_Hugs",
+      "metadata": "animations/22-lu-air-hugs/animation.json",
+      "sheet": "animations/22-lu-air-hugs/spritesheet-optimized-v1.png",
+      "guide": "animations/22-lu-air-hugs/animation.md"
+    },
+    {
+      "id": "23-toy-garden-lu-seat-idle",
+      "name": "Toy_Garden/Lu_Seat_Idle",
+      "metadata": "animations/23-toy-garden-lu-seat-idle/animation.json",
+      "sheet": "animations/23-toy-garden-lu-seat-idle/spritesheet-optimized-v1.png",
+      "guide": "animations/23-toy-garden-lu-seat-idle/animation.md"
+    },
+    {
+      "id": "24-sequence-4-sleep",
+      "name": "Sequence/4/Sleep",
+      "metadata": "animations/24-sequence-4-sleep/animation.json",
+      "sheet": "animations/24-sequence-4-sleep/spritesheet-optimized-v1.png",
+      "guide": "animations/24-sequence-4-sleep/animation.md"
+    },
+    {
+      "id": "25-sequence-4-sleep-wakeup",
+      "name": "Sequence/4/Sleep_Wakeup",
+      "metadata": "animations/25-sequence-4-sleep-wakeup/animation.json",
+      "sheet": "animations/25-sequence-4-sleep-wakeup/spritesheet-optimized-v1.png",
+      "guide": "animations/25-sequence-4-sleep-wakeup/animation.md"
+    },
+    {
+      "id": "26-juice-mode-idle-to-pick-glass",
+      "name": "Juice Mode/Idle_To_Pick_Glass",
+      "metadata": "animations/26-juice-mode-idle-to-pick-glass/animation.json",
+      "sheet": "animations/26-juice-mode-idle-to-pick-glass/spritesheet-optimized-v1.png",
+      "guide": "animations/26-juice-mode-idle-to-pick-glass/animation.md"
+    },
+    {
+      "id": "27-intro-dance-lu-dance-hipmove",
+      "name": "Cute_Bounce_Dance",
+      "metadata": "animations/27-intro-dance-lu-dance-hipmove/animation.json",
+      "sheet": "animations/27-intro-dance-lu-dance-hipmove/spritesheet-optimized-v1.png",
+      "guide": "animations/27-intro-dance-lu-dance-hipmove/animation.md"
+    },
+    {
+      "id": "28-blowing-whistle",
+      "name": "Blowing_Whistle",
+      "metadata": "animations/28-blowing-whistle/animation.json",
+      "sheet": "animations/28-blowing-whistle/spritesheet-optimized-v1.png",
+      "guide": "animations/28-blowing-whistle/animation.md"
+    },
+    {
+      "id": "29-hip-dance",
+      "name": "Hip_Dance",
+      "metadata": "animations/29-hip-dance/animation.json",
+      "sheet": "animations/29-hip-dance/spritesheet-optimized-v1.png",
+      "guide": "animations/29-hip-dance/animation.md"
+    }
+  ]
+}
