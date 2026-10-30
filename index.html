@@ -2,154 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="theme-color" content="#38bdf8">
-  <title>Sparky's Carnival Quest — Preschool Learning Games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#6ec6ff">
+  <title>Sparky's Carnival</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800;900&family=Nunito:wght@700;800;900;1000&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=carnival-childish-v5">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=kids-ui-1">
 </head>
 <body>
-  <main class="game-shell">
+  <main class="game" id="game" data-screen="splash" data-theme="meadow">
 
-    <!-- ═══ SCENIC CARNIVAL MIDWAY BACKGROUND LAYER ═══ -->
-    <div class="scenery-layer" aria-hidden="true">
-
-      <!-- Panoramic Carnival Midway Illustration (Tents, Ferris Wheel, Carousel) -->
-      <div class="scenery-midway"></div>
-
-      <!-- Glowing Carnival Marquee Bulbs String -->
-      <div class="carnival-lights">
-        <span class="bulb bulb-red"></span>
-        <span class="bulb bulb-yellow"></span>
-        <span class="bulb bulb-green"></span>
-        <span class="bulb bulb-blue"></span>
-        <span class="bulb bulb-pink"></span>
-        <span class="bulb bulb-yellow"></span>
-        <span class="bulb bulb-red"></span>
-        <span class="bulb bulb-green"></span>
-        <span class="bulb bulb-blue"></span>
-        <span class="bulb bulb-yellow"></span>
-        <span class="bulb bulb-pink"></span>
-        <span class="bulb bulb-red"></span>
-        <span class="bulb bulb-green"></span>
-        <span class="bulb bulb-yellow"></span>
-        <span class="bulb bulb-blue"></span>
-        <span class="bulb bulb-pink"></span>
-        <span class="bulb bulb-red"></span>
-        <span class="bulb bulb-yellow"></span>
-        <span class="bulb bulb-green"></span>
-        <span class="bulb bulb-blue"></span>
-      </div>
-
-      <!-- Smiling Sun with gentle rotating rays in top-right -->
-      <div class="scenery-sun-wrap">
-        <img class="scenery-sun-art" src="./assets/sun-smiling.svg" alt="">
-      </div>
-
-      <!-- Cheerful Pastel Rainbow -->
-      <img class="scenery-rainbow" src="./assets/rainbow.svg" alt="">
-
-      <!-- Festive Fluttering Bunting Garland -->
-      <img class="scenery-bunting" src="./assets/bunting.svg" alt="">
-
-      <!-- Soft Drifting Fairground Clouds -->
-      <img class="scenery-cloud cloud-1" src="./assets/cloud-happy.svg" alt="">
-      <img class="scenery-cloud cloud-2" src="./assets/cloud-happy.svg" alt="">
-      <img class="scenery-cloud cloud-3" src="./assets/cloud-happy.svg" alt="">
-      <img class="scenery-cloud cloud-4" src="./assets/cloud-happy.svg" alt="">
-
-      <!-- Rolling Green Grassy Hills with Swaying Daisies -->
-      <div class="scenery-hills">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 0 60 Q 300 18 600 48 Q 900 78 1200 38 L 1200 120 L 0 120 Z" fill="#86efac" opacity="0.6"/>
-          <path d="M 0 78 Q 250 42 550 72 Q 850 32 1200 62 L 1200 120 L 0 120 Z" fill="#4ade80"/>
-        </svg>
-        <div class="hill-flowers">
-          <img class="daisy daisy-1" src="./assets/flower-daisy.svg" alt="">
-          <img class="daisy daisy-2" src="./assets/flower-daisy.svg" alt="">
-          <img class="daisy daisy-3" src="./assets/flower-daisy.svg" alt="">
-          <img class="daisy daisy-4" src="./assets/flower-daisy.svg" alt="">
-          <img class="daisy daisy-5" src="./assets/flower-daisy.svg" alt="">
-        </div>
-      </div>
-
-      <!-- Interactive Floating Soap Bubbles (toddlers can pop them!) -->
-      <div class="bubble-field" id="bubble-field"></div>
+    <!-- backdrop -->
+    <div class="scenery" aria-hidden="true">
+      <i class="cloud c1"></i><i class="cloud c2"></i><i class="cloud c3"></i>
+      <div class="hot-air"><span></span></div>
+      <div class="ground"></div>
+      <div class="bush b-right"><em></em><em></em><em></em></div>
+      <div class="bush b-left"><em></em><em></em></div>
     </div>
 
-    <!-- ═══ TOP CARNIVAL HUD BAR ═══ -->
-    <header class="top-hud">
-      <div class="hud-left">
-        <button class="hud-logo bubble-btn" id="hud-home-logo" aria-label="Go to Main Menu" type="button">
-          <img class="hud-logo-icon" src="./assets/cocomelon-melon.svg" alt="Sparky's Carnival">
-          <div class="hud-logo-text">
-            <span class="hud-logo-title">Sparky's</span>
-            <span class="hud-logo-sub">CARNIVAL</span>
-          </div>
-        </button>
-        <div class="hud-stars cloud-pill" aria-label="Stars collected">
-          <img class="star-icon-spin" src="./assets/cocomelon-star.svg" alt="Stars">
-          <span class="hud-stars-count" id="star-count">0</span>
-        </div>
+    <!-- top ribbon -->
+    <div class="ribbon-wrap"><h1 class="ribbon" id="ribbon">Sparky's Carnival</h1></div>
+
+    <!-- corner buttons -->
+    <button class="candy candy-red btn-close" id="btn-home" type="button" aria-label="Back to games" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none"/></svg>
+    </button>
+
+    <div class="corner-left">
+      <button class="candy candy-blue btn-sound" id="btn-sound" type="button" aria-label="Sound on" aria-pressed="true">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M8 19h8l10-8v26l-10-8H8z" fill="#fff"/>
+          <g class="waves" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"><path d="M31 18c3 3 3 9 0 12"/><path d="M36 13c6 6 6 16 0 22"/></g>
+          <path class="slash" d="M30 17 42 31M42 17 30 31" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </svg>
+      </button>
+      <div class="stars-pill" id="stars-pill" aria-label="Stars won">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 5 5.6 12.2 13.4 1.4-10 9 2.9 13.2L24 34 12.1 40.8 15 27.6l-10-9 13.4-1.4z" fill="#ffd23f" stroke="#e8a100" stroke-width="3" stroke-linejoin="round"/></svg>
+        <b id="star-count">0</b>
       </div>
+    </div>
 
-      <div class="hud-center">
-        <span class="hud-banner-badge">🎪 CARNIVAL ADVENTURE 🎪</span>
-      </div>
+    <!-- Sparky -->
+    <div class="character" id="character" role="button" tabindex="0" aria-label="Sparky">
+      <canvas id="sparky" width="512" height="640"></canvas>
+    </div>
 
-      <div class="hud-actions">
-        <button class="hud-btn hud-btn-sound bubble-btn" id="sound-toggle" aria-label="Mute sound effects" title="Sound Effects" type="button">
-          <img id="sound-icon" src="./assets/icon-speaker.svg" alt="Sound">
-        </button>
-        <button class="hud-btn hud-btn-home bubble-btn" id="hud-main-menu" aria-label="Main menu" title="Main Menu" type="button">
-          <img src="./assets/icon-home.svg" alt="Home">
-        </button>
-        <button class="hud-btn hud-btn-restart bubble-btn" id="hud-restart" aria-label="Restart round" title="Restart" type="button">
-          <img src="./assets/icon-restart.svg" alt="Restart">
-        </button>
-      </div>
-    </header>
+    <!-- activity -->
+    <section class="stage" id="stage" aria-live="polite"></section>
 
-    <!-- ═══ MAIN ACTIVITY PLAY AREA ═══ -->
-    <section class="play-area">
+    <!-- next / play -->
+    <button class="candy candy-orange btn-next" id="btn-next" type="button" aria-label="Next" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 24h26M25 12l13 12-13 12" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    </button>
 
-      <!-- Sparky the Lion Guide Character -->
-      <div class="character-wrap" id="character-wrap" role="button" tabindex="0" aria-label="Sparky the Guide (tap to tickle!)">
-        <canvas id="sparky" width="512" height="640"></canvas>
-        <div class="character-shadow"></div>
-        <div class="speech-bubble cloud-bubble" id="speech-bubble">
-          <p id="speech">Welcome to play time!</p>
-        </div>
-      </div>
-
-      <!-- Main Activity Carnival Booth Panel -->
-      <div class="content-panel cloud-panel" id="content-panel"></div>
-
-      <!-- Sparkle & Starburst Particles Layer -->
-      <div class="effects-layer" id="effects-layer" aria-hidden="true"></div>
-
-      <!-- Encouraging Feedback Toast -->
-      <div class="feedback cloud-pill" id="feedback" role="status" aria-live="polite"></div>
-
-    </section>
-
-    <!-- ═══ BOTTOM FOOTER BAR ═══ -->
-    <footer class="bottom-bar">
-      <span class="footer-tagline">🎠 Play at your own pace • Every try is a great try! 🫧</span>
-      <div class="footer-actions">
-        <button id="main-menu-btn" class="restart-button bubble-pill" type="button">
-          <img src="./assets/icon-home.svg" alt=""> <span>Main Menu</span>
-        </button>
-        <button id="restart" class="restart-button bubble-pill" type="button">
-          <img src="./assets/icon-restart.svg" alt=""> <span>Play Again</span>
-        </button>
-      </div>
-    </footer>
-
+    <div class="fx" id="fx" aria-hidden="true"></div>
   </main>
 
-  <script type="module" src="game.js?v=carnival-childish-v5"></script>
+  <script type="module" src="game.js?v=kids-ui-1"></script>
 </body>
 </html>

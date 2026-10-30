@@ -45,3 +45,6 @@ node_modules/
 
 # Cache
 .cache/
+
+# Claude Code local files
+.claude/

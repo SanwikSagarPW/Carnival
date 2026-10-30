@@ -1,1449 +1,810 @@
 import { SpriteSheetPlayer } from './player.js';
 import { DIALOGUES } from './dialogues.js';
+import * as audio from './audio.js';
 
+/* ==========================================================================
+   Setup
+   ========================================================================== */
 const SKILLS = [
-  { key: 'different', label: 'Different One', title: 'Find the different one!', subtitle: 'Three match! One is a little different.', guide: "Can you spot the one that's different?" },
-  { key: 'biggest', label: 'Biggest One', title: 'Which one is biggest?', subtitle: 'Look closely, then tap the giant one!', guide: 'Find the biggest one!' },
-  { key: 'more', label: 'Which Has More', title: 'Which group has MORE?', subtitle: 'Count each toy group and tap the bigger pile!', guide: "Let's count together!" },
-  { key: 'longest', label: 'Longest One', title: 'Which one is the longest?', subtitle: 'Tap the one that stretches the farthest!', guide: 'Find the longest one!' },
-  { key: 'shapes', label: 'Match the Shapes', title: 'Match the shapes!', subtitle: 'Tap a toy, then tap its matching shape space!', guide: 'Tap a toy, then find its shape!' }
+  { key: 'different', title: 'Find The Different One', theme: 'meadow' },
+  { key: 'biggest',   title: 'Select The Biggest One', theme: 'meadow' },
+  { key: 'more',      title: 'Which One Has More?',    theme: 'beach' },
+  { key: 'longest',   title: 'Select The Longest One', theme: 'meadow' },
+  { key: 'shapes',    title: 'Match The Shapes',       theme: 'snow' },
 ];
-
+const MENU = [
+  { key: 'different', asset: 1, label: 'Different' },
+  { key: 'biggest',   asset: 5, label: 'Biggest' },
+  { key: 'more',      asset: 1, label: 'More' },
+  { key: 'longest',   asset: 3, label: 'Longest' },
+  { key: 'shapes',    asset: 8, label: 'Shapes' },
+];
 const ASSET_COUNT = 40;
-const $ = (s) => document.querySelector(s);
-const panel = $('#content-panel'), speech = $('#speech'), feedback = $('#feedback');
-const starCountEl = $('#star-count');
+const PRAISE_DELAY = 750;       // how long a right answer sparkles before the arrow appears
+const NUDGE_AFTER_MS = 9000;    // quiet time before Sparky repeats the question
+const NUDGE_TIMES = 3;
 
-const bank = SKILLS.map((_, skill) => 
-  Array.from({ length: ASSET_COUNT }, (_, i) => ({
-    id: `${SKILLS[skill].key}-${String(i + 1).padStart(2, '0')}`,
-    index: i,
-    seed: (i * 17 + skill * 11) % 40
-  }))
+const $ = (s) => document.querySelector(s);
+const game = $('#game');
+const stage = $('#stage');
+const ribbon = $('#ribbon');
+const btnNext = $('#btn-next');
+const btnHome = $('#btn-home');
+const fx = $('#fx');
+const starCountEl = $('#star-count');
+const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+const bank = SKILLS.map((s, skill) =>
+  Array.from({ length: ASSET_COUNT }, (_, i) => ({ index: i, seed: (i * 17 + skill * 11) % 40 }))
 );
 
 let skillIndex = 0;
-let mini = null;
-let resolved = false;
-let shapeMatches = 0;
-let popped = 0;
-let soundOn = true;
-let player = null;
-let runToken = 0;
-let audioCtx = null;
-let masterGain = null;
-let idleCycleTimer = null;
-let idleCycleIndex = 0;
 let counters = SKILLS.map(() => 0);
-let timeoutIds = [];
+let resolved = false;
 let starsWon = 0;
-let selectedPiece = null;
-let bgMusicTimer = null;
-let bgMusicStep = 0;
+let onNext = null;
 
 /* ==========================================================================
-   AUDIO ENGINE — Hindi/Hinglish MP3 Dialogue Playback
+   Scenes — everything that can fire later (timers, voice callbacks) belongs to
+   the scene that created it, and silently dies when the scene changes.
    ========================================================================== */
-let activeDialogue = null;
+let sceneId = 0;
+let sceneTimers = [];
+let nudgeTimer = null;
 
-function playDialogue(src, onEnded = null) {
-  if (!soundOn) return null;
-  try {
-    stopDialogue();
-    const audio = new Audio(src);
-    activeDialogue = audio;
-    audio.addEventListener('play', () => { getAudio(); }, { once: true });
-    if (typeof onEnded === 'function') {
-      audio.addEventListener('ended', () => {
-        if (activeDialogue === audio) {
-          activeDialogue = null;
-          if (!resolved) onEnded();
-        }
-      }, { once: true });
-    }
-    audio.play().catch(() => {});
-    return audio;
-  } catch (err) {
-    // Missing file or autoplay blocked — never crash the game
-    return null;
-  }
-}
-
-function stopDialogue() {
-  try {
-    if (activeDialogue) {
-      activeDialogue.pause();
-      activeDialogue.currentTime = 0;
-      activeDialogue = null;
-    }
-  } catch (err) {}
-}
-
-function pickRandom(arr) {
-  if (!arr || !arr.length) return undefined;
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function scheduleGuide(section, delayMs) {
-  later(() => {
-    if (resolved) return;
-    try {
-      const clip = pickRandom(DIALOGUES[section]?.guide);
-      if (clip) playDialogue(clip);
-    } catch (err) {}
-  }, delayMs);
-}
-
-function clearTimers() {
-  timeoutIds.forEach(clearTimeout);
-  timeoutIds = [];
+function newScene(screen, theme = 'meadow') {
+  sceneId++;
+  sceneTimers.forEach(clearTimeout);
+  sceneTimers = [];
+  clearTimeout(nudgeTimer);
+  audio.stopSpeech();
+  resolved = false;
+  onNext = null;
+  btnNext.hidden = true;
+  btnNext.classList.remove('pop-in');
+  fx.textContent = '';
+  game.dataset.screen = screen;
+  game.dataset.theme = theme;
+  btnHome.hidden = screen === 'splash' || screen === 'menu';
+  stage.className = 'stage';
+  stage.textContent = '';
+  return sceneId;
 }
 
 function later(fn, ms) {
-  const id = setTimeout(fn, ms);
-  timeoutIds.push(id);
-  return id;
+  const id = sceneId;
+  const t = setTimeout(() => { if (id === sceneId) fn(); }, ms);
+  sceneTimers.push(t);
+  return t;
+}
+
+function setTitle(text) {
+  ribbon.textContent = text;
+  ribbon.classList.remove('ribbon-in');
+  void ribbon.offsetWidth;
+  ribbon.classList.add('ribbon-in');
+}
+
+function showNext(handler, label = 'Next') {
+  onNext = handler;
+  btnNext.setAttribute('aria-label', label);
+  btnNext.hidden = false;
+  btnNext.classList.remove('pop-in');
+  void btnNext.offsetWidth;
+  btnNext.classList.add('pop-in');
+}
+
+/* ---------- voice helpers ---------- */
+function speak(src, opts = {}) {
+  const id = sceneId;
+  const { onEnd, ...rest } = opts;
+  audio.speak(src, { ...rest, onEnd: onEnd ? () => { if (id === sceneId) onEnd(); } : null });
+}
+
+/** Say the intro, then keep gently re-asking while the child is stuck. */
+function introduce(section) {
+  const clips = DIALOGUES[section];
+  if (!clips) return;
+  audio.warm([...(clips.guide || []), ...(clips.cheerup || [])]);
+  speak(clips.intro?.[0], { delay: 450, onEnd: () => armNudge(section, NUDGE_TIMES) });
+}
+
+function armNudge(section, tries) {
+  clearTimeout(nudgeTimer);
+  if (tries <= 0) return;
+  const id = sceneId;
+  nudgeTimer = setTimeout(() => {
+    if (id !== sceneId || resolved) return;
+    if (audio.isSpeaking()) return armNudge(section, tries);
+    speak(audio.pick(DIALOGUES[section]?.guide));
+    armNudge(section, tries - 1);
+  }, NUDGE_AFTER_MS);
+}
+
+/** The child did something — hold off nudging, restart the quiet timer. */
+function touched(section) {
+  armNudge(section, NUDGE_TIMES);
+}
+
+function cheerUp(section) {
+  // Don't pile a second "try again" on top of one that is still playing.
+  const pool = DIALOGUES[section]?.cheerup?.length ? DIALOGUES[section].cheerup : DIALOGUES.welcome.cheerup;
+  speak(audio.pick(pool), { ifIdle: true, delay: 200 });
 }
 
 /* ==========================================================================
-   WEB AUDIO TODDLER SOUND SYNTHESIZER (WARM MARIMBA / XYLOPHONE / CHIMES)
+   Effects
    ========================================================================== */
-function getAudio() {
-  if (!soundOn) return null;
-  try {
-    const Audio = window.AudioContext || window.webkitAudioContext;
-    if (!Audio) return null;
-    audioCtx ??= new Audio();
-    if (!masterGain) {
-      masterGain = audioCtx.createGain();
-      masterGain.gain.value = 0.85;
-      masterGain.connect(audioCtx.destination);
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
-    }
-    return audioCtx;
-  } catch {
-    return null;
-  }
-}
-
-/** Play a warm wooden marimba tone with harmonic overtone */
-function playMarimba(hz, delay = 0, duration = 0.22, volume = 0.08) {
-  const ctx = getAudio();
-  if (!ctx) return;
-  const start = ctx.currentTime + delay;
-
-  // Fundamental note
-  const osc1 = ctx.createOscillator();
-  const gain1 = ctx.createGain();
-  osc1.type = 'sine';
-  osc1.frequency.setValueAtTime(hz, start);
-
-  gain1.gain.setValueAtTime(0.0001, start);
-  gain1.gain.linearRampToValueAtTime(volume, start + 0.008);
-  gain1.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-
-  osc1.connect(gain1);
-  gain1.connect(masterGain);
-  osc1.start(start);
-  osc1.stop(start + duration + 0.02);
-
-  // Marimba wooden overtone (approx 3.9x fundamental)
-  const osc2 = ctx.createOscillator();
-  const gain2 = ctx.createGain();
-  osc2.type = 'triangle';
-  osc2.frequency.setValueAtTime(hz * 3.9, start);
-
-  gain2.gain.setValueAtTime(0.0001, start);
-  gain2.gain.linearRampToValueAtTime(volume * 0.35, start + 0.004);
-  gain2.gain.exponentialRampToValueAtTime(0.0001, start + (duration * 0.45));
-
-  osc2.connect(gain2);
-  gain2.connect(masterGain);
-  osc2.start(start);
-  osc2.stop(start + duration + 0.02);
-}
-
-/** Play a sparkling bell / glockenspiel chime */
-function playChime(hz, delay = 0, duration = 0.35, volume = 0.07) {
-  const ctx = getAudio();
-  if (!ctx) return;
-  const start = ctx.currentTime + delay;
-
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(hz, start);
-
-  gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.linearRampToValueAtTime(volume, start + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(start);
-  osc.stop(start + duration + 0.02);
-}
-
-function playSfx(kind = 'tap') {
-  const ctx = getAudio();
-  if (!ctx) return;
-
-  if (kind === 'tap') {
-    // Warm marimba pop
-    const notes = [523.25, 587.33, 659.25, 783.99, 880];
-    const pick = notes[Math.floor(Math.random() * notes.length)];
-    playMarimba(pick, 0, 0.16, 0.07);
-  } 
-  else if (kind === 'success') {
-    // Joyful rising xylophone arpeggio (C5 -> E5 -> G5 -> C6)
-    [523.25, 659.25, 783.99, 1046.5].forEach((hz, i) => {
-      playMarimba(hz, i * 0.07, 0.25, 0.09);
-      playChime(hz * 2, i * 0.07 + 0.02, 0.22, 0.04);
-    });
-  } 
-  else if (kind === 'wrong') {
-    // Gentle cartoon spring wobble (encouraging, never harsh)
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(320, now);
-    osc.frequency.exponentialRampToValueAtTime(220, now + 0.22);
-
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(now);
-    osc.stop(now + 0.24);
-  } 
-  else if (kind === 'match') {
-    // Sweet double ding
-    playMarimba(659.25, 0, 0.2, 0.07);
-    playMarimba(880, 0.08, 0.28, 0.08);
-    playChime(1318.5, 0.08, 0.32, 0.04);
-  } 
-  else if (kind === 'prize' || kind === 'fanfare') {
-    // Triumphant preschool celebration melody!
-    const tune = [
-      { hz: 523.25, t: 0 },
-      { hz: 659.25, t: 0.08 },
-      { hz: 783.99, t: 0.16 },
-      { hz: 1046.5, t: 0.24 },
-      { hz: 1318.5, t: 0.36 },
-      { hz: 1567.98, t: 0.48 }
-    ];
-    tune.forEach(n => {
-      playMarimba(n.hz, n.t, 0.35, 0.09);
-      playChime(n.hz, n.t + 0.02, 0.4, 0.05);
-    });
-  } 
-  else if (kind === 'transition') {
-    playMarimba(587.33, 0, 0.18, 0.06);
-    playMarimba(880, 0.09, 0.24, 0.07);
-  } 
-  else if (kind === 'giggle') {
-    // Playful giggly high marimba notes
-    [880, 1046.5, 880, 1174.66, 1318.5].forEach((hz, i) => {
-      playMarimba(hz, i * 0.05, 0.12, 0.06);
-    });
-  }
-  else if (kind === 'pop') {
-    // Bubbly soap pop
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.exponentialRampToValueAtTime(140, now + 0.09);
-
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.linearRampToValueAtTime(0.08, now + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(now);
-    osc.stop(now + 0.1);
-  }
-}
-
-/** Gentle preschool background marimba groove */
-function stepBackgroundMusic() {
-  if (!soundOn) return;
-  const ctx = getAudio();
-  if (!ctx || ctx.state === 'suspended') return;
-
-  // C major nursery lullaby progression
-  const melody = [
-    523.25, null, 659.25, null, 783.99, null, 659.25, null,
-    523.25, 523.25, 659.25, 783.99, 1046.5, null, null, null,
-    880, null, 1046.5, null, 783.99, null, 659.25, null,
-    587.33, null, 659.25, null, 523.25, null, null, null
-  ];
-
-  const note = melody[bgMusicStep % melody.length];
-  if (note) {
-    playMarimba(note, 0, 0.28, 0.022);
-  }
-  bgMusicStep++;
-  bgMusicTimer = setTimeout(stepBackgroundMusic, 420);
-}
-
-function startBgMusic() {
-  clearTimeout(bgMusicTimer);
-  if (soundOn) {
-    bgMusicTimer = setTimeout(stepBackgroundMusic, 600);
-  }
-}
-
-function stopBgMusic() {
-  clearTimeout(bgMusicTimer);
-}
-
-/* ==========================================================================
-   VISUAL EFFECTS: SPARKLE & STAR BURSTS
-   ========================================================================== */
-function spawnBurst(origin, kind = 'sparkle', amount = 14) {
-  const layer = $('#effects-layer'), area = $('.play-area');
-  if (!layer || !origin || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-
-  const box = origin.getBoundingClientRect(), bounds = area.getBoundingClientRect();
-  const cx = box.left + box.width / 2 - bounds.left;
-  const cy = box.top + box.height / 2 - bounds.top;
-  const colors = ['#fde047', '#ff4d79', '#4ade80', '#38bdf8', '#c084fc', '#fb923c'];
-
+function burst(origin, amount = 14) {
+  if (!origin || reducedMotion) return;
+  const box = origin.getBoundingClientRect();
+  const area = game.getBoundingClientRect();
+  const cx = box.left + box.width / 2 - area.left;
+  const cy = box.top + box.height / 2 - area.top;
+  const colors = ['#ffd23f', '#ff5c8a', '#5be37d', '#4cc3ff', '#b266ff', '#ff9a3c'];
   for (let i = 0; i < amount; i++) {
     const bit = document.createElement('i');
-    const angle = (Math.PI * 2 * i / amount) + (Math.random() - 0.5) * 0.4;
-    const distance = 36 + Math.random() * 64;
-    const dx = Math.cos(angle) * distance;
-    const dy = Math.sin(angle) * distance - 20;
-    const turn = Math.round(Math.random() * 140 - 70);
-
-    bit.className = `fx-bit ${kind === 'stars' ? 'is-star' : ''}`;
+    const angle = (Math.PI * 2 * i) / amount + (Math.random() - 0.5) * 0.5;
+    const dist = 50 + Math.random() * 90;
     bit.style.left = `${cx}px`;
     bit.style.top = `${cy}px`;
     bit.style.background = colors[i % colors.length];
-    bit.style.setProperty('--dx', `${dx}px`);
-    bit.style.setProperty('--dy', `${dy}px`);
-    bit.style.setProperty('--sx', `${dx * 0.3}px`);
-    bit.style.setProperty('--sy', `${dy * 0.3}px`);
-    bit.style.setProperty('--turn', `${turn}deg`);
-    bit.style.setProperty('--st', `${turn * 0.25}deg`);
-
-    layer.append(bit);
-    setTimeout(() => bit.remove(), 850);
+    bit.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+    bit.style.setProperty('--dy', `${Math.sin(angle) * dist - 24}px`);
+    bit.style.setProperty('--spin', `${Math.round(Math.random() * 240 - 120)}deg`);
+    fx.append(bit);
+    setTimeout(() => bit.remove(), 900);
   }
-}
-
-function say(text, kind = 'good') {
-  feedback.textContent = text;
-  feedback.className = `feedback show ${kind}`;
-  later(() => {
-    feedback.className = 'feedback';
-  }, 1300);
-  // Trigger matching animation only for non-hint states
-  if (kind === 'good') animate('happy');
-  else if (kind === 'try') animate('try');
-  // 'hint' keeps the current animation unchanged
 }
 
 function addStar() {
   starsWon++;
-  if (starCountEl) {
-    starCountEl.textContent = String(starsWon);
-  }
-  const starHud = document.querySelector('.hud-stars');
-  if (starHud) {
-    starHud.classList.remove('star-celebrate');
-    void starHud.offsetWidth;
-    starHud.classList.add('star-celebrate');
-    later(() => starHud.classList.remove('star-celebrate'), 650);
-  }
+  starCountEl.textContent = String(starsWon);
+  const pill = $('#stars-pill');
+  pill.classList.remove('bump');
+  void pill.offsetWidth;
+  pill.classList.add('bump');
 }
 
 /* ==========================================================================
-   CHARACTER ANIMATIONS (SPARKY / LUCAS)
+   Sparky
    ========================================================================== */
+let player = null;
+let runToken = 0;
+let idleTimer = null;
+
+const IDLE_CYCLE = [
+  ['idle', '01-idle'],
+  ['lookLeft', '04-room-game-lu-n-look-left'],
+  ['lookRight', '05-room-game-lu-n-look-right'],
+  ['idleAlt', '02-idle-eb'],
+];
+const HAPPY = ['17-clapping', '16-entry-thumbs-up', '14-n2-lu-laugh-03-tummy-hand', '27-intro-dance-lu-dance-hipmove'];
+const CLIPS = {
+  ...Object.fromEntries(IDLE_CYCLE),
+  wow: '13-wow',
+  jump: '11-toy-garden-happy-jumping',
+  welcome: '18-front-hi',
+  dance: '27-intro-dance-lu-dance-hipmove',
+  laugh: '14-n2-lu-laugh-03-tummy-hand',
+  try: '20-saying-no',
+};
+
 async function animate(name = 'idle') {
-  clearTimeout(idleCycleTimer);
+  clearTimeout(idleTimer);
   const token = ++runToken;
-  const activePlayer = player;
-  player = undefined;
-  activePlayer?.destroy();
-
-  const idleCycle = [
-    ['idle', '01-idle'],
-    ['lookLeft', '04-room-game-lu-n-look-left'],
-    ['lookRight', '05-room-game-lu-n-look-right'],
-    ['idleAlt', '02-idle-eb']
-  ];
-
-  // Joyful preschool reaction variations
-  const happyVariations = [
-    '17-clapping', 
-    '16-entry-thumbs-up', 
-    '14-n2-lu-laugh-03-tummy-hand', 
-    '27-intro-dance-lu-dance-hipmove'
-  ];
-  const chosenHappy = happyVariations[Math.floor(Math.random() * happyVariations.length)];
-
-  const paths = {
-    ...Object.fromEntries(idleCycle),
-    happy: chosenHappy,
-    wow: '13-wow',
-    jump: '11-toy-garden-happy-jumping',
-    welcome: '18-front-hi',
-    dance: '27-intro-dance-lu-dance-hipmove',
-    laugh: '14-n2-lu-laugh-03-tummy-hand',
-    try: '20-saying-no'
-  };
-
-  const id = paths[name] || paths.idle;
+  player?.destroy();
+  player = null;
+  const id = name === 'happy' ? HAPPY[Math.floor(Math.random() * HAPPY.length)] : (CLIPS[name] || CLIPS.idle);
+  const looping = IDLE_CYCLE.some(([key]) => key === name);
 
   try {
-    const nextPlayer = await SpriteSheetPlayer.load($('#sparky'), `./animations/${id}/animation.json`, {
-      loop: idleCycle.some(([key]) => key === name),
-      isCurrent: () => token === runToken
+    const next = await SpriteSheetPlayer.load($('#sparky'), `./animations/${id}/animation.json`, {
+      loop: looping,
+      isCurrent: () => token === runToken,
     });
-    if (!nextPlayer || token !== runToken) {
-      nextPlayer?.destroy();
-      return;
-    }
-    player = nextPlayer;
+    if (!next || token !== runToken) { next?.destroy(); return; }
+    player = next;
     player.play();
-
-    const idleIndex = idleCycle.findIndex(([key]) => key === name);
-    if (idleIndex >= 0) {
-      idleCycleIndex = idleIndex;
-      idleCycleTimer = setTimeout(() => {
-        animate(idleCycle[(idleIndex + 1) % idleCycle.length][0]);
-      }, 4400);
+    if (looping) {
+      const i = IDLE_CYCLE.findIndex(([key]) => key === name);
+      idleTimer = setTimeout(() => animate(IDLE_CYCLE[(i + 1) % IDLE_CYCLE.length][0]), 4400);
     } else {
-      idleCycleTimer = setTimeout(() => {
-        if (token === runToken) animate('idle');
-      }, player.data.durationMs + 160);
+      idleTimer = setTimeout(() => { if (token === runToken) animate('idle'); }, player.data.durationMs + 160);
     }
   } catch {
     if (token === runToken && name !== 'idle') animate('idle');
   }
 }
 
+$('#character').addEventListener('click', () => {
+  audio.sfx('giggle');
+  burst($('#character'), 10);
+  animate(['dance', 'laugh', 'jump', 'happy'][Math.floor(Math.random() * 4)]);
+});
+$('#character').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#character').click(); }
+});
+
 /* ==========================================================================
-   BUBBLE FIELD GENERATOR (KIDS LOVE POPPING BUBBLES!)
+   Building blocks
    ========================================================================== */
-function initBubbleField() {
-  const field = $('#bubble-field');
-  if (!field) return;
+const pad = (n) => String(n).padStart(2, '0');
 
-  const tints = [
-    'rgba(56, 189, 248, 0.45)', // sky
-    'rgba(244, 114, 182, 0.45)', // pink
-    'rgba(74, 222, 128, 0.45)',  // mint
-    'rgba(250, 204, 21, 0.45)',  // yellow
-    'rgba(192, 132, 252, 0.45)', // lilac
-    'rgba(251, 146, 60, 0.45)'   // orange
-  ];
+function pic(src, cls = '') {
+  const img = document.createElement('img');
+  img.className = `pic ${cls}`.trim();
+  img.alt = '';
+  img.draggable = false;
+  img.decoding = 'async';
+  // natural size feeds the CSS so "bigger"/"longer" pictures really are bigger/longer
+  img.addEventListener('load', () => {
+    img.style.setProperty('--nw', img.naturalWidth);
+    img.style.setProperty('--nh', img.naturalHeight);
+  }, { once: true });
+  img.src = src;
+  return img;
+}
 
-  function spawnSoapBubble(offsetSec = null) {
-    if (document.hidden) return;
-    if (field.querySelectorAll('.toddler-bubble').length < 12) {
-      const bubble = document.createElement('div');
-      bubble.className = 'toddler-bubble';
-      const size = 32 + Math.random() * 42;
-      const startX = 3 + Math.random() * 94;
-      const duration = 9 + Math.random() * 7;
-      const drift = (Math.random() - 0.5) * 70;
-      const tint = tints[Math.floor(Math.random() * tints.length)];
+const objectSrc = (key, n) => `./assets/objects/${key}/${pad((n % ASSET_COUNT) + 1)}.png`;
 
-      bubble.style.width = `${size}px`;
-      bubble.style.height = `${size}px`;
-      bubble.style.left = `${startX}%`;
-      bubble.style.setProperty('--rise-duration', `${duration}s`);
-      bubble.style.setProperty('--drift-x', `${drift}px`);
-      bubble.style.setProperty('--bubble-tint', tint);
-
-      if (offsetSec !== null) {
-        bubble.style.animationDelay = `-${offsetSec}s`;
-      }
-
-      // Pop on touch / click
-      const popBubble = (e) => {
-        e.stopPropagation();
-        playSfx('pop');
-        spawnBurst(bubble, 'stars', 9);
-        bubble.remove();
-      };
-      bubble.addEventListener('click', popBubble);
-      bubble.addEventListener('touchstart', popBubble, { passive: true });
-
-      bubble.addEventListener('animationiteration', () => {
-        bubble.remove();
-      });
-
-      field.append(bubble);
-    }
-    later(spawnSoapBubble, 1400);
+/** A white answer card with the little "?" help button in its corner. */
+function card({ section, extra = '', onPick, label }) {
+  const el = document.createElement('div');
+  el.className = `card ${extra}`.trim();
+  el.tabIndex = 0;
+  if (onPick) {
+    el.setAttribute('role', 'button');
+    if (label) el.setAttribute('aria-label', label);
+    el.addEventListener('click', () => onPick(el));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(el); }
+    });
   }
-
-  // Initial population of bubbles already floating in the sky
-  [1.5, 3.8, 5.2, 7.0, 9.5].forEach(sec => spawnSoapBubble(sec));
-  later(spawnSoapBubble, 1200);
-}
-
-/* ==========================================================================
-   GAME BOOTH RENDERING
-   ========================================================================== */
-function objectArt(skill, item, extraClass = '', customSrc = null) {
-  const image = document.createElement('img');
-  image.className = `sprite-art ${extraClass}`.trim();
-  image.src = customSrc || `./assets/objects/${skill.key}/${String(item % ASSET_COUNT + 1).padStart(2, '0')}.png`;
-  image.alt = '';
-  image.draggable = false;
-  image.decoding = 'async';
-  return image;
-}
-
-function panelHead(skill) {
-  const n = String(counters[skillIndex] % 40 + 1).padStart(2, '0');
-  return `
-    <p class="round-kicker">
-      <span class="booth-tag">${skill.label}</span>
-      <span class="round-count">ROUND ${n} OF 40</span>
-    </p>
-    <h1 class="round-title">${skill.title}</h1>
-    <p class="round-subtitle">${skill.subtitle}</p>
-  `;
-}
-
-function startSkill() {
-  stopDialogue();
-  clearTimers();
-  mini = null;
-  resolved = false;
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  const skill = SKILLS[skillIndex];
-  speech.textContent = skill.guide;
-
-  panel.classList.remove('is-menu', 'is-complete');
-
-  if (skill.key === 'shapes') return renderShapes(skill);
-  if (skill.key === 'more') return renderMore(skill);
-
-  // Play intro dialogue for this skill, then when it ends and child hasn't answered, schedule a gentle guide
-  try {
-    const introMap = {
-      different: DIALOGUES.different.intro[0],
-      biggest:   DIALOGUES.biggest.intro[0],
-      longest:   DIALOGUES.longest.intro[0],
-    };
-    const introSrc = introMap[skill.key];
-    if (introSrc) {
-      playDialogue(introSrc, () => {
-        later(() => {
-          if (!resolved) {
-            const clip = pickRandom(DIALOGUES[skill.key]?.guide);
-            if (clip) playDialogue(clip);
-          }
-        }, 4000);
-      });
-    }
-  } catch (err) {}
-
-  const isLongest = skill.key === 'longest';
-  const isBiggest = skill.key === 'biggest';
-
-  const options = makeOptions(skill);
-  panel.innerHTML = `
-    ${panelHead(skill)}
-    <div class="choices ${isLongest ? 'is-longest' : isBiggest ? 'is-biggest' : ''}" role="group" aria-label="Answer choices"></div>
-    <p class="image-hint">${isLongest ? '🏁 Look at the track! Tap the LONGEST one reaching farthest!' : isBiggest ? '🔍 Look closely! Tap the GIANT biggest one!' : '👉 Tap your favorite answer!'}</p>
-  `;
-
-  const holder = panel.querySelector('.choices');
-  options.items.forEach((item, i) => {
-    const b = document.createElement('button');
-    b.className = 'choice';
-    b.type = 'button';
-    b.setAttribute('aria-label', `Choice ${i + 1}`);
-
-    const art = objectArt(skill, item.asset, isLongest ? 'long-art' : 'size-art', item.customSrc);
-
-    if (isLongest) {
-      const track = document.createElement('div');
-      track.className = 'longest-track';
-
-      const startMarker = document.createElement('span');
-      startMarker.className = 'track-start';
-      startMarker.textContent = '🏁';
-      startMarker.setAttribute('aria-hidden', 'true');
-
-      const wrap = document.createElement('div');
-      wrap.className = 'longest-art-wrap';
-      art.style.setProperty('--art-width', `${item.widthPercent ?? 100}%`);
-      wrap.append(art);
-
-      const goalMarker = document.createElement('span');
-      goalMarker.className = 'track-goal';
-      goalMarker.textContent = '⭐';
-      goalMarker.setAttribute('aria-hidden', 'true');
-
-      track.append(startMarker, wrap, goalMarker);
-      b.append(track);
-    } else {
-      b.append(art);
-    }
-
-    b.insertAdjacentHTML('beforeend', `<span class="choice-number">${i + 1}</span>`);
-    b.addEventListener('click', () => answer(i === options.answer, b));
-    holder.append(b);
+  const hint = document.createElement('button');
+  hint.type = 'button';
+  hint.className = 'hint';
+  hint.setAttribute('aria-label', 'Hear the question again');
+  hint.textContent = '?';
+  hint.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.sfx('tap');
+    speak(audio.pick(DIALOGUES[section]?.guide));
+    touched(section);
   });
+  el.append(hint);
+  return el;
 }
 
 function shuffled(list) {
-  return [...list].sort(() => Math.random() - 0.5);
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ==========================================================================
+   Splash + menu
+   ========================================================================== */
+function showSplash() {
+  newScene('splash');
+  setTitle("Sparky's Carnival");
+  stage.classList.add('is-splash');
+  const play = document.createElement('button');
+  play.type = 'button';
+  play.className = 'candy candy-orange big-play';
+  play.setAttribute('aria-label', 'Play');
+  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 10v28l22-14z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>';
+  play.addEventListener('click', () => {
+    audio.unlock();
+    audio.sfx('success');
+    audio.startMusic();
+    animate('happy');
+    showMenu();
+  });
+  stage.append(play);
+  animate('welcome');
+}
+
+function showMenu() {
+  newScene('menu');
+  skillIndex = 0;
+  counters = SKILLS.map(() => 0);
+  setTitle('Choose A Game');
+  stage.classList.add('is-menu');
+  audio.warm(DIALOGUES.welcome.guide);
+  speak(DIALOGUES.welcome.intro[0], { delay: 400, onEnd: () => armMenuNudge(NUDGE_TIMES) });
+
+  MENU.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = 'card menu-card';
+    el.setAttribute('role', 'button');
+    el.tabIndex = 0;
+    el.setAttribute('aria-label', m.label);
+    el.style.setProperty('--i', i);
+    el.append(pic(objectSrc(m.key, m.asset - 1), 'art-fit'));
+    const name = document.createElement('b');
+    name.textContent = m.label;
+    el.append(name);
+    const go = () => {
+      skillIndex = SKILLS.findIndex((s) => s.key === m.key);
+      audio.sfx('tap');
+      burst(el, 8);
+      animate('happy');
+      startSkill();
+    };
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    stage.append(el);
+  });
+  showNext(() => {
+    audio.sfx('success');
+    animate('happy');
+    skillIndex = 0;
+    startSkill();
+  }, 'Play all games');
+  animate('welcome');
+}
+
+function armMenuNudge(tries) {
+  clearTimeout(nudgeTimer);
+  if (tries <= 0) return;
+  const id = sceneId;
+  nudgeTimer = setTimeout(() => {
+    if (id !== sceneId || game.dataset.screen !== 'menu') return;
+    if (audio.isSpeaking()) return armMenuNudge(tries);
+    speak(audio.pick(DIALOGUES.welcome.guide));
+    armMenuNudge(tries - 1);
+  }, NUDGE_AFTER_MS);
+}
+
+/* ==========================================================================
+   Learning games
+   ========================================================================== */
+function startSkill() {
+  const skill = SKILLS[skillIndex];
+  newScene('play', skill.theme);
+  setTitle(skill.title);
+  animate('idle');
+  // pre-fetch the next game's voice lines so the hand-over is instant
+  const next = SKILLS[(skillIndex + 1) % SKILLS.length].key;
+  audio.warm([...(DIALOGUES[next]?.intro || [])]);
+
+  if (skill.key === 'shapes') return renderShapes(skill);
+  if (skill.key === 'more') return renderMore(skill);
+  return renderChoices(skill);
 }
 
 function makeOptions(skill) {
-  const currentAsset = bank[skillIndex][counters[skillIndex] % ASSET_COUNT], q = currentAsset.index;
-  let items;
+  const n = counters[skillIndex];
+  const round = bank[skillIndex][n % ASSET_COUNT];
 
   if (skill.key === 'different') {
-    const common = currentAsset.seed % ASSET_COUNT;
+    const common = round.seed % ASSET_COUNT;
     const odd = (common + 17) % ASSET_COUNT;
-    const oddAt = (q * 3 + counters[skillIndex]) % 4;
-    items = Array.from({ length: 4 }, (_, i) => ({
-      asset: i === oddAt ? odd : common,
-      correct: i === oddAt
-    }));
-  } else if (skill.key === 'biggest') {
-    // Each size is a clean transparent PNG rendered from one isolated master cutout.
-    const rowIdx = counters[skillIndex] % 8;
-    const pickSizes = [0, 2, 4, 7]; // Small, medium, big, giant; spread the visual sizes clearly
-    items = pickSizes.map(size => ({
-      asset: rowIdx,
-      customSrc: `./assets/objects/biggest/obj_${rowIdx}_size_${size}.png?v=clean-biggest-2`,
-      correct: size === 7
-    }));
-  } else if (skill.key === 'longest') {
-    // 7 hand-drawn horizontal toys (pencil, paintbrush, ribbon, train, candy rope, spiral, crayon)
-    // with 8 hand-drawn lengths (0 to 7) - wheels stay circular, zero stretching
-    const bandIdx = counters[skillIndex] % 7;
-    const pickLens = [0, 2, 5, 7]; // Short, Medium, Long, Super-Long
-    items = pickLens.map(len => ({
-      asset: bandIdx,
-      customSrc: `./assets/objects/longest/obj_${bandIdx}_len_${len}.png`,
-      widthPercent: [28, 48, 72, 100][pickLens.indexOf(len)],
-      correct: len === 7
-    }));
+    const oddAt = (round.index * 3 + n) % 4;
+    return {
+      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('different', i === oddAt ? odd : common), correct: i === oddAt })),
+      shuffle: false,
+    };
   }
+  if (skill.key === 'biggest') {
+    const row = n % 8;
+    return {
+      items: [0, 2, 4, 7].map((size) => ({ src: `./assets/objects/biggest/obj_${row}_size_${size}.png?v=clean-biggest-2`, correct: size === 7 })),
+      shuffle: true,
+    };
+  }
+  const band = n % 7;
+  return {
+    items: [0, 2, 5, 7].map((len) => ({ src: `./assets/objects/longest/obj_${band}_len_${len}.png`, correct: len === 7 })),
+    shuffle: true,
+  };
+}
 
-  const mixed = shuffled(items);
-  return { items: mixed, answer: mixed.findIndex(item => item.correct) };
+function renderChoices(skill) {
+  const section = skill.key;
+  const { items, shuffle } = makeOptions(skill);
+  const list = shuffle ? shuffled(items) : items;
+  stage.classList.add(section === 'different' ? 'grid-4' : 'grid-2x2');
+  if (section === 'longest') stage.classList.add('is-longest');
+
+  list.forEach((item, i) => {
+    const el = card({
+      section,
+      label: `Choice ${i + 1}`,
+      onPick: (c) => answer(section, item.correct, c),
+    });
+    const cls = section === 'different' ? 'art-fit' : section === 'biggest' ? 'art-scaled' : 'art-long';
+    el.append(pic(item.src, cls));
+    el.style.setProperty('--i', i);
+    stage.append(el);
+  });
+  introduce(section);
 }
 
 function renderMore(skill) {
-  // Play intro dialogue, then when it naturally finishes schedule a guide
-  try {
-    playDialogue(DIALOGUES.more.intro[0], () => {
-      later(() => {
-        if (!resolved) {
-          const clip = pickRandom(DIALOGUES.more?.guide);
-          if (clip) playDialogue(clip);
-        }
-      }, 4000);
-    });
-  } catch (err) {}
+  const section = 'more';
   const round = bank[skillIndex][counters[skillIndex] % ASSET_COUNT];
-  const seed = round.seed;
-  // Dramatic count difference (e.g. 2 vs 5, 3 vs 7, 2 vs 6) for toddlers
-  const left = 2 + (seed % 3);           // 2, 3, or 4
-  const delta = 4 + ((seed * 7) % 4);    // 4, 5, 6, or 7
-  const right = left + delta;             // at least 6, up to 11
-  const correctGroup = (seed + counters[skillIndex]) % 2;
-  const counts = correctGroup === 0 ? [right, left] : [left, right];
+  const left = 2 + (round.seed % 3);
+  const right = left + 4 + ((round.seed * 7) % 4);
+  const bigSide = (round.seed + counters[skillIndex]) % 2;
+  const counts = bigSide === 0 ? [right, left] : [left, right];
+  stage.classList.add('grid-2');
 
-  panel.innerHTML = `
-    ${panelHead(skill)}
-    <div class="group-board" role="group" aria-label="Choose the group with more objects"></div>
-    <p class="image-hint">👉 Tap the toy group with MORE!</p>
-  `;
-
-  const board = panel.querySelector('.group-board');
-  counts.forEach((count, index) => {
-    const b = document.createElement('button');
-    b.className = 'group-choice';
-    b.type = 'button';
-    b.setAttribute('aria-label', `${count} items`);
-
-    const grid = document.createElement('span');
-    grid.className = 'group-grid';
-    for (let i = 0; i < count; i++) {
-      grid.append(objectArt(skill, round.index));
-    }
-    b.append(grid);
-
-    const label = document.createElement('span');
-    label.className = 'group-count';
-    label.textContent = `⭐ ${count} Items`;
-    b.append(label);
-
-    b.addEventListener('click', () => answer(index === correctGroup, b));
-    board.append(b);
+  counts.forEach((count, side) => {
+    const el = card({
+      section,
+      label: `${count} things`,
+      onPick: (c) => answer(section, side === bigSide, c),
+    });
+    el.style.setProperty('--i', side);
+    const pile = document.createElement('div');
+    pile.className = 'pile';
+    for (let i = 0; i < count; i++) pile.append(pic(objectSrc('more', round.index), 'pile-item'));
+    el.append(pile);
+    stage.append(el);
   });
+  introduce(section);
 }
 
-const shapeConfig = [
-  { name: 'circle', label: 'Circle', icon: '🟡', file: 'shape-circle.svg', color: '#0284c7', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #e0f2fe 100%)' },
-  { name: 'triangle', label: 'Triangle', icon: '🔺', file: 'shape-triangle.svg', color: '#16a34a', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #dcfce7 100%)' },
-  { name: 'square', label: 'Square', icon: '🟧', file: 'shape-square.svg', color: '#ea580c', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #ffedd5 100%)' },
-  { name: 'star', label: 'Star', icon: '⭐', file: 'shape-star.svg', color: '#ca8a04', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #fef9c3 100%)' },
-  { name: 'heart', label: 'Heart', icon: '❤️', file: 'shape-heart.svg', color: '#db2777', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #fce7f3 100%)' },
-  { name: 'diamond', label: 'Diamond', icon: '🔷', file: 'shape-diamond.svg', color: '#0891b2', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #cffafe 100%)' },
-  { name: 'oval', label: 'Oval', icon: '🔴', file: 'shape-oval.svg', color: '#dc2626', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #fee2e2 100%)' },
-  { name: 'moon', label: 'Moon', icon: '🌙', file: 'shape-moon.svg', color: '#9333ea', bg: 'radial-gradient(circle at 50% 40%, #ffffff 0%, #f3e8ff 100%)' }
-];
-
-const shapeNames = shapeConfig.map(s => s.name);
-const shapeAssetPools = [
-  [0, 9, 18, 27, 36],
-  [2, 11, 20, 29, 38],
-  [3, 12, 21, 30, 39],
-  [7, 16, 25, 34],
-  [6, 15, 24, 33],
-  [5, 14, 23, 32],
-  [1, 10, 19, 28, 37],
-  [8, 17, 26, 35]
-];
-
-function renderShapes(skill) {
-  // Play intro dialogue, then when it naturally finishes schedule a guide
-  try {
-    playDialogue(DIALOGUES.shapes.intro[0], () => {
-      later(() => {
-        if (!resolved && shapeMatches < 4) {
-          const clip = pickRandom(DIALOGUES.shapes?.guide);
-          if (clip) playDialogue(clip);
-        }
-      }, 4000);
-    });
-  } catch (err) {}
-  shapeMatches = 0;
-  selectedPiece = null;
-  const seed = bank[skillIndex][counters[skillIndex] % ASSET_COUNT].seed;
-  const shapes = [0, 1, 2, 3, 4, 5, 6, 7].sort((a, b) => ((a * 13 + seed) % 41) - ((b * 13 + seed) % 41));
-  const targets = shapes.slice(0, 4).sort((a, b) => a - b);
-  const toys = shuffled(targets);
-
-  panel.innerHTML = `
-    ${panelHead(skill)}
-    <div class="shape-board" aria-label="Shape target spaces"></div>
-    <div class="shape-toys" aria-label="Shape toy pieces"></div>
-    <p class="image-hint">👉 Tap a toy below, then tap its matching shape space!</p>
-  `;
-
-  const board = panel.querySelector('.shape-board');
-  const toysEl = panel.querySelector('.shape-toys');
-
-  targets.forEach(shape => {
-    const cfg = shapeConfig[shape];
-    const card = document.createElement('div');
-    card.className = 'shape-match-card';
-
-    const target = document.createElement('button');
-    target.type = 'button';
-    target.className = 'shape-target';
-    target.dataset.target = shape;
-    target.style.setProperty('--shape-color', cfg.color);
-    target.style.setProperty('--shape-bg', cfg.bg);
-    target.setAttribute('aria-label', `${cfg.label} shape space`);
-
-    target.innerHTML = `
-      <img class="shape-silhouette" src="./assets/shapes/${cfg.file}" alt="${cfg.label}">
-      <span class="shape-badge">${cfg.icon} ${cfg.label}</span>
-    `;
-
-    target.addEventListener('click', () => {
-      if (selectedPiece) {
-        tryMatch(selectedPiece, target);
-      } else {
-        playSfx('tap');
-        say(`Tap a toy piece first! ⭐`, 'try');
-      }
-    });
-
-    card.append(target);
-    board.append(card);
-  });
-
-  toys.forEach(shape => {
-    const cfg = shapeConfig[shape];
-    const piece = document.createElement('button');
-    piece.type = 'button';
-    piece.className = 'shape-piece';
-    piece.draggable = true;
-    piece.dataset.shape = shape;
-    piece.setAttribute('aria-label', `${cfg.label} toy piece`);
-
-    const pool = shapeAssetPools[shape];
-    const asset = pool[counters[skillIndex] % pool.length];
-    piece.append(objectArt(skill, asset));
-
-    piece.addEventListener('click', () => {
-      playSfx('tap');
-      selectedPiece = piece;
-      panel.querySelectorAll('.shape-piece').forEach(x => x.classList.toggle('selected', x === piece));
-      
-      // Highlight matching target with friendly pulse
-      panel.querySelectorAll('.shape-target').forEach(t => {
-        t.classList.toggle('target-hint', Number(t.dataset.target) === shape && !t.classList.contains('matched'));
-      });
-      
-      say(`Can you find the ${cfg.label} shape? ⭐`, 'hint');
-    });
-
-    piece.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', String(shape));
-      selectedPiece = piece;
-    });
-
-    toysEl.append(piece);
-  });
-
-  // Touch and Drag-drop handlers
-  panel.querySelectorAll('.shape-target').forEach(target => {
-    target.addEventListener('dragover', e => {
-      e.preventDefault();
-      target.classList.add('over');
-    });
-    target.addEventListener('dragleave', () => target.classList.remove('over'));
-    target.addEventListener('drop', e => {
-      e.preventDefault();
-      target.classList.remove('over');
-      const shapeVal = e.dataTransfer.getData('text/plain');
-      const piece = panel.querySelector(`.shape-piece[data-shape="${shapeVal}"]`);
-      if (piece) tryMatch(piece, target);
-    });
-  });
-}
-
-function tryMatch(piece, target) {
-  if (!piece || target.classList.contains('matched')) return;
-
-  const pieceShape = Number(piece.dataset.shape);
-  const targetShape = Number(target.dataset.target);
-
-  if (pieceShape !== targetShape) {
-    stopDialogue();
-    playSfx('wrong');
-    const correctCfg = shapeConfig[pieceShape];
-    const targetCfg = shapeConfig[targetShape];
-    say(`Almost! That's ${targetCfg.label}! Look for ${correctCfg.label}! ⭐`, 'try');
-    target.classList.add('bump');
-    later(() => target.classList.remove('bump'), 350);
-    animate('try');
-    // Cheerup dialogue for WRONG shape match
-    try {
-      const cheerup = pickRandom(DIALOGUES.shapes.cheerup);
-      if (cheerup) playDialogue(cheerup);
-    } catch (err) {}
-    return;
-  }
-
-  playSfx('match');
-  spawnBurst(target, 'stars', 16);
-  piece.disabled = true;
-  piece.classList.add('matched');
-  piece.classList.remove('selected');
-  target.classList.add('matched');
-  target.classList.remove('target-hint');
-
-  // Place matched toy with check badge inside target space
-  const toyImg = piece.querySelector('img').cloneNode(true);
-  toyImg.className = 'matched-toy';
-  target.innerHTML = '';
-  target.append(toyImg);
-  target.insertAdjacentHTML('beforeend', '<img class="match-check" src="./assets/icon-check.svg" alt="Matched!"><span class="shape-badge">⭐ Matched!</span>');
-
-  // Clear hints
-  panel.querySelectorAll('.shape-target').forEach(t => t.classList.remove('target-hint'));
-  selectedPiece = null;
-
-  shapeMatches++;
-
-  if (shapeMatches < 4) {
-    // Single-match celebration
-    try {
-      const matchClip = pickRandom(DIALOGUES.shapes.matchSingle);
-      if (matchClip) playDialogue(matchClip);
-    } catch (err) {}
-    say(`A perfect fit! Wonderful! ⭐`, 'good');
-    animate('happy');
-  } else {
-    // All 4 matched celebration
-    resolved = true;
-    playSfx('prize');
-    spawnBurst(panel, 'stars', 26);
-    say(`Hooray! You matched all four shapes! 🎉`, 'good');
-    // Play all-matched victory dialogue: "Wow! Tumne saari chaar shapes match kar li! Shabash!"
-    try {
-      if (DIALOGUES.shapes.matchAll[0]) playDialogue(DIALOGUES.shapes.matchAll[0]);
-    } catch (err) {}
-    animate('jump');
-    later(() => finishSkill(), 1200);
-  }
-}
-
-function answer(correct, button) {
+function answer(section, correct, el) {
   if (resolved) return;
-
+  audio.unlock();
   if (!correct) {
-    stopDialogue();
-    playSfx('wrong');
-    button.classList.add('wrong');
-    say('Great try! Take another peek! 🌟', 'try');
-    later(() => button.classList.remove('wrong'), 500);
+    audio.sfx('wrong');
+    el.classList.remove('wrong');
+    void el.offsetWidth;
+    el.classList.add('wrong');
     animate('try');
-    // Play an encouraging cheerup dialogue ONLY on WRONG answer!
-    try {
-      const skillCheerup = DIALOGUES[SKILLS[skillIndex].key]?.cheerup || [];
-      const pool = skillCheerup.length > 0 ? skillCheerup : DIALOGUES.welcome.cheerup;
-      const cheerup = pickRandom(pool);
-      if (cheerup) playDialogue(cheerup);
-    } catch (err) {}
+    cheerUp(section);
+    touched(section);
     return;
   }
-
-  // CORRECT ANSWER!
   resolved = true;
-  stopDialogue(); // Immediately silence any intro/guide dialogue!
-  playSfx('success');
-  spawnBurst(button, 'stars', 20);
-  button.classList.add('correct');
-  finishSkill();
-}
-
-function finishSkill() {
-  resolved = true;
-  // If not shapes (which is playing its all-shapes victory dialogue), silence any lingering intro
-  if (SKILLS[skillIndex].key !== 'shapes') {
-    stopDialogue();
-  }
-  addStar();
-  const skill = SKILLS[skillIndex];
-  panel.classList.add('is-complete');
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  speech.textContent = 'Hooray! You did it! High five! ⭐';
-  playSfx('fanfare');
+  clearTimeout(nudgeTimer);
+  audio.stopSpeech();
+  audio.sfx('success');
+  el.classList.add('correct');
+  stage.classList.add('has-answer');
+  burst(el, 18);
   animate('happy');
-  spawnBurst(panel, 'stars', 28);
-
-  panel.innerHTML = `
-    <div class="round-done">
-      <div class="done-badge-wrap">⭐</div>
-      <p class="round-kicker">${skill.label}</p>
-      <h2>You Did It!</h2>
-      <p>⭐️ You're a superstar player! ⭐️</p>
-      <button class="continue-button" id="continue" type="button">
-        Let's Go! <img src="./assets/icon-arrow.svg" alt="">
-      </button>
-    </div>
-  `;
-
-  panel.querySelector('#continue').addEventListener('click', e => {
-    playSfx('transition');
-    spawnBurst(e.currentTarget, 'sparkle', 14);
-    advance();
-  });
+  addStar();
+  later(() => {
+    audio.sfx('fanfare');
+    showNext(advance, 'Next game');
+  }, PRAISE_DELAY);
 }
 
 function advance() {
-  stopDialogue();
+  audio.sfx('transition');
   counters[skillIndex] = (counters[skillIndex] + 1) % ASSET_COUNT;
   skillIndex = (skillIndex + 1) % SKILLS.length;
-
   if (skillIndex === 2) return showMystery();
   if (skillIndex === 4) return showBalloons();
-
-  animate('idle');
   startSkill();
 }
 
 /* ==========================================================================
-   MINI-GAMES: MYSTERY BOX & BALLOON POP
+   Match the shapes — drag a shape from the tray onto the toy it belongs to
    ========================================================================== */
-function showMystery() {
-  stopDialogue();
-  panel.classList.remove('is-menu');
-  mini = 'mystery';
-  resolved = false;
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  speech.textContent = "Ooh! Tap a mystery box to see what's inside!";
-  // Play mystery intro dialogue and when finished, schedule a guide
-  try {
-    playDialogue(DIALOGUES.mystery.intro[0], () => {
-      later(() => {
-        if (!resolved) {
-          const g = pickRandom(DIALOGUES.mystery.guide);
-          if (g) playDialogue(g);
-        }
-      }, 4000);
-    });
-  } catch (err) {}
+const SHAPES = [
+  { name: 'circle',   file: 'shape-circle.svg' },
+  { name: 'triangle', file: 'shape-triangle.svg' },
+  { name: 'square',   file: 'shape-square.svg' },
+  { name: 'star',     file: 'shape-star.svg' },
+  { name: 'heart',    file: 'shape-heart.svg' },
+  { name: 'diamond',  file: 'shape-diamond.svg' },
+  { name: 'oval',     file: 'shape-oval.svg' },
+  { name: 'moon',     file: 'shape-moon.svg' },
+];
+const SHAPE_ASSET_POOLS = [
+  [0, 9, 18, 27, 36], [2, 11, 20, 29, 38], [3, 12, 21, 30, 39], [7, 16, 25, 34],
+  [6, 15, 24, 33], [5, 14, 23, 32], [1, 10, 19, 28, 37], [8, 17, 26, 35],
+];
 
-  panel.innerHTML = `
-    <p class="round-kicker">BONUS FUN • MYSTERY SURPRISE</p>
-    <h1 class="round-title">Pick a Mystery Box!</h1>
-    <p class="round-subtitle">Choose any box to reveal a magical surprise!</p>
-    <div class="mini-scene">
-      ${[0, 1, 2].map(i => `
-        <button class="mystery-box" data-box="${i}" aria-label="Mystery gift box ${i + 1}" type="button">
-          <img class="box-art" src="./assets/mystery-box.svg" alt="Gift box">
-        </button>
-      `).join('')}
-    </div>
-    <p class="image-hint">✨ Every box has a wonderful prize! ✨</p>
-  `;
+function renderShapes(skill) {
+  const section = 'shapes';
+  const n = counters[skillIndex];
+  const seed = bank[skillIndex][n % ASSET_COUNT].seed;
+  const order = [0, 1, 2, 3, 4, 5, 6, 7].sort((a, b) => ((a * 13 + seed) % 41) - ((b * 13 + seed) % 41));
+  const targets = order.slice(0, 4);
+  const extra = order[4];                                   // one spare piece in the tray
+  const tray = shuffled([...targets, extra]);
+  let matched = 0;
+  let held = null;                                           // tapped (not dragged) piece
+  const misses = new Map();
 
-  panel.querySelectorAll('.mystery-box').forEach(box => {
-    box.addEventListener('click', () => {
-      if (resolved) return;
+  stage.classList.add('is-shapes');
+  const board = document.createElement('div');
+  board.className = 'shape-board';
+  const trayEl = document.createElement('div');
+  trayEl.className = 'shape-tray';
+  stage.append(board, trayEl);
+
+  const slots = new Map();
+  shuffled(targets).forEach((shape, i) => {
+    const pool = SHAPE_ASSET_POOLS[shape];
+    const el = card({ section, extra: 'shape-card' });
+    el.style.setProperty('--i', i);
+    el.append(pic(objectSrc('shapes', pool[n % pool.length]), 'toy'));
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.dataset.shape = shape;
+    slot.innerHTML = '<span>?</span>';
+    slot.addEventListener('click', () => { if (held) place(held, slot); });
+    el.append(slot);
+    board.append(el);
+    slots.set(shape, slot);
+  });
+
+  function hintSlot(shape, on) {
+    slots.forEach((s, k) => s.classList.toggle('glow', on && k === shape && !s.classList.contains('filled')));
+  }
+
+  function place(piece, slot) {
+    const shape = Number(piece.dataset.shape);
+    if (slot.classList.contains('filled') || piece.classList.contains('done')) return;
+    touched(section);
+    if (Number(slot.dataset.shape) !== shape) {
+      audio.sfx('wrong');
+      slot.classList.remove('bump');
+      void slot.offsetWidth;
+      slot.classList.add('bump');
+      animate('try');
+      cheerUp(section);
+      const m = (misses.get(shape) || 0) + 1;
+      misses.set(shape, m);
+      if (m >= 2) hintSlot(shape, true);         // after two misses, show where it goes
+      return;
+    }
+    audio.sfx('match');
+    burst(slot, 14);
+    piece.classList.add('done');
+    piece.classList.remove('selected', 'dragging');
+    piece.style.transform = '';
+    held = null;
+    hintSlot(shape, false);
+    slot.classList.add('filled');
+    slot.classList.remove('glow');
+    slot.textContent = '';
+    slot.append(pic(`./assets/shapes/${SHAPES[shape].file}`, 'placed'));
+    slot.insertAdjacentHTML('beforeend', '<svg class="tick" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#2fc455" stroke="#fff" stroke-width="4"/><path d="m14 25 7 7 14-16" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    matched++;
+
+    if (matched < 4) {
+      speak(audio.pick(DIALOGUES.shapes.matchSingle), { delay: 250 });
+      animate('happy');
+    } else {
       resolved = true;
-      stopDialogue();
+      clearTimeout(nudgeTimer);
       addStar();
-      playSfx('prize');
-      spawnBurst(box, 'stars', 24);
-      box.classList.add('open');
-      box.querySelector('.box-art').src = './assets/mystery-box-open.svg';
+      audio.sfx('fanfare');
+      burst(stage, 26);
+      speak(DIALOGUES.shapes.matchAll[0], { delay: 500 });
+      animate('jump');
+      later(() => showNext(advance, 'Next game'), 1100);
+    }
+  }
 
-      const prizes = [35, 28, 36, 37, 38];
-      const prize = objectArt(SKILLS[1], prizes[Math.floor(Math.random() * prizes.length)]);
-      prize.className = 'box-prize';
-      box.append(prize);
-
-      say('Ta-da! You found a surprise treasure! ⭐', 'good');
-      animate('wow');
-      // Play prize dialogue
-      try {
-        if (DIALOGUES.mystery.prize[0]) playDialogue(DIALOGUES.mystery.prize[0]);
-      } catch (err) {}
-
-      panel.insertAdjacentHTML('beforeend', `
-        <button class="continue-button" id="mini-next" type="button" style="margin-top: 14px;">
-          Next Game! <img src="./assets/icon-arrow.svg" alt="">
-        </button>
-      `);
-
-      $('#mini-next').addEventListener('click', e => {
-        playSfx('transition');
-        spawnBurst(e.currentTarget, 'sparkle', 14);
-        mini = null;
-        animate('idle');
-        startSkill();
-      });
+  tray.forEach((shape) => {
+    const piece = document.createElement('div');
+    piece.className = 'tray-piece';
+    piece.dataset.shape = shape;
+    piece.setAttribute('role', 'button');
+    piece.setAttribute('aria-label', `${SHAPES[shape].name} shape`);
+    piece.append(pic(`./assets/shapes/${SHAPES[shape].file}`));
+    makeDraggable(piece, {
+      slots: () => [...slots.values()],
+      onTap: () => {
+        audio.sfx('tap');
+        held = held === piece ? null : piece;
+        trayEl.querySelectorAll('.tray-piece').forEach((p) => p.classList.toggle('selected', p === held));
+        touched(section);
+      },
+      onDrop: (slot) => (slot ? place(piece, slot) : null),
+      onLift: () => { held = null; trayEl.querySelectorAll('.selected').forEach((p) => p.classList.remove('selected')); audio.sfx('whoosh'); },
     });
+    trayEl.append(piece);
+  });
+
+  introduce(section);
+}
+
+/** Pointer-based dragging so it works the same with a finger or a mouse. */
+function makeDraggable(el, { slots, onTap, onDrop, onLift }) {
+  el.addEventListener('pointerdown', (e) => {
+    if (resolved || el.classList.contains('done')) return;
+    audio.unlock();
+    e.preventDefault();
+    const startX = e.clientX, startY = e.clientY;
+    let dragging = false;
+    el.setPointerCapture(e.pointerId);
+
+    const move = (ev) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      if (!dragging && Math.hypot(dx, dy) > 10) {
+        dragging = true;
+        el.classList.add('dragging');
+        onLift?.();
+      }
+      if (dragging) el.style.transform = `translate(${dx}px, ${dy}px) scale(1.12)`;
+    };
+    const end = (ev) => {
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
+      try { el.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+      if (!dragging) return onTap?.();
+      el.classList.remove('dragging');
+      const target = slots().find((s) => {
+        const r = s.getBoundingClientRect();
+        const pad = r.width * 0.25;          // forgiving drop zone for little fingers
+        return ev.clientX > r.left - pad && ev.clientX < r.right + pad && ev.clientY > r.top - pad && ev.clientY < r.bottom + pad;
+      });
+      el.style.transform = '';               // springs home via CSS transition unless placed
+      onDrop?.(target || null);
+    };
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
   });
 }
 
-function showBalloons() {
-  stopDialogue();
-  panel.classList.remove('is-menu');
-  mini = 'balloons';
-  popped = 0;
-  resolved = false;
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  speech.textContent = "Let's pop 5 colorful balloons!";
-  // Play balloons intro dialogue and when finished, schedule a guide
-  try {
-    playDialogue(DIALOGUES.balloons.intro[0], () => {
-      later(() => {
-        if (!resolved && popped < 5) {
-          const g = pickRandom(DIALOGUES.balloons.guide);
-          if (g) playDialogue(g);
-        }
-      }, 4000);
+/* ==========================================================================
+   Bonus: mystery boxes
+   ========================================================================== */
+function showMystery() {
+  newScene('play', 'candy');
+  setTitle('Pick A Mystery Box');
+  animate('idle');
+  stage.classList.add('grid-3');
+  const section = 'mystery';
+
+  [0, 1, 2].forEach((i) => {
+    const el = card({
+      section,
+      label: `Mystery box ${i + 1}`,
+      extra: 'box-card',
+      onPick: (c) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(nudgeTimer);
+        audio.stopSpeech();
+        addStar();
+        audio.sfx('fanfare');
+        burst(c, 24);
+        c.classList.add('open', 'correct');
+        stage.classList.add('has-answer');
+        c.querySelector('.pic').src = './assets/mystery-box-open.svg';
+        const prizes = [35, 28, 36, 37, 38];
+        c.append(pic(objectSrc('biggest', prizes[Math.floor(Math.random() * prizes.length)]), 'prize'));
+        animate('wow');
+        speak(DIALOGUES.mystery.prize[0], { delay: 400 });
+        later(() => showNext(() => { audio.sfx('transition'); startSkill(); }, 'Next game'), 1200);
+      },
     });
-  } catch (err) {}
+    el.style.setProperty('--i', i);
+    el.append(pic('./assets/mystery-box.svg', 'art-fit'));
+    stage.append(el);
+  });
+  introduce(section);
+}
 
-  panel.innerHTML = `
-    <p class="round-kicker">BONUS FUN • BALLOON POP</p>
-    <h1 class="round-title">Pop 5 Smiling Balloons!</h1>
-    <p class="round-subtitle">Tap the colorful balloons as they float up to the sky!</p>
-    <div class="mini-scene balloon-row" aria-label="Floating balloons arena"></div>
-    <div class="balloon-progress" aria-live="polite">
-      <div class="progress-balloons">
-        ${[1, 2, 3, 4, 5].map(n => `
-          <span class="progress-balloon" id="p-balloon-${n}">
-            <img src="./assets/balloons/0${n}.svg" alt="">
-          </span>
-        `).join('')}
-      </div>
-      <strong id="balloon-count">0 of 5</strong>
-    </div>
-  `;
+/* ==========================================================================
+   Bonus: balloons
+   ========================================================================== */
+function showBalloons() {
+  newScene('play', 'meadow');
+  setTitle('Pop The Balloons');
+  animate('idle');
+  stage.classList.add('is-balloons');
+  const section = 'balloons';
+  const GOAL = 5;
+  let popped = 0;
 
-  const row = panel.querySelector('.balloon-row');
+  const sky = document.createElement('div');
+  sky.className = 'balloon-sky';
+  const stars = document.createElement('div');
+  stars.className = 'star-row';
+  stars.innerHTML = Array.from({ length: GOAL }, () =>
+    '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 5 5.6 12.2 13.4 1.4-10 9 2.9 13.2L24 34 12.1 40.8 15 27.6l-10-9 13.4-1.4z"/></svg>').join('');
+  stage.append(sky, stars);
 
-  function spawnBalloon(initialOffset = null) {
+  function spawn(offset = 0) {
     if (resolved) return;
-    if (row.querySelectorAll('.balloon:not(.popped)').length < 6) {
+    if (sky.querySelectorAll('.balloon:not(.popped)').length < 6) {
       const b = document.createElement('button');
-      const width = 78 + Math.random() * 24;
+      b.type = 'button';
       b.className = 'balloon';
-
-      const paletteIndex = Math.floor(Math.random() * 7);
-      const art = document.createElement('img');
-      art.src = `./assets/balloons/0${paletteIndex + 1}.svg`;
-      art.className = 'balloon-art';
-      art.alt = 'Smiling balloon';
+      b.setAttribute('aria-label', 'Balloon');
+      const width = 84 + Math.random() * 28;
+      b.style.setProperty('--w', `${width}px`);
+      b.style.setProperty('--x', `${4 + Math.random() * 82}%`);
+      b.style.setProperty('--lift', `${sky.clientHeight + 220}px`);
+      b.style.setProperty('--drift', `${Math.round((Math.random() - 0.5) * 80)}px`);
+      b.style.setProperty('--time', `${6.5 + Math.random() * 2.5}s`);
+      if (offset) b.style.animationDelay = `-${offset}s`;
+      const art = pic(`./assets/balloons/${pad(1 + Math.floor(Math.random() * 7))}.svg`, 'balloon-art');
       b.append(art);
-
-      const liftHeight = row.clientHeight > 50 ? (row.clientHeight + 160) : 380;
-      b.style.setProperty('--balloon-width', `${width}px`);
-      b.style.setProperty('--start-x', `${5 + Math.random() * 80}%`);
-      b.style.setProperty('--lift', `-${liftHeight}px`);
-      b.style.setProperty('--drift', `${Math.round((Math.random() - 0.5) * 90)}px`);
-      b.style.setProperty('--float-time', `${5.5 + Math.random() * 2.5}s`);
-      if (initialOffset !== null) {
-        b.style.animationDelay = `-${initialOffset}s`;
-      }
-      b.setAttribute('aria-label', 'Pop smiling balloon');
-
-      b.addEventListener('animationend', e => {
-        if (e.animationName === 'balloonFloatUp' || e.animationName === 'balloonPopExplode') {
-          b.remove();
-        }
+      b.addEventListener('animationend', (e) => {
+        if (e.animationName === 'rise' || e.animationName === 'burst') b.remove();
       });
-
-      const onPop = (e) => {
-        e.stopPropagation();
+      b.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        audio.unlock();
         if (b.classList.contains('popped') || resolved) return;
         b.classList.add('popped');
         popped++;
-        // Every 2nd pop, play a guide dialogue
-        if (popped % 2 === 0 && popped < 5) {
-          try {
-            const g = pickRandom(DIALOGUES.balloons.guide);
-            if (g) playDialogue(g);
-          } catch (err) {}
-        }
-
-        playSfx('pop');
-        playMarimba(523.25 + popped * 110, 0, 0.22, 0.08);
-        spawnBurst(b, 'stars', 18);
-
-        // Floating +1 star score indicator
-        const scorePop = document.createElement('span');
-        scorePop.textContent = '+1 ⭐';
-        scorePop.style.cssText = `
-          position: absolute;
-          left: ${b.offsetLeft + width / 2 - 20}px;
-          top: ${b.offsetTop}px;
-          font-size: 24px;
-          font-weight: 900;
-          color: #f59e0b;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 10px #fef08a;
-          pointer-events: none;
-          z-index: 20;
-          animation: floatScore 0.8s ease-out forwards;
-        `;
-        row.append(scorePop);
-        setTimeout(() => scorePop.remove(), 800);
-
-        $('#balloon-count').textContent = `${popped} of 5`;
-        const progItem = $(`#p-balloon-${popped}`);
-        if (progItem) {
-          progItem.classList.add('is-popped');
-          progItem.innerHTML = '<img src="./assets/cocomelon-star.svg" alt="Pop!">';
-        }
-
-        const praises = ['Pop-tastic! 🎈', 'Great pop! ⭐', 'Awesome! 🌟', 'Super job! 🎈', 'Hooray! ⭐️'];
-        say(praises[popped - 1], 'good');
+        audio.sfx('pop', popped);
+        burst(b, 16);
+        const slot = stars.children[popped - 1];
+        if (slot) slot.classList.add('on');
         animate('happy');
-
-        if (popped === 5) {
+        touched(section);
+        if (popped === 2 || popped === 4) speak(audio.pick(DIALOGUES.balloons.guide), { delay: 200 });
+        if (popped >= GOAL) {
           resolved = true;
-          stopDialogue();
+          clearTimeout(nudgeTimer);
           addStar();
           later(() => {
-            playSfx('fanfare');
-            spawnBurst(row, 'stars', 30);
-            say('🎈 You popped all five balloons! Superstar! ⭐️', 'good');
+            audio.sfx('fanfare');
+            burst(stars, 26);
             animate('jump');
-            // Play all-popped dialogue
-            try {
-              if (DIALOGUES.balloons.allPopped[0]) playDialogue(DIALOGUES.balloons.allPopped[0]);
-            } catch (err) {}
-            panel.insertAdjacentHTML('beforeend', `
-              <button class="continue-button" id="mini-next" type="button" style="margin-top: 14px;">
-                Keep Playing! <img src="./assets/icon-arrow.svg" alt="">
-              </button>
-            `);
-            $('#mini-next').addEventListener('click', ev => {
-              playSfx('transition');
-              spawnBurst(ev.currentTarget, 'sparkle', 16);
-              mini = null;
-              animate('idle');
-              startSkill();
-            });
-          }, 350);
+            speak(DIALOGUES.balloons.allPopped[0], { delay: 300 });
+            showNext(() => { audio.sfx('transition'); startSkill(); }, 'Next game');
+          }, 400);
         }
-      };
-
-      b.addEventListener('click', onPop);
-      b.addEventListener('touchstart', onPop, { passive: true });
-
-      row.append(b);
+      });
+      sky.append(b);
     }
-    if (!resolved) later(spawnBalloon, 700);
+    if (!resolved) later(() => spawn(), 800);
   }
-
-  // Spawn initial set
-  spawnBalloon(2.2);
-  spawnBalloon(3.8);
-  spawnBalloon(1.0);
-  later(() => spawnBalloon(), 600);
+  spawn(2.4); spawn(4.2); spawn(1);
+  introduce(section);
 }
 
 /* ==========================================================================
-   MAIN MENU
+   Chrome: sound, home, next
    ========================================================================== */
-function showMainMenu() {
-  stopDialogue();
-  clearTimers();
-  mini = null;
-  resolved = false;
-  skillIndex = 0;
-  counters = SKILLS.map(() => 0);
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  panel.classList.remove('is-complete');
-  panel.classList.add('is-menu');
-  $('.game-shell').classList.remove('is-playing');
-  speech.textContent = 'Welcome! Tap a game or press Play!';
-  // Play welcome intro, and when it finishes naturally, schedule a friendly guide prompt
-  try {
-    playDialogue(DIALOGUES.welcome.intro[0], () => {
-      later(() => {
-        if (panel.classList.contains('is-menu')) {
-          const g = pickRandom(DIALOGUES.welcome.guide);
-          if (g) playDialogue(g);
-        }
-      }, 4000);
-    });
-  } catch (err) {}
+const soundBtn = $('#btn-sound');
+soundBtn.addEventListener('click', () => {
+  audio.unlock();
+  const on = !audio.isEnabled();
+  audio.setEnabled(on);
+  soundBtn.classList.toggle('is-off', !on);
+  soundBtn.setAttribute('aria-pressed', String(on));
+  soundBtn.setAttribute('aria-label', on ? 'Sound on' : 'Sound off');
+  if (on) { audio.sfx('tap'); audio.startMusic(); }
+});
 
-  const menuItems = [
-    ['different', 1, 'Spot Different'],
-    ['biggest', 5, 'Find Biggest'],
-    ['more', 1, 'Count More'],
-    ['longest', 3, 'Find Longest'],
-    ['shapes', 8, 'Match Shapes']
-  ];
+btnHome.addEventListener('click', () => {
+  audio.sfx('transition');
+  showMenu();
+});
 
-  panel.innerHTML = `
-    <div class="main-menu">
-      <p class="menu-kicker">🎪 SPARKY'S CARNIVAL QUEST 🎪</p>
-      <h1><span>Let's Play,</span> <strong>Sparky!</strong></h1>
-      <p class="menu-intro">Five fun games for curious little learners!</p>
-      <div class="menu-games" aria-label="Choose a game">
-        ${menuItems.map(([folder, asset, label]) => `
-          <button class="menu-game" type="button" data-skill="${folder}" aria-label="${label}">
-            <img src="./assets/objects/${folder}/${String(asset).padStart(2, '0')}.png" alt="">
-            <b>${label}</b>
-          </button>
-        `).join('')}
-      </div>
-      <button class="menu-play" id="menu-play" type="button">
-        <img src="./assets/icon-play.svg" alt=""> Play All Games!
-      </button>
-    </div>
-  `;
+btnNext.addEventListener('click', () => {
+  audio.unlock();
+  const go = onNext;
+  if (!go) return;
+  btnNext.hidden = true;
+  go();
+});
 
-  panel.querySelectorAll('.menu-game').forEach(card => {
-    card.addEventListener('click', () => {
-      const chosen = SKILLS.findIndex(skill => skill.key === card.dataset.skill);
-      if (chosen < 0) return;
-      skillIndex = chosen;
-      playSfx('tap');
-      $('.game-shell').classList.add('is-playing');
-      animate('happy');
-      startSkill();
-      startBgMusic();
-    });
-  });
+document.addEventListener('pointerdown', () => audio.unlock(), { once: true, capture: true });
+document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  $('#menu-play').addEventListener('click', () => {
-    playSfx('success');
-    $('.game-shell').classList.add('is-playing');
-    animate('happy');
-    startSkill();
-    startBgMusic();
-  });
-}
+window.addEventListener('pagehide', () => { audio.stopSpeech(); audio.stopMusic(); player?.destroy(); });
 
 /* ==========================================================================
-   INTERACTIVE SPARKY / TICKLE TAP
+   Start
    ========================================================================== */
-function setupCharacterInteractions() {
-  const wrap = $('#character-wrap');
-  if (!wrap) return;
-
-  const tickleSparky = (e) => {
-    e.stopPropagation();
-    playSfx('giggle');
-    spawnBurst(wrap, 'stars', 12);
-    
-    const giggles = [
-      'Hehehe, that tickles!',
-      'Yay! You are my best friend!',
-      "Let's play another game!",
-      'High five! 🖐️',
-      'You are doing super-duper!'
-    ];
-    speech.textContent = giggles[Math.floor(Math.random() * giggles.length)];
-
-    const dances = ['dance', 'laugh', 'jump', 'happy'];
-    const dance = dances[Math.floor(Math.random() * dances.length)];
-    animate(dance);
-  };
-
-  wrap.addEventListener('click', tickleSparky);
-  wrap.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      tickleSparky(e);
-    }
-  });
-}
-
-/* ==========================================================================
-   INITIALIZATION & EVENT LISTENERS
-   ========================================================================== */
-function toggleSound() {
-  soundOn = !soundOn;
-  const toggleBtn = $('#sound-toggle');
-  const soundIcon = $('#sound-icon');
-
-  toggleBtn.classList.toggle('is-muted', !soundOn);
-  toggleBtn.setAttribute('aria-label', soundOn ? 'Mute sound effects' : 'Enable sound effects');
-  
-  if (soundIcon) {
-    soundIcon.src = soundOn ? './assets/icon-speaker.svg' : './assets/icon-speaker-muted.svg';
-  }
-
-  if (masterGain && audioCtx) {
-    masterGain.gain.setTargetAtTime(soundOn ? 0.85 : 0, audioCtx.currentTime, 0.025);
-  }
-
-  if (soundOn) {
-    playSfx('tap');
-    startBgMusic();
-  } else {
-    stopBgMusic();
-  }
-}
-
-$('#sound-toggle').addEventListener('click', toggleSound);
-
-$('#hud-home-logo')?.addEventListener('click', () => {
-  stopDialogue();
-  playSfx('transition');
-  showMainMenu();
-  animate('welcome');
-});
-
-$('#hud-main-menu')?.addEventListener('click', () => {
-  stopDialogue();
-  playSfx('transition');
-  showMainMenu();
-  animate('welcome');
-});
-
-$('#main-menu-btn')?.addEventListener('click', () => {
-  stopDialogue();
-  playSfx('transition');
-  showMainMenu();
-  animate('welcome');
-});
-
-$('#hud-restart')?.addEventListener('click', () => {
-  stopDialogue();
-  playSfx('tap');
-  clearTimers();
-  skillIndex = 0;
-  counters = SKILLS.map(() => 0);
-  mini = null;
-  animate('idle');
-  startSkill();
-});
-
-$('#restart')?.addEventListener('click', () => {
-  stopDialogue();
-  playSfx('tap');
-  clearTimers();
-  skillIndex = 0;
-  counters = SKILLS.map(() => 0);
-  mini = null;
-  animate('idle');
-  startSkill();
-});
-
-// Sound context unlock on any first user gesture
-document.addEventListener('pointerdown', () => {
-  getAudio();
-}, { once: true });
-
-window.addEventListener('beforeunload', () => {
-  clearTimers();
-  stopBgMusic();
-  player?.destroy();
-  audioCtx?.close();
-});
-
-// Initialize elements
-initBubbleField();
-setupCharacterInteractions();
-
-const urlParams = new URLSearchParams(window.location.search);
-const paramSkill = urlParams.get('skill');
-const paramMini = urlParams.get('mini');
-
-if (paramMini === 'mystery') {
-  $('.game-shell').classList.add('is-playing');
-  animate('idle');
-  showMystery();
-} else if (paramMini === 'balloons') {
-  $('.game-shell').classList.add('is-playing');
-  animate('idle');
-  showBalloons();
-} else if (paramSkill) {
-  const chosen = SKILLS.findIndex(s => s.key === paramSkill);
-  if (chosen >= 0) {
-    skillIndex = chosen;
-    $('.game-shell').classList.add('is-playing');
-    animate('idle');
-    startSkill();
-  } else {
-    animate('welcome');
-    showMainMenu();
-  }
-} else {
-  animate('welcome');
-  showMainMenu();
-}
-
-new MutationObserver(() => {
-  panel.classList.remove('enter');
-  void panel.offsetWidth;
-  panel.classList.add('enter');
-}).observe(panel, { childList: true });
+const params = new URLSearchParams(location.search);
+const wantSkill = SKILLS.findIndex((s) => s.key === params.get('skill'));
+if (params.get('mini') === 'mystery') showMystery();
+else if (params.get('mini') === 'balloons') showBalloons();
+else if (wantSkill >= 0) { skillIndex = wantSkill; startSkill(); }
+else if (params.get('screen') === 'menu') showMenu();
+else showSplash();
