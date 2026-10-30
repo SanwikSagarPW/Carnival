@@ -34,12 +34,7 @@ const fx = $('#fx');
 const starCountEl = $('#star-count');
 const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-const bank = SKILLS.map((s, skill) =>
-  Array.from({ length: ASSET_COUNT }, (_, i) => ({ index: i, seed: (i * 17 + skill * 11) % 40 }))
-);
-
 let skillIndex = 0;
-let counters = SKILLS.map(() => 0);
 let resolved = false;
 let starsWon = 0;
 let onNext = null;
@@ -294,15 +289,22 @@ function showSplash() {
   stage.classList.add('is-splash');
   const play = document.createElement('button');
   play.type = 'button';
-  play.className = 'candy candy-orange big-play';
+  play.className = 'play-pill';
   play.setAttribute('aria-label', 'Play');
-  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 10v28l22-14z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>';
+  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 9v30l24-15z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg><span>PLAY</span>';
   play.addEventListener('click', () => {
     audio.unlock();
     audio.sfx('success');
     audio.startMusic();
+    burst(play, 22);
     animate('happy');
-    showMenu();
+    later(showMenu, 280);
+  });
+  const rays = document.createElement('div');
+  rays.className = 'rays';
+  stage.append(rays);
+  [1, 3, 5, 2].forEach((n, i) => {
+    stage.append(pic(`./assets/balloons/0${n}.svg`, `float-balloon fb${i}`));
   });
   stage.append(play);
   animate('welcome');
@@ -311,7 +313,6 @@ function showSplash() {
 function showMenu() {
   newScene('menu');
   skillIndex = 0;
-  counters = SKILLS.map(() => 0);
   setTitle('Choose A Game');
   stage.classList.add('is-menu');
   audio.warm(DIALOGUES.welcome.guide);
@@ -377,29 +378,74 @@ function startSkill() {
   return renderChoices(skill);
 }
 
-function makeOptions(skill) {
-  const n = counters[skillIndex];
-  const round = bank[skillIndex][n % ASSET_COUNT];
+/* ---------- endless question generator ----------
+   Every round is rolled fresh from many parts, and the last few rounds are
+   remembered so the same question never comes round twice in a row. */
+const rand = (n) => Math.floor(Math.random() * n);
+const recent = {};
 
+function fresh(skill, make) {
+  const seen = (recent[skill] ??= []);
+  let round;
+  for (let i = 0; i < 20; i++) {
+    round = make();
+    if (!seen.includes(round.key)) break;
+  }
+  seen.push(round.key);
+  if (seen.length > 10) seen.shift();
+  return round;
+}
+
+/** Sorted values from 0..max that are at least `gap` apart, so every size/length is clearly different. */
+function spacedPicks(max, count, gap) {
+  for (;;) {
+    const picked = new Set();
+    while (picked.size < count) picked.add(rand(max + 1));
+    const a = [...picked].sort((x, y) => x - y);
+    if (a.every((v, i) => !i || v - a[i - 1] >= gap)) return a;
+  }
+}
+
+/* Which "different" pictures are the same kind of thing (index = position in the art sheet).
+   The odd one out is always a different kind, so it can never be confused with the others. */
+const KINDS = [
+  [0, 8, 13, 20, 29, 33, 36], [1, 14, 24], [2, 15, 25, 30, 37], [3, 26, 39], [4, 34], [5, 22],
+  [6, 16, 28, 38], [7, 19], [9, 35], [10, 27], [11, 31], [12, 23, 32], [17], [18], [21],
+];
+const kindOf = new Map();
+KINDS.forEach((list, k) => list.forEach((n) => kindOf.set(n, k)));
+
+function makeOptions(skill) {
   if (skill.key === 'different') {
-    const common = round.seed % ASSET_COUNT;
-    const odd = (common + 17) % ASSET_COUNT;
-    const oddAt = (round.index * 3 + n) % 4;
+    const r = fresh('different', () => {
+      const common = rand(ASSET_COUNT);
+      let odd;
+      do { odd = rand(ASSET_COUNT); } while (kindOf.get(odd) === kindOf.get(common));
+      return { key: `${common}-${odd}`, common, odd, at: rand(4) };
+    });
     return {
-      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('different', i === oddAt ? odd : common), correct: i === oddAt })),
+      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('different', i === r.at ? r.odd : r.common), correct: i === r.at })),
       shuffle: false,
     };
   }
   if (skill.key === 'biggest') {
-    const row = n % 8;
+    const r = fresh('biggest', () => {
+      const row = rand(8);
+      const sizes = spacedPicks(7, 4, 2);
+      return { key: `${row}-${sizes}`, row, sizes };
+    });
     return {
-      items: [0, 2, 4, 7].map((size) => ({ src: `./assets/objects/biggest/obj_${row}_size_${size}.png?v=clean-biggest-2`, correct: size === 7 })),
+      items: r.sizes.map((size, i) => ({ src: `./assets/objects/biggest/obj_${r.row}_size_${size}.png?v=clean-biggest-2`, correct: i === 3 })),
       shuffle: true,
     };
   }
-  const band = n % 7;
+  const r = fresh('longest', () => {
+    const band = rand(7);
+    const lens = spacedPicks(7, 4, 2);
+    return { key: `${band}-${lens}`, band, lens };
+  });
   return {
-    items: [0, 2, 5, 7].map((len) => ({ src: `./assets/objects/longest/obj_${band}_len_${len}.png`, correct: len === 7 })),
+    items: r.lens.map((len, i) => ({ src: `./assets/objects/longest/obj_${r.band}_len_${len}.png`, correct: i === 3 })),
     shuffle: true,
   };
 }
@@ -427,11 +473,14 @@ function renderChoices(skill) {
 
 function renderMore(skill) {
   const section = 'more';
-  const round = bank[skillIndex][counters[skillIndex] % ASSET_COUNT];
-  const left = 2 + (round.seed % 3);
-  const right = left + 4 + ((round.seed * 7) % 4);
-  const bigSide = (round.seed + counters[skillIndex]) % 2;
-  const counts = bigSide === 0 ? [right, left] : [left, right];
+  const round = fresh('more', () => {
+    const item = rand(ASSET_COUNT);
+    const small = 2 + rand(6);                  // 2-7
+    const big = small + 2 + rand(3);            // always at least 2 more, never above 11
+    return { key: `${item}-${small}-${big}`, item, small, big, bigSide: rand(2) };
+  });
+  const bigSide = round.bigSide;
+  const counts = bigSide === 0 ? [round.big, round.small] : [round.small, round.big];
   stage.classList.add('grid-2');
 
   counts.forEach((count, side) => {
@@ -443,7 +492,7 @@ function renderMore(skill) {
     el.style.setProperty('--i', side);
     const pile = document.createElement('div');
     pile.className = 'pile';
-    for (let i = 0; i < count; i++) pile.append(pic(objectSrc('more', round.index), 'pile-item'));
+    for (let i = 0; i < count; i++) pile.append(pic(objectSrc('more', round.item), 'pile-item'));
     el.append(pile);
     stage.append(el);
   });
@@ -480,7 +529,6 @@ function answer(section, correct, el) {
 
 function advance() {
   audio.sfx('transition');
-  counters[skillIndex] = (counters[skillIndex] + 1) % ASSET_COUNT;
   skillIndex = (skillIndex + 1) % SKILLS.length;
   if (skillIndex === 2) return showMystery();
   if (skillIndex === 4) return showBalloons();
@@ -507,11 +555,13 @@ const SHAPE_ASSET_POOLS = [
 
 function renderShapes(skill) {
   const section = 'shapes';
-  const n = counters[skillIndex];
-  const seed = bank[skillIndex][n % ASSET_COUNT].seed;
-  const order = [0, 1, 2, 3, 4, 5, 6, 7].sort((a, b) => ((a * 13 + seed) % 41) - ((b * 13 + seed) % 41));
-  const targets = order.slice(0, 4);
-  const extra = order[4];                                   // one spare piece in the tray
+  const round = fresh('shapes', () => {
+    const order = shuffled([0, 1, 2, 3, 4, 5, 6, 7]);
+    const targets = order.slice(0, 4);
+    const toys = Object.fromEntries(targets.map((s) => [s, rand(SHAPE_ASSET_POOLS[s].length)]));
+    return { key: [...targets].sort().join('') + Object.values(toys).join(''), targets, extra: order[4], toys };
+  });
+  const { targets, extra } = round;                          // one spare piece in the tray
   const tray = shuffled([...targets, extra]);
   let matched = 0;
   let held = null;                                           // tapped (not dragged) piece
@@ -529,7 +579,7 @@ function renderShapes(skill) {
     const pool = SHAPE_ASSET_POOLS[shape];
     const el = card({ section, extra: 'shape-card' });
     el.style.setProperty('--i', i);
-    el.append(pic(objectSrc('shapes', pool[n % pool.length]), 'toy'));
+    el.append(pic(objectSrc('shapes', pool[round.toys[shape]]), 'toy'));
     const slot = document.createElement('div');
     slot.className = 'slot';
     slot.dataset.shape = shape;
@@ -713,7 +763,8 @@ function showBalloons() {
     '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 5 5.6 12.2 13.4 1.4-10 9 2.9 13.2L24 34 12.1 40.8 15 27.6l-10-9 13.4-1.4z"/></svg>').join('');
   stage.append(sky, stars);
 
-  function spawn(offset = 0) {
+  let lane = -1;
+  function spawn() {
     if (resolved) return;
     if (sky.querySelectorAll('.balloon:not(.popped)').length < 6) {
       const b = document.createElement('button');
@@ -722,11 +773,14 @@ function showBalloons() {
       b.setAttribute('aria-label', 'Balloon');
       const width = 84 + Math.random() * 28;
       b.style.setProperty('--w', `${width}px`);
-      b.style.setProperty('--x', `${4 + Math.random() * 82}%`);
-      b.style.setProperty('--lift', `${sky.clientHeight + 220}px`);
+      // pick a lane different from the last balloon so they don't stack up
+      let next;
+      do { next = Math.floor(Math.random() * 6); } while (next === lane);
+      lane = next;
+      b.style.setProperty('--x', `${3 + lane * 15 + Math.random() * 6}%`);
+      b.style.setProperty('--lift', `${sky.clientHeight + 260}px`);
       b.style.setProperty('--drift', `${Math.round((Math.random() - 0.5) * 80)}px`);
       b.style.setProperty('--time', `${6.5 + Math.random() * 2.5}s`);
-      if (offset) b.style.animationDelay = `-${offset}s`;
       const art = pic(`./assets/balloons/${pad(1 + Math.floor(Math.random() * 7))}.svg`, 'balloon-art');
       b.append(art);
       b.addEventListener('animationend', (e) => {
@@ -760,9 +814,9 @@ function showBalloons() {
       });
       sky.append(b);
     }
-    if (!resolved) later(() => spawn(), 800);
+    if (!resolved) later(spawn, 750);
   }
-  spawn(2.4); spawn(4.2); spawn(1);
+  spawn();
   introduce(section);
 }
 
