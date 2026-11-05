@@ -1,0 +1,11 @@
+{
+  "id": "26-0final-woohoo",
+  "name": "0Final/Woohoo",
+  "title": "Woohoo",
+  "category": "Celebrations",
+  "duration": 1.8333333730697632,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "27-0final-wow-2",
+  "name": "0Final/Wow_2",
+  "title": "Wow 2",
+  "category": "Expressions",
+  "duration": 2.9000000953674316,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

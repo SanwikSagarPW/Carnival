@@ -1,0 +1,11 @@
+{
+  "id": "16-0final-vocal-wow-you-re-a-true-ice",
+  "name": "0Final/Vocal/Wow, you're a true ice",
+  "title": "Wow, you're a true ice",
+  "category": "Dialogue",
+  "duration": 4.366666793823242,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

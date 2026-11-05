@@ -1,0 +1,11 @@
+{
+  "id": "48-sequence-4-sleep-wakeup",
+  "name": "Sequence/4/Sleep_Wakeup",
+  "title": "Sleep Wakeup",
+  "category": "Rest & interactions",
+  "duration": 5.1666669845581055,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

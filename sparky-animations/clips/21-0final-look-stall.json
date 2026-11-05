@@ -1,0 +1,11 @@
+{
+  "id": "21-0final-look-stall",
+  "name": "0Final/Look_Stall",
+  "title": "Look Stall",
+  "category": "Activities",
+  "duration": 4.400000095367432,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

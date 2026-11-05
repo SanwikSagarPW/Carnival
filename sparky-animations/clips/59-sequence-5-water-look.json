@@ -1,0 +1,11 @@
+{
+  "id": "59-sequence-5-water-look",
+  "name": "Sequence/5/Water_Look",
+  "title": "Water Look",
+  "category": "Activities",
+  "duration": 3.3000001907348633,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

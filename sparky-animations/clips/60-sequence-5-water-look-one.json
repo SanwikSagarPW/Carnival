@@ -1,0 +1,11 @@
+{
+  "id": "60-sequence-5-water-look-one",
+  "name": "Sequence/5/Water_Look_One",
+  "title": "Water Look One",
+  "category": "Activities",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

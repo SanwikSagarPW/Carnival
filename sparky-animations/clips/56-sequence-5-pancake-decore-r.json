@@ -1,0 +1,11 @@
+{
+  "id": "56-sequence-5-pancake-decore-r",
+  "name": "Sequence/5/Pancake_Decore_R",
+  "title": "Pancake Decore R",
+  "category": "Activities",
+  "duration": 3.500000238418579,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

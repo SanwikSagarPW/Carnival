@@ -1,5 +1,5 @@
 {
-  "description": "Forty individually cropped transparent PNG objects per activity.",
+  "description": "Transparent WebP objects with original pixel dimensions. Original PNG atlases remain in assets/catalog.",
   "schemaVersion": 1,
   "atlases": [
     {

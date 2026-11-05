@@ -1,0 +1,11 @@
+{
+  "id": "40-sequence-1-lu-teeth-pain-one",
+  "name": "Sequence/1/Lu_Teeth_Pain_One",
+  "title": "Lu Teeth Pain One",
+  "category": "Expressions",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

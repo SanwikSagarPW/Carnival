@@ -1,0 +1,11 @@
+{
+  "id": "06-0final-idle-idle-eb",
+  "name": "0Final/Idle/Idle_EB",
+  "title": "Idle EB",
+  "category": "Idle & looks",
+  "duration": 1.3333333730697632,
+  "kind": "animation",
+  "loop": true,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

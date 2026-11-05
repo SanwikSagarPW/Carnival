@@ -1,0 +1,11 @@
+{
+  "id": "49-sequence-4-sleep-wakeup-one",
+  "name": "Sequence/4/Sleep_Wakeup_One",
+  "title": "Sleep Wakeup One",
+  "category": "Rest & interactions",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

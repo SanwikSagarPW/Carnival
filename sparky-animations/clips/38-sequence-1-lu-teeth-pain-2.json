@@ -1,0 +1,11 @@
+{
+  "id": "38-sequence-1-lu-teeth-pain-2",
+  "name": "Sequence/1/Lu_Teeth_Pain_2",
+  "title": "Lu Teeth Pain 2",
+  "category": "Expressions",
+  "duration": 0.6666666865348816,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

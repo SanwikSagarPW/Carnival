@@ -1,0 +1,11 @@
+{
+  "id": "46-sequence-4-brush-one",
+  "name": "Sequence/4/Brush_One",
+  "title": "Brush One",
+  "category": "Activities",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

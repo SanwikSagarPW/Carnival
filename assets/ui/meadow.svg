@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#b9e5f4"/><stop offset="1" stop-color="#edf7ed"/></linearGradient>
+    <linearGradient id="grass" x2="0" y2="1"><stop stop-color="#afd579"/><stop offset="1" stop-color="#7dbb67"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#fff8ce" stop-opacity=".55"/><stop offset="1" stop-color="#fff8ce" stop-opacity="0"/></radialGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1280v720H0z"/>
+  <ellipse cx="170" cy="160" rx="310" ry="260" fill="url(#light)"/>
+  <path fill="#bbd9bc" d="M0 445Q150 321 326 426T710 405T1050 422T1280 376V720H0z"/>
+  <path fill="#a8cf98" d="M0 488Q216 393 414 476T836 450T1280 468V720H0z"/>
+  <g opacity=".55" fill="#7ebba0">
+    <path d="M26 487V393q-46 0-26-41-18-38 24-46 39-32 62 2 44 3 29 44 23 41-29 45v90z"/>
+    <path d="M1193 505V385q-55 0-40-41-20-30 16-50 22-48 56-20 49-2 46 39 30 40-31 72v120z"/>
+  </g>
+  <path fill="url(#grass)" d="M0 557Q230 474 535 537T1280 516V720H0z"/>
+  <path fill="#9ecb72" opacity=".55" d="M0 629Q260 566 610 621T1280 580v140H0z"/>
+  <g fill="#78ad60" opacity=".35"><path d="m68 660-7-18 12 8 9-17-4 26zm1162-63-4-19 11 8 6-15 1 25zM263 699l-8-17 13 8 10-17-4 26z"/></g>
+</svg>

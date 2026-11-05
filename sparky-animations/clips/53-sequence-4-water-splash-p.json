@@ -1,0 +1,11 @@
+{
+  "id": "53-sequence-4-water-splash-p",
+  "name": "Sequence/4/Water_Splash_P",
+  "title": "Water Splash P",
+  "category": "Activities",
+  "duration": 0.6666666865348816,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

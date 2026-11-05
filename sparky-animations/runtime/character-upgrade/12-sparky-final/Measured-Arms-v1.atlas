@@ -1,0 +1,13 @@
+Measured-UpperArm-v1.webp
+size:1024,1536
+filter:Linear,Linear
+pma:false
+UpperArm
+bounds:0,0,1024,1536
+
+Forearm-v1.webp
+size:1254,1254
+filter:Linear,Linear
+pma:false
+Forearm
+bounds:0,0,1254,1254

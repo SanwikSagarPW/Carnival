@@ -1,0 +1,11 @@
+{
+  "id": "41-sequence-3-lu-pinata-hit",
+  "name": "Sequence/3/Lu_Pinata_Hit",
+  "title": "Lu Pinata Hit",
+  "category": "Activities",
+  "duration": 1.100000023841858,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

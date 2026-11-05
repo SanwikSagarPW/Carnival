@@ -1,0 +1,11 @@
+{
+  "id": "07-0final-idle-lookaround-wow",
+  "name": "0Final/Idle/Lookaround_Wow",
+  "title": "Lookaround Wow",
+  "category": "Idle & looks",
+  "duration": 3.266666889190674,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "19-0final-vocal-yum-i-can-almost-taste-it3",
+  "name": "0Final/Vocal/Yum I can almost taste it3",
+  "title": "Yum I can almost taste it3",
+  "category": "Dialogue",
+  "duration": 4.9666666984558105,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "04-0final-appreciation-yeahh-1",
+  "name": "0Final/Appreciation/Yeahh_1",
+  "title": "Yeahh 1",
+  "category": "Celebrations",
+  "duration": 1.2000000476837158,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

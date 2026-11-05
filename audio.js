@@ -22,6 +22,7 @@ const MELODY = [
 ];
 
 let enabled = true;
+let paused = false;
 let unlocked = false;
 let ctx = null;
 let master = null;
@@ -61,11 +62,19 @@ function ensureVoice() {
   voice = new Audio();
   voice.preload = 'auto';
   voice.addEventListener('ended', () => finish(current?.ticket, true));
-  voice.addEventListener('error', () => finish(current?.ticket, true));
+  voice.addEventListener('error', () => {
+    console.warn('Dialogue could not load.', current?.src, voice.error);
+    finish(current?.ticket, true);
+  });
   voice.addEventListener('stalled', () => {
     // A clip that can't load must not leave the game waiting for it.
     const t = current?.ticket;
-    setTimeout(() => { if (current?.ticket === t && voice.readyState < 3) finish(t, true); }, 2500);
+    setTimeout(() => {
+      if (!paused && current?.ticket === t && voice.readyState < 3) {
+        console.warn('Dialogue stalled.', current.src);
+        finish(t, true);
+      }
+    }, 2500);
   });
   return voice;
 }
@@ -94,6 +103,38 @@ export function unlock() {
 export function isEnabled() { return enabled; }
 export function isSpeaking() { return !!current; }
 
+export function setPaused(value) {
+  if (paused === value) return;
+  paused = value;
+  if (paused) {
+    clearTimeout(musicTimer);
+    if (current) {
+      current.remaining = Math.max(0, current.deadline - performance.now());
+      clearTimeout(current.watchdog);
+      voice?.pause();
+    }
+    ctx?.suspend().catch((error) => console.warn('Unable to suspend audio.', error));
+  } else {
+    if (unlocked) ctx?.resume().catch((error) => console.warn('Unable to resume audio.', error));
+    if (current && voice) {
+      const t = current.ticket;
+      current.deadline = performance.now() + current.remaining;
+      current.watchdog = setTimeout(() => finish(t, true), current.remaining);
+      voice.play().catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.warn('Unable to resume dialogue.', error);
+          finish(t, true);
+        }
+      });
+    } else if (pending && unlocked) {
+      const next = pending;
+      pending = null;
+      speak(next.src, next.opts);
+    }
+    if (musicWanted) startMusic();
+  }
+}
+
 export function setEnabled(on) {
   enabled = on;
   if (master && ctx) master.gain.setTargetAtTime(on ? MASTER_VOLUME : 0, ctx.currentTime, 0.02);
@@ -112,6 +153,7 @@ function finish(t, natural) {
   const done = current;
   current = null;
   clearTimeout(done.watchdog);
+  voice?.pause();
   duck(false);
   if (natural && done.onEnd) {
     try { done.onEnd(); } catch (e) { console.error(e); }
@@ -128,7 +170,7 @@ export function speak(src, opts = {}) {
   if (!src) return;
   if (opts.ifIdle && current) return;
   if (!enabled) return;
-  if (!unlocked) { pending = { src, opts }; return; }
+  if (!unlocked || paused) { pending = { src, opts }; return; }
 
   const myTicket = ++ticket;
   stopSpeech(false);
@@ -142,13 +184,17 @@ export function speak(src, opts = {}) {
       v.currentTime = 0;
       duck(true);
       const p = v.play();
-      p?.catch((err) => {
+      p?.then(() => { if (paused && current?.ticket === myTicket) v.pause(); }).catch((err) => {
         if (err?.name === 'AbortError') return; // replaced by a newer clip
+        console.warn('Unable to play dialogue.', src, err);
         finish(myTicket, true);
       });
       // No clip is longer than a minute; never wait forever.
-      current.watchdog = setTimeout(() => finish(myTicket, true), 60000);
-    } catch {
+      current.remaining = 60000;
+      current.deadline = performance.now() + current.remaining;
+      current.watchdog = setTimeout(() => finish(myTicket, true), current.remaining);
+    } catch (error) {
+      console.warn('Dialogue playback failed.', src, error);
       finish(myTicket, true);
     }
   };
@@ -181,10 +227,17 @@ export function pick(list) {
 
 /** Warm the HTTP cache so the next clip starts instantly. */
 export function warm(list = []) {
+  if (navigator.connection?.saveData || /(^|-)[23]g$/.test(navigator.connection?.effectiveType || '')) return;
   list.forEach((src) => {
     if (!src || warmed.has(src)) return;
     warmed.add(src);
-    fetch(src).catch(() => warmed.delete(src));
+    fetch(src, { priority: 'low' }).then(async (response) => {
+      if (!response.ok) throw new Error(`Dialogue HTTP ${response.status}`);
+      await response.arrayBuffer();
+    }).catch((error) => {
+      warmed.delete(src);
+      console.warn('Dialogue prefetch failed; playback will retry.', src, error);
+    });
   });
 }
 
@@ -293,7 +346,7 @@ export function sfx(kind = 'tap', n = 0) {
 
 function stepMusic() {
   clearTimeout(musicTimer);
-  if (!enabled || !musicWanted || document.hidden) return;
+  if (!enabled || !musicWanted || paused || document.hidden) return;
   const note = MELODY[musicStep++ % MELODY.length];
   if (note && ctx?.state === 'running') {
     tone(note, { dur: 0.28, vol: MUSIC_VOLUME, bus: musicBus, overtone: 0.35 });
@@ -303,7 +356,7 @@ function stepMusic() {
 
 export function startMusic() {
   musicWanted = true;
-  if (!unlocked || !enabled) return;
+  if (!unlocked || !enabled || paused) return;
   ensureContext();
   clearTimeout(musicTimer);
   musicTimer = setTimeout(stepMusic, 600);
@@ -316,21 +369,9 @@ export function stopMusic() {
 
 /* ---------- lifecycle ---------- */
 
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    // Don't talk to an empty room, and don't leave a clip half-played forever.
-    stopSpeech();
-    ctx?.suspend().catch(() => {});
-    clearTimeout(musicTimer);
-  } else {
-    ctx?.resume().catch(() => {});
-    if (musicWanted) startMusic();
-  }
-});
-
 // iOS/Safari can drop the context after a call or lock screen.
 ['pointerdown', 'keydown'].forEach((ev) =>
   document.addEventListener(ev, () => {
-    if (ctx?.state === 'suspended' || ctx?.state === 'interrupted') ctx.resume().catch(() => {});
+    if (!paused && (ctx?.state === 'suspended' || ctx?.state === 'interrupted')) ctx.resume().catch(() => {});
   }, { passive: true })
 );

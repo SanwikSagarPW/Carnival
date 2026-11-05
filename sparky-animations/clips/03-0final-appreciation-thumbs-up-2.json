@@ -1,0 +1,11 @@
+{
+  "id": "03-0final-appreciation-thumbs-up-2",
+  "name": "0Final/Appreciation/Thumbs_Up_2",
+  "title": "Thumbs Up 2",
+  "category": "Celebrations",
+  "duration": 1,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "42-sequence-3-lu-pinata-hit-one",
+  "name": "Sequence/3/Lu_Pinata_Hit_One",
+  "title": "Lu Pinata Hit One",
+  "category": "Activities",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

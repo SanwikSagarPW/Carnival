@@ -1,0 +1,11 @@
+{
+  "id": "24-0final-n-front-run-r",
+  "name": "0Final/N_Front_Run_R",
+  "title": "N Front Run R",
+  "category": "Movement",
+  "duration": 0.5,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

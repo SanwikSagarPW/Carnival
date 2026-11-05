@@ -1,0 +1,11 @@
+{
+  "id": "29-sequence-1-eat-candy-1",
+  "name": "Sequence/1/Eat_Candy_1",
+  "title": "Eat Candy 1",
+  "category": "Activities",
+  "duration": 1.2666667699813843,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

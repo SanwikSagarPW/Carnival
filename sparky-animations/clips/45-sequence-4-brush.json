@@ -1,0 +1,11 @@
+{
+  "id": "45-sequence-4-brush",
+  "name": "Sequence/4/Brush",
+  "title": "Brush",
+  "category": "Activities",
+  "duration": 1.6666667461395264,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

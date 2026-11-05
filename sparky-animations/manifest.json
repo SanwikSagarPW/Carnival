@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 3,
+  "title": "Sparky selected animation pack",
+  "sourceManifest": "runtime/character-upgrade/06-lucas-construction/manifest.json",
+  "animations": [
+    {
+      "id": "01-0final-appreciation-clapping",
+      "name": "0Final/Appreciation/Clapping",
+      "title": "Clapping",
+      "category": "Celebrations",
+      "duration": 2.133333444595337,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "02-0final-appreciation-hurray",
+      "name": "0Final/Appreciation/Hurray",
+      "title": "Hurray",
+      "category": "Celebrations",
+      "duration": 2,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "03-0final-appreciation-thumbs-up-2",
+      "name": "0Final/Appreciation/Thumbs_Up_2",
+      "title": "Thumbs Up 2",
+      "category": "Celebrations",
+      "duration": 1,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "04-0final-appreciation-yeahh-1",
+      "name": "0Final/Appreciation/Yeahh_1",
+      "title": "Yeahh 1",
+      "category": "Celebrations",
+      "duration": 1.2000000476837158,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "05-0final-idle-idle",
+      "name": "0Final/Idle/Idle",
+      "title": "Idle",
+      "category": "Idle & looks",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "06-0final-idle-idle-eb",
+      "name": "0Final/Idle/Idle_EB",
+      "title": "Idle EB",
+      "category": "Idle & looks",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "07-0final-idle-lookaround-wow",
+      "name": "0Final/Idle/Lookaround_Wow",
+      "title": "Lookaround Wow",
+      "category": "Idle & looks",
+      "duration": 3.266666889190674,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "08-0final-vocal-every-scoop-you-make-is-a",
+      "name": "0Final/Vocal/Every scoop you make is a",
+      "title": "Every scoop you make is a",
+      "category": "Dialogue",
+      "duration": 3.6000001430511475,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "09-0final-vocal-great-choice-how-about",
+      "name": "0Final/Vocal/Great choice! How about",
+      "title": "Great choice! How about",
+      "category": "Dialogue",
+      "duration": 4.366666793823242,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "10-0final-vocal-i-can-t-wait-to-taste-it",
+      "name": "0Final/Vocal/I can't wait to taste it",
+      "title": "I can't wait to taste it",
+      "category": "Dialogue",
+      "duration": 2.7333335876464844,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "11-0final-vocal-i-wonder-what-magical-flavor",
+      "name": "0Final/Vocal/I wonder what magical flavor",
+      "title": "I wonder what magical flavor",
+      "category": "Dialogue",
+      "duration": 4.600000381469727,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "12-0final-vocal-let-s-make-this-ice-cream",
+      "name": "0Final/Vocal/Let's make this ice cream",
+      "title": "Let's make this ice cream",
+      "category": "Dialogue",
+      "duration": 4.300000190734863,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "13-0final-vocal-let-s-add-some-sprinkles-",
+      "name": "0Final/Vocal/Let’s add some sprinkles!",
+      "title": "Let’s add some sprinkles!",
+      "category": "Dialogue",
+      "duration": 3.4000000953674316,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "14-0final-vocal-thank-you-for-making-this-for-me",
+      "name": "0Final/Vocal/Thank you for making this for me",
+      "title": "Thank you for making this for me",
+      "category": "Dialogue",
+      "duration": 2.3333334922790527,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "15-0final-vocal-what-a-fantastic-flavor",
+      "name": "0Final/Vocal/What a fantastic flavor",
+      "title": "What a fantastic flavor",
+      "category": "Dialogue",
+      "duration": 4.233333587646484,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "16-0final-vocal-wow-you-re-a-true-ice",
+      "name": "0Final/Vocal/Wow, you're a true ice",
+      "title": "Wow, you're a true ice",
+      "category": "Dialogue",
+      "duration": 4.366666793823242,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "17-0final-vocal-you-re-doing-amazing-this",
+      "name": "0Final/Vocal/You're doing amazing! This",
+      "title": "You're doing amazing! This",
+      "category": "Dialogue",
+      "duration": 6.40000057220459,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "18-0final-vocal-your-ice-cream-is-looking",
+      "name": "0Final/Vocal/Your ice cream is looking",
+      "title": "Your ice cream is looking",
+      "category": "Dialogue",
+      "duration": 6.100000381469727,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "19-0final-vocal-yum-i-can-almost-taste-it3",
+      "name": "0Final/Vocal/Yum I can almost taste it3",
+      "title": "Yum I can almost taste it3",
+      "category": "Dialogue",
+      "duration": 4.9666666984558105,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "20-0final-eat-icecream",
+      "name": "0Final/Eat_Icecream",
+      "title": "Eat Icecream",
+      "category": "Activities",
+      "duration": 10.933334350585938,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "21-0final-look-stall",
+      "name": "0Final/Look_Stall",
+      "title": "Look Stall",
+      "category": "Activities",
+      "duration": 4.400000095367432,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "22-0final-n-front-run",
+      "name": "0Final/N_Front_Run",
+      "title": "N Front Run",
+      "category": "Movement",
+      "duration": 0.6666666865348816,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "23-0final-n-front-run-p",
+      "name": "0Final/N_Front_Run_P",
+      "title": "N Front Run P",
+      "category": "Movement",
+      "duration": 1.0666667222976685,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "24-0final-n-front-run-r",
+      "name": "0Final/N_Front_Run_R",
+      "title": "N Front Run R",
+      "category": "Movement",
+      "duration": 0.5,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "25-0final-super-happy",
+      "name": "0Final/Super_Happy",
+      "title": "Super Happy",
+      "category": "Celebrations",
+      "duration": 3.700000286102295,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "26-0final-woohoo",
+      "name": "0Final/Woohoo",
+      "title": "Woohoo",
+      "category": "Celebrations",
+      "duration": 1.8333333730697632,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "27-0final-wow-2",
+      "name": "0Final/Wow_2",
+      "title": "Wow 2",
+      "category": "Expressions",
+      "duration": 2.9000000953674316,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "28-0final-yummy-2",
+      "name": "0Final/Yummy_2",
+      "title": "Yummy 2",
+      "category": "Expressions",
+      "duration": 3.200000286102295,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "29-sequence-1-eat-candy-1",
+      "name": "Sequence/1/Eat_Candy_1",
+      "title": "Eat Candy 1",
+      "category": "Activities",
+      "duration": 1.2666667699813843,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "30-sequence-1-eat-candy-2",
+      "name": "Sequence/1/Eat_Candy_2",
+      "title": "Eat Candy 2",
+      "category": "Activities",
+      "duration": 3.566666841506958,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "31-sequence-1-eat-candy-one",
+      "name": "Sequence/1/Eat_Candy_One",
+      "title": "Eat Candy One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "32-sequence-1-lookaround-sad",
+      "name": "Sequence/1/Lookaround_Sad",
+      "title": "Lookaround Sad",
+      "category": "Expressions",
+      "duration": 2.6666667461395264,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "33-sequence-1-lookaround-sad-one",
+      "name": "Sequence/1/Lookaround_Sad_One",
+      "title": "Lookaround Sad One",
+      "category": "Expressions",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "34-sequence-1-look-dr-happy",
+      "name": "Sequence/1/Look_Dr_Happy",
+      "title": "Look Dr Happy",
+      "category": "Expressions",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "35-sequence-1-look-dr-happy-loop",
+      "name": "Sequence/1/Look_Dr_Happy_Loop",
+      "title": "Look Dr Happy Loop",
+      "category": "Expressions",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "36-sequence-1-look-dr-happy-loop-eb",
+      "name": "Sequence/1/Look_Dr_Happy_Loop_EB",
+      "title": "Look Dr Happy Loop EB",
+      "category": "Expressions",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "37-sequence-1-lu-teeth-pain-1",
+      "name": "Sequence/1/Lu_Teeth_Pain_1",
+      "title": "Lu Teeth Pain 1",
+      "category": "Expressions",
+      "duration": 2,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "38-sequence-1-lu-teeth-pain-2",
+      "name": "Sequence/1/Lu_Teeth_Pain_2",
+      "title": "Lu Teeth Pain 2",
+      "category": "Expressions",
+      "duration": 0.6666666865348816,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "39-sequence-1-lu-teeth-pain-2-eb",
+      "name": "Sequence/1/Lu_Teeth_Pain_2_EB",
+      "title": "Lu Teeth Pain 2 EB",
+      "category": "Expressions",
+      "duration": 0.6666666865348816,
+      "kind": "animation",
+      "loop": true
+    },
+    {
+      "id": "40-sequence-1-lu-teeth-pain-one",
+      "name": "Sequence/1/Lu_Teeth_Pain_One",
+      "title": "Lu Teeth Pain One",
+      "category": "Expressions",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "41-sequence-3-lu-pinata-hit",
+      "name": "Sequence/3/Lu_Pinata_Hit",
+      "title": "Lu Pinata Hit",
+      "category": "Activities",
+      "duration": 1.100000023841858,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "42-sequence-3-lu-pinata-hit-one",
+      "name": "Sequence/3/Lu_Pinata_Hit_One",
+      "title": "Lu Pinata Hit One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "43-sequence-3-lu-pinata-hit-p",
+      "name": "Sequence/3/Lu_Pinata_Hit_P",
+      "title": "Lu Pinata Hit P",
+      "category": "Activities",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "44-sequence-3-lu-pinata-hit-r",
+      "name": "Sequence/3/Lu_Pinata_Hit_R",
+      "title": "Lu Pinata Hit R",
+      "category": "Activities",
+      "duration": 3.1666667461395264,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "45-sequence-4-brush",
+      "name": "Sequence/4/Brush",
+      "title": "Brush",
+      "category": "Activities",
+      "duration": 1.6666667461395264,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "46-sequence-4-brush-one",
+      "name": "Sequence/4/Brush_One",
+      "title": "Brush One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "47-sequence-4-sleep",
+      "name": "Sequence/4/Sleep",
+      "title": "Sleep",
+      "category": "Rest & interactions",
+      "duration": 3.3333334922790527,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "48-sequence-4-sleep-wakeup",
+      "name": "Sequence/4/Sleep_Wakeup",
+      "title": "Sleep Wakeup",
+      "category": "Rest & interactions",
+      "duration": 5.1666669845581055,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "49-sequence-4-sleep-wakeup-one",
+      "name": "Sequence/4/Sleep_Wakeup_One",
+      "title": "Sleep Wakeup One",
+      "category": "Rest & interactions",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "50-sequence-4-water-look",
+      "name": "Sequence/4/Water_Look",
+      "title": "Water Look",
+      "category": "Activities",
+      "duration": 2.6000001430511475,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "51-sequence-4-water-splash",
+      "name": "Sequence/4/Water_Splash",
+      "title": "Water Splash",
+      "category": "Activities",
+      "duration": 0.6666666865348816,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "52-sequence-4-water-splash-one",
+      "name": "Sequence/4/Water_Splash_One",
+      "title": "Water Splash One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "53-sequence-4-water-splash-p",
+      "name": "Sequence/4/Water_Splash_P",
+      "title": "Water Splash P",
+      "category": "Activities",
+      "duration": 0.6666666865348816,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "54-sequence-5-pancake-decore",
+      "name": "Sequence/5/Pancake_Decore",
+      "title": "Pancake Decore",
+      "category": "Activities",
+      "duration": 2.2333333492279053,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "55-sequence-5-pancake-decore-one",
+      "name": "Sequence/5/Pancake_Decore_One",
+      "title": "Pancake Decore One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "56-sequence-5-pancake-decore-r",
+      "name": "Sequence/5/Pancake_Decore_R",
+      "title": "Pancake Decore R",
+      "category": "Activities",
+      "duration": 3.500000238418579,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "57-sequence-5-pancake-mix",
+      "name": "Sequence/5/Pancake_Mix",
+      "title": "Pancake Mix",
+      "category": "Activities",
+      "duration": 1.3333333730697632,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "58-sequence-5-pancake-mix-one",
+      "name": "Sequence/5/Pancake_Mix_One",
+      "title": "Pancake Mix One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    },
+    {
+      "id": "59-sequence-5-water-look",
+      "name": "Sequence/5/Water_Look",
+      "title": "Water Look",
+      "category": "Activities",
+      "duration": 3.3000001907348633,
+      "kind": "animation",
+      "loop": false
+    },
+    {
+      "id": "60-sequence-5-water-look-one",
+      "name": "Sequence/5/Water_Look_One",
+      "title": "Water Look One",
+      "category": "Activities",
+      "duration": 0,
+      "kind": "pose",
+      "loop": false
+    }
+  ]
+}

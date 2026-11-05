@@ -1,0 +1,11 @@
+{
+  "id": "12-0final-vocal-let-s-make-this-ice-cream",
+  "name": "0Final/Vocal/Let's make this ice cream",
+  "title": "Let's make this ice cream",
+  "category": "Dialogue",
+  "duration": 4.300000190734863,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

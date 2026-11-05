@@ -1,0 +1,1589 @@
+{
+  "Torso": {
+    "bounds": [
+      -44,
+      109.75,
+      44,
+      193.40625
+    ],
+    "pixels": [
+      1024,
+      967
+    ],
+    "atlas": [
+      4,
+      4,
+      1024,
+      967
+    ],
+    "source": "new artwork on refined reference-shaped torso guide"
+  },
+  "Shorts": {
+    "bounds": [
+      -45,
+      78.015625,
+      45,
+      124.5
+    ],
+    "pixels": [
+      289,
+      194
+    ],
+    "atlas": [
+      1036,
+      4,
+      289,
+      194
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Foot_L": {
+    "bounds": [
+      -80.05078125,
+      1.375,
+      -2.836181640625,
+      60
+    ],
+    "pixels": [
+      271,
+      221
+    ],
+    "atlas": [
+      1333,
+      4,
+      271,
+      221
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Foot_R": {
+    "bounds": [
+      2.836181640625,
+      1.375,
+      80.05078125,
+      60
+    ],
+    "pixels": [
+      271,
+      221
+    ],
+    "atlas": [
+      1612,
+      4,
+      271,
+      221
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Sleeve_L": {
+    "bounds": [
+      -57.68968144782398,
+      143.3002547043518,
+      -13.664557267244877,
+      191.97784217833754
+    ],
+    "pixels": [
+      623,
+      696
+    ],
+    "atlas": [
+      1891,
+      4,
+      623,
+      696
+    ],
+    "source": "flat open cuff sleeve painted on fitted mesh guide; feather restricted to torso-covered root"
+  },
+  "Sleeve_R": {
+    "bounds": [
+      14.656701184449322,
+      143.3329113353995,
+      58.78105085274845,
+      191.96375481626808
+    ],
+    "pixels": [
+      624,
+      696
+    ],
+    "atlas": [
+      2522,
+      4,
+      624,
+      696
+    ],
+    "source": "flat open cuff sleeve painted on fitted mesh guide; feather restricted to torso-covered root"
+  },
+  "Arm_L": {
+    "bounds": [
+      -75.48649535106672,
+      112.51350464893326,
+      -16.50140446221429,
+      188.49859553778572
+    ],
+    "pixels": [
+      217,
+      262
+    ],
+    "atlas": [
+      3154,
+      4,
+      217,
+      262
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Arm_R": {
+    "bounds": [
+      17.50060244424511,
+      112.51682860073852,
+      76.48317139926148,
+      188.49939755575488
+    ],
+    "pixels": [
+      217,
+      262
+    ],
+    "atlas": [
+      3379,
+      4,
+      217,
+      262
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Hand_L": {
+    "bounds": [
+      -87.5,
+      76,
+      -43,
+      128.5
+    ],
+    "pixels": [
+      231,
+      254
+    ],
+    "atlas": [
+      3604,
+      4,
+      231,
+      254
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Hand_R": {
+    "bounds": [
+      43.5,
+      76.375,
+      87.75,
+      128.75
+    ],
+    "pixels": [
+      226,
+      254
+    ],
+    "atlas": [
+      3843,
+      4,
+      226,
+      254
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Leg_L": {
+    "bounds": [
+      -44.86370410442536,
+      42.136295895574634,
+      -14.1400650472134,
+      101.8599349527866
+    ],
+    "pixels": [
+      171,
+      271
+    ],
+    "atlas": [
+      4,
+      979,
+      171,
+      271
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Leg_R": {
+    "bounds": [
+      13.127945522521705,
+      42.124289252435986,
+      44.87571074756402,
+      101.8720544774783
+    ],
+    "pixels": [
+      170,
+      272
+    ],
+    "atlas": [
+      183,
+      979,
+      170,
+      272
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Sock_L": {
+    "bounds": [
+      -45.963292387221365,
+      44.036707612778635,
+      -18.036707612778635,
+      68.96329238722137
+    ],
+    "pixels": [
+      264,
+      217
+    ],
+    "atlas": [
+      361,
+      979,
+      264,
+      217
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Sock_R": {
+    "bounds": [
+      18.036707612778635,
+      44.036707612778635,
+      45.963292387221365,
+      68.96329238722137
+    ],
+    "pixels": [
+      263,
+      218
+    ],
+    "atlas": [
+      633,
+      979,
+      263,
+      218
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Neck": {
+    "bounds": [
+      -28,
+      170,
+      30,
+      202
+    ],
+    "pixels": [
+      271,
+      153
+    ],
+    "atlas": [
+      904,
+      979,
+      271,
+      153
+    ],
+    "source": "new generated mesh-guide paint"
+  },
+  "Head": {
+    "bounds": [
+      -118,
+      192,
+      118,
+      403
+    ],
+    "pixels": [
+      1164,
+      1050
+    ],
+    "atlas": [
+      1183,
+      979,
+      1164,
+      1050
+    ],
+    "source": "guide-matched generated featureless flame artwork, iteration 4",
+    "tint": [
+      1,
+      0.975,
+      1
+    ]
+  },
+  "EyeWhite_L": {
+    "bounds": [
+      -64,
+      222,
+      -14,
+      271
+    ],
+    "pixels": [
+      293,
+      252
+    ],
+    "atlas": [
+      2355,
+      979,
+      293,
+      252
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "EyeWhite_R": {
+    "bounds": [
+      19,
+      222,
+      68,
+      271
+    ],
+    "pixels": [
+      293,
+      252
+    ],
+    "atlas": [
+      2656,
+      979,
+      293,
+      252
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Iris_L": {
+    "bounds": [
+      -48.5,
+      224.5,
+      -15.5,
+      265.5
+    ],
+    "pixels": [
+      197,
+      208
+    ],
+    "atlas": [
+      2957,
+      979,
+      197,
+      208
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Iris_R": {
+    "bounds": [
+      20.5,
+      224.5,
+      53.5,
+      265.5
+    ],
+    "pixels": [
+      194,
+      208
+    ],
+    "atlas": [
+      3162,
+      979,
+      194,
+      208
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "EyeClosed_L": {
+    "bounds": [
+      -61,
+      232,
+      -14,
+      247
+    ],
+    "pixels": [
+      304,
+      83
+    ],
+    "atlas": [
+      3364,
+      979,
+      304,
+      83
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "EyeClosed_R": {
+    "bounds": [
+      20,
+      232,
+      66,
+      247
+    ],
+    "pixels": [
+      302,
+      83
+    ],
+    "atlas": [
+      3676,
+      979,
+      302,
+      83
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "EyeHalf_L": {
+    "bounds": [
+      -63,
+      222,
+      -13,
+      271
+    ],
+    "pixels": [
+      320,
+      226
+    ],
+    "atlas": [
+      4,
+      2037,
+      320,
+      226
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "EyeHalf_R": {
+    "bounds": [
+      20,
+      222,
+      69,
+      271
+    ],
+    "pixels": [
+      315,
+      226
+    ],
+    "atlas": [
+      332,
+      2037,
+      315,
+      226
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Brow_L": {
+    "bounds": [
+      -54,
+      273,
+      -22,
+      288
+    ],
+    "pixels": [
+      269,
+      118
+    ],
+    "atlas": [
+      655,
+      2037,
+      269,
+      118
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Brow_R": {
+    "bounds": [
+      27,
+      273,
+      58,
+      288
+    ],
+    "pixels": [
+      270,
+      118
+    ],
+    "atlas": [
+      932,
+      2037,
+      270,
+      118
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Nose": {
+    "bounds": [
+      -7,
+      225,
+      12,
+      237
+    ],
+    "pixels": [
+      143,
+      91
+    ],
+    "atlas": [
+      1210,
+      2037,
+      143,
+      91
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Smile": {
+    "bounds": [
+      -18,
+      212,
+      23,
+      222
+    ],
+    "pixels": [
+      284,
+      80
+    ],
+    "atlas": [
+      1361,
+      2037,
+      284,
+      80
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Happy": {
+    "bounds": [
+      -17.0,
+      195,
+      22.0,
+      222
+    ],
+    "pixels": [
+      337,
+      138
+    ],
+    "atlas": [
+      1653,
+      2037,
+      337,
+      138
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Teeth": {
+    "bounds": [
+      -17.0,
+      203,
+      22.0,
+      222
+    ],
+    "pixels": [
+      352,
+      105
+    ],
+    "atlas": [
+      1998,
+      2037,
+      352,
+      105
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Talk": {
+    "bounds": [
+      -17.0,
+      195,
+      22.0,
+      222
+    ],
+    "pixels": [
+      303,
+      122
+    ],
+    "atlas": [
+      2358,
+      2037,
+      303,
+      122
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_A": {
+    "bounds": [
+      -7.5,
+      195,
+      12.5,
+      222
+    ],
+    "pixels": [
+      174,
+      201
+    ],
+    "atlas": [
+      2669,
+      2037,
+      174,
+      201
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_O": {
+    "bounds": [
+      -7.5,
+      195,
+      12.5,
+      222
+    ],
+    "pixels": [
+      134,
+      140
+    ],
+    "atlas": [
+      2851,
+      2037,
+      134,
+      140
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_U": {
+    "bounds": [
+      -7.5,
+      195,
+      12.5,
+      222
+    ],
+    "pixels": [
+      170,
+      105
+    ],
+    "atlas": [
+      2993,
+      2037,
+      170,
+      105
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_FV": {
+    "bounds": [
+      -17.0,
+      203,
+      22.0,
+      222
+    ],
+    "pixels": [
+      303,
+      76
+    ],
+    "atlas": [
+      3171,
+      2037,
+      303,
+      76
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Sad": {
+    "bounds": [
+      -17.0,
+      203,
+      22.0,
+      222
+    ],
+    "pixels": [
+      257,
+      41
+    ],
+    "atlas": [
+      3482,
+      2037,
+      257,
+      41
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "Mouth_Laugh": {
+    "bounds": [
+      -17.0,
+      195,
+      22.0,
+      222
+    ],
+    "pixels": [
+      284,
+      164
+    ],
+    "atlas": [
+      3747,
+      2037,
+      284,
+      164
+    ],
+    "source": "preserved separate facial artwork; alpha halo removed"
+  },
+  "NativeHand00": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      116,
+      220
+    ],
+    "atlas": [
+      4,
+      2271,
+      116,
+      220
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_R"
+  },
+  "NativeHand01": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      176,
+      288
+    ],
+    "atlas": [
+      232,
+      2271,
+      176,
+      288
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Thumb"
+  },
+  "NativeHand02": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      212,
+      240
+    ],
+    "atlas": [
+      416,
+      2271,
+      212,
+      240
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Point"
+  },
+  "NativeHand03": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      176,
+      188
+    ],
+    "atlas": [
+      636,
+      2271,
+      176,
+      188
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Fist_Strong"
+  },
+  "NativeHand04": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      224,
+      228
+    ],
+    "atlas": [
+      820,
+      2271,
+      224,
+      228
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/S/Palm_3"
+  },
+  "NativeHand05": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      224,
+      228
+    ],
+    "atlas": [
+      1052,
+      2271,
+      224,
+      228
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_3"
+  },
+  "NativeHand06": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      280,
+      248
+    ],
+    "atlas": [
+      1284,
+      2271,
+      280,
+      248
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Lucas_Palm_25"
+  },
+  "NativeHand07": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      204,
+      208
+    ],
+    "atlas": [
+      1540,
+      2271,
+      204,
+      208
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_2_S"
+  },
+  "NativeHand08": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      196,
+      212
+    ],
+    "atlas": [
+      1752,
+      2271,
+      196,
+      212
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_4"
+  },
+  "NativeHand09": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      212,
+      264
+    ],
+    "atlas": [
+      1972,
+      2271,
+      212,
+      264
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/F_Point"
+  },
+  "NativeHand10": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      164,
+      248
+    ],
+    "atlas": [
+      2192,
+      2271,
+      164,
+      248
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_9"
+  },
+  "NativeHand11": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      212,
+      240
+    ],
+    "atlas": [
+      2364,
+      2271,
+      212,
+      240
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/S/Lu_Point2"
+  },
+  "NativeHand12": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      200,
+      208
+    ],
+    "atlas": [
+      2584,
+      2271,
+      200,
+      208
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_2"
+  },
+  "NativeHand13": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      200,
+      264
+    ],
+    "atlas": [
+      2792,
+      2271,
+      200,
+      264
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/S/G_Palm"
+  },
+  "NativeHand14": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      168,
+      220
+    ],
+    "atlas": [
+      3064,
+      2271,
+      168,
+      220
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Jump_1"
+  },
+  "NativeHand15": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      184,
+      216
+    ],
+    "atlas": [
+      3292,
+      2271,
+      184,
+      216
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Jump_2"
+  },
+  "NativeHand16": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      100,
+      92
+    ],
+    "atlas": [
+      3516,
+      2271,
+      100,
+      92
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Lucas_Palm_Back_Thumb"
+  },
+  "NativeHand17": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      200,
+      152
+    ],
+    "atlas": [
+      3624,
+      2271,
+      200,
+      152
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/1"
+  },
+  "NativeHand18": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      204,
+      152
+    ],
+    "atlas": [
+      3832,
+      2271,
+      204,
+      152
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/2"
+  },
+  "NativeHand19": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      196,
+      176
+    ],
+    "atlas": [
+      4,
+      2567,
+      196,
+      176
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/3"
+  },
+  "NativeHand20": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      204,
+      168
+    ],
+    "atlas": [
+      208,
+      2567,
+      204,
+      168
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/6"
+  },
+  "NativeHand21": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      192,
+      212
+    ],
+    "atlas": [
+      384,
+      2567,
+      192,
+      212
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Balloon_B"
+  },
+  "NativeHand22": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      148,
+      168
+    ],
+    "atlas": [
+      604,
+      2567,
+      148,
+      168
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Lucas_Palm"
+  },
+  "NativeHand23": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      176,
+      144
+    ],
+    "atlas": [
+      760,
+      2567,
+      176,
+      144
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Lu_Fist"
+  },
+  "NativeHand24": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      188,
+      184
+    ],
+    "atlas": [
+      912,
+      2567,
+      188,
+      184
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_1"
+  },
+  "NativeHand25": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      272,
+      260
+    ],
+    "atlas": [
+      1108,
+      2567,
+      272,
+      260
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_Hug"
+  },
+  "NativeHand26": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      116,
+      208
+    ],
+    "atlas": [
+      1376,
+      2567,
+      116,
+      208
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_R_2"
+  },
+  "NativeHand27": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      176,
+      320
+    ],
+    "atlas": [
+      1500,
+      2567,
+      176,
+      320
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/S/Thumbs_Up"
+  },
+  "NativeHand28": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      192,
+      204
+    ],
+    "atlas": [
+      1828,
+      2567,
+      192,
+      204
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Balloon_P"
+  },
+  "NativeHand29": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      196,
+      176
+    ],
+    "atlas": [
+      2040,
+      2567,
+      196,
+      176
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/4"
+  },
+  "NativeHand30": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      160,
+      184
+    ],
+    "atlas": [
+      2244,
+      2567,
+      160,
+      184
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Fist_Strong3"
+  },
+  "NativeHand31": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      260,
+      216
+    ],
+    "atlas": [
+      2412,
+      2567,
+      260,
+      216
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Ring_Throw_Palm"
+  },
+  "NativeHand32": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      160,
+      212
+    ],
+    "atlas": [
+      2680,
+      2567,
+      160,
+      212
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Fist"
+  },
+  "NativeHand33": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      252,
+      192
+    ],
+    "atlas": [
+      2848,
+      2567,
+      252,
+      192
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Kangaroo"
+  },
+  "NativeHand34": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      228,
+      224
+    ],
+    "atlas": [
+      3048,
+      2567,
+      228,
+      224
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Lucas_Palm_P"
+  },
+  "NativeHand35": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      168,
+      160
+    ],
+    "atlas": [
+      3280,
+      2567,
+      168,
+      160
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_5"
+  },
+  "NativeHand36": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      220,
+      216
+    ],
+    "atlas": [
+      3448,
+      2567,
+      220,
+      216
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Egg_Hand"
+  },
+  "NativeHand37": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      124,
+      180
+    ],
+    "atlas": [
+      3672,
+      2567,
+      124,
+      180
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Hold_Hand_1"
+  },
+  "NativeHand38": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      212,
+      152
+    ],
+    "atlas": [
+      3804,
+      2567,
+      212,
+      152
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/S/Cookie_3"
+  },
+  "NativeHand39": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      236,
+      220
+    ],
+    "atlas": [
+      4,
+      2847,
+      236,
+      220
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_Fing"
+  },
+  "NativeHand40": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      204,
+      296
+    ],
+    "atlas": [
+      248,
+      2847,
+      204,
+      296
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Palm_L_A"
+  },
+  "NativeHand41": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      100,
+      92
+    ],
+    "atlas": [
+      460,
+      2847,
+      100,
+      92
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Hold_Back"
+  },
+  "NativeHand42": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      148,
+      168
+    ],
+    "atlas": [
+      568,
+      2847,
+      148,
+      168
+    ],
+    "source": "new white glove paint on native Lucas pose/UV contract",
+    "nativePath": "Palms/Hold_front"
+  },
+  "WristCuff": {
+    "bounds": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "pixels": [
+      231,
+      56
+    ],
+    "atlas": [
+      724,
+      2847,
+      231,
+      56
+    ],
+    "source": "isolated cuff from separately generated glove artwork"
+  }
+}

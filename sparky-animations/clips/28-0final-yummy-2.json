@@ -1,0 +1,11 @@
+{
+  "id": "28-0final-yummy-2",
+  "name": "0Final/Yummy_2",
+  "title": "Yummy 2",
+  "category": "Expressions",
+  "duration": 3.200000286102295,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

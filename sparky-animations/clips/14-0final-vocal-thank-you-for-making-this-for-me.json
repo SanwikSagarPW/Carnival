@@ -1,0 +1,11 @@
+{
+  "id": "14-0final-vocal-thank-you-for-making-this-for-me",
+  "name": "0Final/Vocal/Thank you for making this for me",
+  "title": "Thank you for making this for me",
+  "category": "Dialogue",
+  "duration": 2.3333334922790527,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

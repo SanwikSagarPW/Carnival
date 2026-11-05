@@ -1,0 +1,11 @@
+{
+  "id": "33-sequence-1-lookaround-sad-one",
+  "name": "Sequence/1/Lookaround_Sad_One",
+  "title": "Lookaround Sad One",
+  "category": "Expressions",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

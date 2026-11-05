@@ -1,0 +1,11 @@
+{
+  "id": "25-0final-super-happy",
+  "name": "0Final/Super_Happy",
+  "title": "Super Happy",
+  "category": "Celebrations",
+  "duration": 3.700000286102295,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

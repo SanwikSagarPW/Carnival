@@ -1,0 +1,11 @@
+{
+  "id": "57-sequence-5-pancake-mix",
+  "name": "Sequence/5/Pancake_Mix",
+  "title": "Pancake Mix",
+  "category": "Activities",
+  "duration": 1.3333333730697632,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

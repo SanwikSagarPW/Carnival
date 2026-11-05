@@ -1,0 +1,11 @@
+{
+  "id": "09-0final-vocal-great-choice-how-about",
+  "name": "0Final/Vocal/Great choice! How about",
+  "title": "Great choice! How about",
+  "category": "Dialogue",
+  "duration": 4.366666793823242,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "52-sequence-4-water-splash-one",
+  "name": "Sequence/4/Water_Splash_One",
+  "title": "Water Splash One",
+  "category": "Activities",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

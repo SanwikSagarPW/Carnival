@@ -1,0 +1,11 @@
+{
+  "id": "11-0final-vocal-i-wonder-what-magical-flavor",
+  "name": "0Final/Vocal/I wonder what magical flavor",
+  "title": "I wonder what magical flavor",
+  "category": "Dialogue",
+  "duration": 4.600000381469727,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

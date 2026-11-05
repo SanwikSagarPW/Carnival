@@ -1,0 +1,11 @@
+{
+  "id": "34-sequence-1-look-dr-happy",
+  "name": "Sequence/1/Look_Dr_Happy",
+  "title": "Look Dr Happy",
+  "category": "Expressions",
+  "duration": 1.3333333730697632,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

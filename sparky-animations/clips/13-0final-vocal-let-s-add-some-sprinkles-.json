@@ -1,0 +1,11 @@
+{
+  "id": "13-0final-vocal-let-s-add-some-sprinkles-",
+  "name": "0Final/Vocal/Let’s add some sprinkles!",
+  "title": "Let’s add some sprinkles!",
+  "category": "Dialogue",
+  "duration": 3.4000000953674316,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "18-0final-vocal-your-ice-cream-is-looking",
+  "name": "0Final/Vocal/Your ice cream is looking",
+  "title": "Your ice cream is looking",
+  "category": "Dialogue",
+  "duration": 6.100000381469727,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

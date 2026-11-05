@@ -3,22 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#6ec6ff">
+  <meta name="theme-color" content="#172b45">
   <title>Sparky's Carnival</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=kids-ui-1">
+  <link rel="preload" href="assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/sparky-poster.webp" as="image" type="image/webp">
+  <link rel="stylesheet" href="style.css?v=carnival-5">
 </head>
 <body>
-  <main class="game" id="game" data-screen="splash" data-theme="meadow">
-
-    <!-- top ribbon -->
-    <div class="ribbon-wrap"><h1 class="ribbon" id="ribbon">Sparky's Carnival</h1></div>
-
+  <main class="game" id="game" data-screen="splash" data-theme="meadow" inert>
     <!-- corner buttons -->
-    <button class="candy candy-red btn-close" id="btn-home" type="button" aria-label="Back to games" hidden>
-      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 13 35 35M35 13 13 35" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none"/></svg>
+    <button class="candy btn-pause" id="btn-pause" type="button" aria-label="Pause game">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="9" width="9" height="30" rx="3" fill="#fff"/><rect x="27" y="9" width="9" height="30" rx="3" fill="#fff"/></svg>
     </button>
 
     <div class="corner-left">
@@ -37,20 +32,74 @@
 
     <!-- Sparky -->
     <div class="character" id="character" role="button" tabindex="0" aria-label="Sparky">
+      <img class="poster" src="assets/sparky-poster.webp" alt="" width="512" height="640" decoding="async" draggable="false">
       <canvas id="sparky" width="512" height="640"></canvas>
+      <span class="sole-contact" aria-hidden="true"></span>
+      <span id="actor-status" class="actor-status" role="status"></span>
     </div>
 
     <!-- activity -->
-    <section class="stage" id="stage" aria-live="polite"></section>
+    <section class="puzzle-frame" aria-labelledby="ribbon">
+      <header class="board-heading">
+        <p class="eyebrow" id="eyebrow">Play, discover, grow</p>
+        <h1 class="ribbon" id="ribbon">Sparky's Carnival</h1>
+        <p class="instruction" id="instruction">Little games. Big discoveries.</p>
+      </header>
+      <section class="stage" id="stage"></section>
+      <footer class="board-footer">
+        <p id="feedback" role="status" aria-live="polite">Sparky is here to help.</p>
+        <button class="hear-button" id="btn-hear" type="button" hidden>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 19h9l10-8v26L16 29H7z" fill="currentColor"/><path d="M33 15q12 9 0 18" stroke="currentColor" fill="none" stroke-width="4" stroke-linecap="round"/></svg>
+          Hear it
+        </button>
+      </footer>
+      <div class="round-loading" id="round-loading" role="status">
+        <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <p id="loading-message">Getting your games ready...</p>
+        <button class="text-action" id="btn-retry" type="button" hidden>Try loading again</button>
+      </div>
+    </section>
 
     <!-- next / play -->
-    <button class="candy candy-orange btn-next" id="btn-next" type="button" aria-label="Next" hidden>
+    <button class="candy btn-next" id="btn-next" type="button" aria-label="Next" hidden>
       <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 24h26M25 12l13 12-13 12" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
     </button>
 
     <div class="fx" id="fx" aria-hidden="true"></div>
   </main>
 
-  <script type="module" src="game.js?v=kids-ui-1"></script>
+  <dialog class="pause-dialog" id="pause-dialog" aria-labelledby="pause-title">
+    <p class="eyebrow">Take your time</p>
+    <h2 id="pause-title">A little pause</h2>
+    <p>Your game will be right here.</p>
+    <div class="pause-actions">
+      <button id="btn-resume" type="button" autofocus>
+        <span class="dialog-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="m17 10 22 14-22 14z" fill="#fff"/></svg></span>
+        Keep playing
+      </button>
+      <button id="btn-restart" type="button">
+        <span class="dialog-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 18a14 14 0 1 1-1 15M13 8v12H3" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        Try again
+      </button>
+    </div>
+    <button class="text-action" id="btn-start" type="button">Back to start</button>
+  </dialog>
+  <section class="rotate-prompt" role="status" aria-live="polite">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><rect x="31" y="15" width="38" height="68" rx="8" fill="none" stroke="currentColor" stroke-width="5" transform="rotate(-30 50 50)"/><path d="M12 31q8-19 29-20m-6-7 9 8-9 8M88 69q-8 19-29 20m6 7-9-8 9-8" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2>Turn your screen to play</h2>
+    <p>Sparky needs a little more room.<br>Hold your device sideways.</p>
+  </section>
+  <noscript><p class="no-script">Please enable JavaScript to play with Sparky.</p></noscript>
+  <script id="game-code" type="module" src="game.js?v=carnival-5"></script>
+  <script>
+    document.getElementById('game-code').addEventListener('error', function () {
+      document.getElementById('loading-message').textContent = 'The game could not connect. Please try again.';
+      document.getElementById('game').inert = false;
+      document.querySelectorAll('.candy').forEach(function (button) { button.disabled = true; });
+      var retry = document.getElementById('btn-retry');
+      retry.hidden = false;
+      retry.addEventListener('click', function () { location.reload(); });
+    });
+  </script>
 </body>
 </html>

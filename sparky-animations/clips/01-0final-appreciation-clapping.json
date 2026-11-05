@@ -1,0 +1,11 @@
+{
+  "id": "01-0final-appreciation-clapping",
+  "name": "0Final/Appreciation/Clapping",
+  "title": "Clapping",
+  "category": "Celebrations",
+  "duration": 2.133333444595337,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

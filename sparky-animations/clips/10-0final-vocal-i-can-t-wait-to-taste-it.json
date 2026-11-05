@@ -1,0 +1,11 @@
+{
+  "id": "10-0final-vocal-i-can-t-wait-to-taste-it",
+  "name": "0Final/Vocal/I can't wait to taste it",
+  "title": "I can't wait to taste it",
+  "category": "Dialogue",
+  "duration": 2.7333335876464844,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

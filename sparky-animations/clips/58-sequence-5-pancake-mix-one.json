@@ -1,0 +1,11 @@
+{
+  "id": "58-sequence-5-pancake-mix-one",
+  "name": "Sequence/5/Pancake_Mix_One",
+  "title": "Pancake Mix One",
+  "category": "Activities",
+  "duration": 0,
+  "kind": "pose",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

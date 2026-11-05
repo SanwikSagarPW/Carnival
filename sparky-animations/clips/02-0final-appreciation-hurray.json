@@ -1,0 +1,11 @@
+{
+  "id": "02-0final-appreciation-hurray",
+  "name": "0Final/Appreciation/Hurray",
+  "title": "Hurray",
+  "category": "Celebrations",
+  "duration": 2,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

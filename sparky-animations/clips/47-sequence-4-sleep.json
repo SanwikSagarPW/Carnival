@@ -1,0 +1,11 @@
+{
+  "id": "47-sequence-4-sleep",
+  "name": "Sequence/4/Sleep",
+  "title": "Sleep",
+  "category": "Rest & interactions",
+  "duration": 3.3333334922790527,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

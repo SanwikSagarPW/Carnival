@@ -1,0 +1,11 @@
+{
+  "id": "15-0final-vocal-what-a-fantastic-flavor",
+  "name": "0Final/Vocal/What a fantastic flavor",
+  "title": "What a fantastic flavor",
+  "category": "Dialogue",
+  "duration": 4.233333587646484,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

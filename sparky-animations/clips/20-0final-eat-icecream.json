@@ -1,0 +1,11 @@
+{
+  "id": "20-0final-eat-icecream",
+  "name": "0Final/Eat_Icecream",
+  "title": "Eat Icecream",
+  "category": "Activities",
+  "duration": 10.933334350585938,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}

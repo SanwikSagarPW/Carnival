@@ -1,0 +1,11 @@
+{
+  "id": "17-0final-vocal-you-re-doing-amazing-this",
+  "name": "0Final/Vocal/You're doing amazing! This",
+  "title": "You're doing amazing! This",
+  "category": "Dialogue",
+  "duration": 6.40000057220459,
+  "kind": "animation",
+  "loop": false,
+  "manifest": "../manifest.json",
+  "runtime": "../player.js"
+}
