@@ -14,7 +14,7 @@ Open [http://localhost:8000/](http://localhost:8000/). The server uses gzip for 
 
 ## Continuous play
 
-The five learning booths repeat forever. Each booth tracks 40 asset variations, then cycles its set while play continues:
+The five learning booths repeat forever. The object games share a set of 40 distinct item pictures, plus 7 long objects and 12 shape pictures. Images are reused for scale and colour variations instead of loading separate files for each size:
 
 1. Different One
 2. Biggest one
@@ -22,17 +22,19 @@ The five learning booths repeat forever. Each booth tracks 40 asset variations, 
 4. Select the longest one
 5. Match the shapes
 
+The home screen is deliberately minimal: a stacked "Sparky's / Carnival" wordmark in Baloo 2 (self-hosted, `assets/fonts/baloo2-latin.woff2`) with white outlines, a plum extruded shadow, and multicoloured letters that bounce in (static in reduced-motion mode), over the carnival backdrop, one borderless orange pill **Play** button (solid colour, one raised edge, white play badge, a slow breathing pulse, and a squish-pop with a soft ring when tapped; both motions stay still in reduced-motion mode), and Sparky. Pause, sound, stars, and hints appear only once play begins.
+
 After Play, the five booths run in order with no game-selection menu or finish line. The mystery-box surprise appears between booths 2 and 3. Balloon pop appears between booths 4 and 5, without a board or bordered playfield: balloons rise from below the screen until five have been popped. All seven balloon pictures load before play starts. Reduced-motion mode uses stationary balloons. Neither bonus uses a time limit or wrong-answer penalty.
 
 Balloon lanes adapt to the available width and reserve room for the full pop expansion, gentle side-to-side sway, and a gap. Each lane holds only one balloon, including one still popping. Resizing restarts the floating balloons in new lanes without changing the pop count.
 
 Sound stays top-left, Pause top-right, and Next bottom-right. The pause dialog offers Keep playing, Try again (restart the current round), and Back to start. Pause freezes gameplay timers, audio, the rig, and ambient motion; resuming retains progress. Portrait orientation shows a rotate-device prompt and suspends play, as does hiding the tab. Shapes support dragging, tap-select/tap-target, and keyboard selection with Enter or Space. Hear it repeats the current instruction.
 
-Biggest and longest questions compare four sizes of the same selected object. Counting questions repeat one picture in both groups so the child only has to compare the counts. Shape art rotates through all 40 shape assets while preserving each shape's matching silhouette.
+Biggest and longest questions scale one picture to four sizes (biggest also hue-shifts it per round); counting questions reuse one of the 40 item pictures in both groups, with a colour variation. Match the shapes uses 12 shapes: circle, oval, triangle, square, rectangle, diamond, heart, star, moon, pentagon, hexagon, and octagon. Each round asks for four of them plus one spare tray piece, and never more than one of the look-alike polygons (pentagon, hexagon, octagon). Each shape has one picture; the polygon pictures and the pentagon, hexagon, octagon, and rectangle tray pieces are drawn by `scripts/make-shape-art.mjs`. Every tray piece keeps the same silhouette as its pictures, and `tests/shapes.test.mjs` checks that every shape has art and a picture.
 
 ## Assets and motion
 
-Learning objects are separate transparent WebP files under `assets/objects/`, with the original pixel dimensions preserved. Biggest and longest normalize the four displayed widths to 38%, 56%, 74%, and 100%, preserving each picture's aspect ratio and fitting them together to the available space. The winning object is at least 35% wider than the runner-up, even when source crops have almost equal widths. A single resize listener updates the current round. Counting uses equal-sized grid cells in both groups. Original PNG atlases remain in `assets/catalog/`.
+Learning objects are separate transparent WebP files under `assets/objects/`. The 40 item pictures are individual files (`assets/objects/pics/01.webp` to `40.webp`) with their natural margins, so no object is cut off; the original PNG atlases remain in `assets/catalog/` and are not loaded. Biggest and longest normalize the four displayed widths to 38%, 56%, 74%, and 100%, preserving each picture's aspect ratio and fitting them together to the available space. The winning object is at least 35% wider than the runner-up, even when source crops have almost equal widths. A single resize listener updates the current round. Counting uses equal-sized grid cells in both groups.
 
 Mystery boxes use custom closed/open vector artwork in `assets/mystery-box.svg` and `assets/mystery-box-open.svg`, then reveal a prize from the existing object library.
 
@@ -45,9 +47,12 @@ Ambient motion is quiet; card entry and feedback take roughly 300ms. Checks and 
 - The board and controls render without waiting for the rig. A 32KB still of Sparky stays visible while animation loads.
 - Images retry failed downloads. A round stays non-interactive behind a friendly loading surface until all its pictures are ready; failures expose Try loading again instead of blank answer cards.
 - The 34MB mesh model is packed into a 1.34MB gzip payload. Tests bound rest-position error below 0.25 rig units; the original model remains for regeneration. Skeleton data also has a gzip copy, with raw fallbacks for browsers without `DecompressionStream`.
-- Speech is mono 48kbps MP3. Runtime textures are WebP at their original dimensions and atlas registrations.
-- `sw.js` caches successful local assets, supports audio byte-range requests, and serves cached code immediately while refreshing it. Previously loaded rounds can work offline; an uncached round still needs a connection.
-- Optional prefetch is skipped on data-saver, 2G/3G, and low-bandwidth connections. Bump the service worker `VERSION` when replacing assets under existing names.
+- Speech is mono 48kbps MP3. Runtime textures are WebP at their original dimensions and atlas registrations; rig textures use quality 82 (measured at 1.5/255 mean colour error against the original PNGs), about 24% smaller than quality 92.
+- A cold first load on a 1.6 Mbps / 150 ms link makes the home screen usable in about 1 second. Sparky's full animation arrives after roughly 3.8MB (about 22 seconds on that link); the game is fully playable while it downloads.
+- `index.html` preloads the backdrop and the game's module dependencies, so they are not discovered late.
+- If WebGL is unavailable, the rig is never requested (the static Sparky picture stays). On data-saver or 2G it waits until the child taps Sparky. If the GPU context is lost and restored, the rig keeps animating.
+- `sw.js` revalidates only the small app shell (html, js, and css beside `sw.js`, which also works when hosted in a sub-folder). Everything else, including rig scripts and data, is cache-first, so repeat visits transfer almost nothing. It supports audio byte-range requests, and after a full prefetch the whole game, including every round and the voice, runs offline.
+- Optional prefetch is skipped on data-saver, 2G/3G, and low-bandwidth connections, so those players cache only what they have played. Bump the service worker `VERSION` when replacing non-shell files under existing names.
 
 To regenerate optimised art/audio, install the development-only tools and run:
 

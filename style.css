@@ -5,6 +5,13 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Baloo 2';
+  src: url('assets/fonts/baloo2-latin.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   font-family: Nunito, 'Trebuchet MS', system-ui, sans-serif;
   color: #285780;
@@ -135,21 +142,54 @@ button:focus-visible, [role="button"]:focus-visible {
 .pile { width: 100%; height: 100%; padding: 8%; display: grid; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); grid-template-rows: repeat(var(--rows), minmax(0, 1fr)); gap: 1cqh .6cqw; }
 .pile-item { width: 100%; height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
 
-.stage.is-splash { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3cqh; }
-.welcome-copy { text-align: center; max-width: 90%; }
-.welcome-copy h2 { font-weight: 900; font-size: clamp(25px, 3.1cqw, 44px); line-height: 1.2; }
-.welcome-copy p { font-weight: 800; margin-top: 2cqh; font-size: clamp(14px, 1.5cqw, 22px); line-height: 1.5; color: #62899c; }
-.play-pill {
-  display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 64px; min-width: 180px;
-  padding: 14px 36px; border-radius: 22px; border: 2px solid #2a80b4;
-  background: linear-gradient(#81d3f2, #329bda); color: #fff; font-weight: 900; font-size: clamp(22px, 2.4cqw, 34px);
-  box-shadow: inset 0 3px 0 #c4efff, 0 5px 0 #2676a7, 0 8px 12px #245d7220;
-  transition: transform 140ms;
+/* Home screen: just the title and one Play button over the backdrop. */
+.game[data-screen="splash"] .puzzle-frame { inset: 0; width: auto; height: auto; background: none; }
+.game[data-screen="splash"] .board-heading { left: 50%; top: 6%; width: max-content; max-width: 94%; translate: -50% 0; }
+.game[data-screen="splash"] .eyebrow,
+.game[data-screen="splash"] .instruction,
+.game[data-screen="splash"] .board-footer,
+.game[data-screen="splash"] .btn-pause,
+.game[data-screen="splash"] .corner-left { display: none; }
+.game[data-screen="splash"] .ribbon {
+  display: flex; flex-direction: column; align-items: center; margin: 0; rotate: -3deg;
+  font-family: 'Baloo 2', 'Trebuchet MS', 'Comic Sans MS', system-ui, sans-serif; font-weight: 800; line-height: .86; white-space: nowrap;
+  -webkit-text-stroke: .2em #fff; paint-order: stroke fill; stroke-linejoin: round;
+  filter: drop-shadow(0 .05em 0 #4c1d78) drop-shadow(0 .1em 0 #4c1d78) drop-shadow(0 .16em .12em #00000040);
 }
-.play-pill svg { width: 30px; height: 30px; }
-.play-pill:active { transform: translateY(2px) scale(.96); }
+.game[data-screen="splash"] .word-top { font-size: min(8.5cqw, 17cqh); color: #ffc52e; letter-spacing: .02em; }
+.game[data-screen="splash"] .word-bottom { display: flex; font-size: min(13cqw, 26cqh); }
+.word-bottom span { display: inline-block; animation: letterPop 520ms cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(120ms + var(--i) * 55ms); }
+.word-bottom span:nth-child(5n + 1) { color: #ff4f7e; }
+.word-bottom span:nth-child(5n + 2) { color: #ff9a2e; }
+.word-bottom span:nth-child(5n + 3) { color: #3fc96b; }
+.word-bottom span:nth-child(5n + 4) { color: #3aaef2; }
+.word-bottom span:nth-child(5n) { color: #a45cf0; }
+@keyframes letterPop { from { opacity: 0; transform: translateY(.5em) scale(.4); } to { opacity: 1; transform: none; } }
+.stage.is-splash { top: 50%; bottom: 8%; left: 25%; right: 25%; display: grid; place-items: center; }
+.play-pill {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: .26em; padding: .12em .78em .2em .2em;
+  border-radius: 99px; background: #ff8a1f; color: #fff;
+  box-shadow: 0 .1em 0 #d9680b, 0 .2em .28em -.04em #0000004d;
+  font-family: 'Baloo 2', 'Trebuchet MS', 'Comic Sans MS', system-ui, sans-serif; font-weight: 800; font-size: min(7cqw, 16cqh); line-height: 1.25;
+  letter-spacing: .02em; animation: playBreathe 2.8s ease-in-out infinite;
+  transition: translate 90ms ease-out, box-shadow 90ms ease-out, background-color 120ms;
+}
+.play-pill svg { width: 1.05em; height: 1.05em; flex: none; }
+/* Soft ring that spreads out from the button when it is tapped. */
+.play-pill::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+@keyframes playBreathe { 50% { scale: 1.035; } }
+@media (hover: hover) { .play-pill:hover { background: #ff9a3a; } }
+.play-pill:active:not(.is-pressed) {
+  animation: none; scale: .95; translate: 0 .08em; background: #f27d12;
+  box-shadow: 0 .02em 0 #d9680b, 0 .06em .12em -.04em #0000004d;
+}
+.play-pill.is-pressed { animation: playPop 360ms cubic-bezier(.3, 1.5, .5, 1) both; pointer-events: none; }
+.play-pill.is-pressed::after { animation: playRing 520ms ease-out both; }
+@keyframes playPop { 0% { scale: .95; translate: 0 .08em; } 55% { scale: 1.07; translate: 0 -.03em; } 100% { scale: 1; translate: 0 0; } }
+@keyframes playRing { from { box-shadow: 0 0 0 0 #ff8a1fa6; } to { box-shadow: 0 0 0 .5em #ff8a1f00; } }
+.play-pill:focus-visible { outline: .05em solid #fff; outline-offset: .1em; }
 
-.stage.is-shapes { display: flex; flex-direction: column; gap: 1.8cqh; bottom: 17%; }
+.stage.is-shapes { display: flex; flex-direction: column; gap: 1.8cqh; bottom: max(17%, calc(7% + 58px)); }
 .shape-board { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 1.4cqh 1cqw; }
 .shape-card { cursor: default; justify-content: space-evenly; padding: 4px; }
 .shape-card:hover, .shape-card:active { transform: none; }
@@ -239,19 +279,18 @@ button:focus-visible, [role="button"]:focus-visible {
   .ribbon { font-size: clamp(19px, 5.5cqh, 30px); margin-top: 3px; }
   .instruction { font-size: clamp(12px, 3.4cqh, 16px); margin-top: 4px; }
   .stage { top: 29%; bottom: 20%; gap: 1.8cqh 1.2cqw; }
+  .stage.is-shapes { top: 27%; bottom: max(15%, calc(6.5% + 52px)); }
   .board-footer { bottom: 6.5%; gap: 5px; }
   #feedback { font-size: 12px; max-width: 64%; }
   .hear-button { padding: 6px 9px; font-size: 12px; }
   .hear-button svg { width: 18px; height: 18px; }
-  .welcome-copy h2 { font-size: clamp(21px, 5.5cqh, 30px); }
-  .welcome-copy p { font-size: 13px; margin-top: 8px; }
-  .play-pill { min-height: 56px; padding: 8px 24px; font-size: 23px; }
   .pause-dialog { padding: 18px 28px; }
   .pause-actions { margin: 16px 0; }
 }
 @media (max-width: 620px) and (orientation: landscape) {
   .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); }
   .eyebrow { display: none; }
+  .stage.is-shapes { top: 24%; }
   .board-heading { top: 6%; }
   .ribbon { font-size: clamp(16px, 5.5cqh, 22px); }
   .instruction { font-size: 12px; }
@@ -267,4 +306,5 @@ button:focus-visible, [role="button"]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .balloon { animation: none !important; top: var(--rest-y, 10%); }
+  .word-bottom span { animation: none !important; }
 }

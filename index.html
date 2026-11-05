@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#172b45">
   <title>Sparky's Carnival</title>
+  <link rel="icon" href="assets/sparky-poster.webp" type="image/webp">
+  <link rel="preload" href="assets/carnival-midway.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="preload" href="assets/fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/baloo2-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/sparky-poster.webp" as="image" type="image/webp">
-  <link rel="stylesheet" href="style.css?v=carnival-5">
+  <link rel="modulepreload" href="audio.js">
+  <link rel="modulepreload" href="dialogues.js">
+  <link rel="modulepreload" href="timers.js">
+  <link rel="stylesheet" href="style.css?v=carnival-19">
 </head>
 <body>
   <main class="game" id="game" data-screen="splash" data-theme="meadow" inert>
@@ -90,7 +96,7 @@
     <p>Sparky needs a little more room.<br>Hold your device sideways.</p>
   </section>
   <noscript><p class="no-script">Please enable JavaScript to play with Sparky.</p></noscript>
-  <script id="game-code" type="module" src="game.js?v=carnival-5"></script>
+  <script id="game-code" type="module" src="game.js?v=carnival-19"></script>
   <script>
     document.getElementById('game-code').addEventListener('error', function () {
       document.getElementById('loading-message').textContent = 'The game could not connect. Please try again.';

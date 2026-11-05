@@ -109,6 +109,7 @@ function later(fn, ms) {
 
 function setTitle(text) {
   ribbon.textContent = text;
+  ribbon.removeAttribute('aria-label');
   ribbon.classList.remove('ribbon-in');
   void ribbon.offsetWidth;
   ribbon.classList.add('ribbon-in');
@@ -208,12 +209,39 @@ let view = null;
 let runToken = 0;
 let idleTimer = null;
 let rigPromise = null;
+let rigWanted = false;
+let webglSupported;
 const characterEl = $('#character');
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/* Without WebGL the animation can never run, so don't spend megabytes (and five retries) on it. */
+function hasWebgl() {
+  if (webglSupported === undefined) {
+    try {
+      const probe = document.createElement('canvas');
+      const gl = probe.getContext('webgl2') || probe.getContext('webgl');
+      webglSupported = !!gl;
+      gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    } catch {
+      webglSupported = false;
+    }
+  }
+  return webglSupported;
+}
+const dataSaverOn = () => {
+  const link = navigator.connection;
+  return !!(link?.saveData || /(^|-)2g$/.test(link?.effectiveType || ''));
+};
+
 /* Sparky's rig is the heaviest download, so it loads in the background after the first screen is up. The static
-   poster in #character stands in until the first rig frame is drawn, and stays if the rig can never load. */
+   poster in #character stands in until the first rig frame is drawn, and stays if the rig can never load.
+   On data saver or 2G the poster stays until the child taps Sparky. */
 function loadRig() {
+  if (!hasWebgl()) return Promise.resolve(null);
+  if (!rigWanted && dataSaverOn()) {
+    $('#actor-status').textContent = 'Tap Sparky to wake him up';
+    return Promise.resolve(null);
+  }
   rigPromise ??= (async () => {
     // Let the backdrop, font and poster win the bandwidth race on slow connections.
     if (document.readyState !== 'complete') {
@@ -305,6 +333,7 @@ async function animate(name = 'idle') {
 }
 
 $('#character').addEventListener('click', () => {
+  rigWanted = true;
   audio.sfx('giggle');
   burst($('#character'), 10);
   animate(['dance', 'laugh', 'jump', 'happy'][Math.floor(Math.random() * 4)]);
@@ -421,7 +450,7 @@ addEventListener('resize', () => requestAnimationFrame(() => {
   resetBalloonLayout?.();
 }));
 
-const objectSrc = (key, n) => `./assets/objects/${key}/${pad((n % ASSET_COUNT) + 1)}.webp`;
+const objectSrc = (key, n) => `./assets/objects/pics/${pad((n % ASSET_COUNT) + 1)}.webp`;
 
 /** A white answer card with the little "?" help button in its corner. */
 function card({ section, extra = '', onPick, label }) {
@@ -466,25 +495,27 @@ function shuffled(list) {
 function showSplash() {
   newScene('splash');
   setTitle("Sparky's Carnival");
+  // Stacked wordmark: letters are separate spans so each can carry its own carnival colour.
+  ribbon.setAttribute('aria-label', "Sparky's Carnival");
+  ribbon.innerHTML = `<span class="word word-top" aria-hidden="true">Sparky's</span><span class="word word-bottom" aria-hidden="true">${
+    [...'Carnival'].map((letter, i) => `<span style="--i:${i}">${letter}</span>`).join('')}</span>`;
   stage.classList.add('is-splash');
   instruction.textContent = 'Little games. Big discoveries.';
-  const welcome = document.createElement('div');
-  welcome.className = 'welcome-copy';
-  welcome.innerHTML = '<h2>A little play.<br>A lot of discovery.</h2><p>Find, count, and match with Sparky.<br>Let’s explore together!</p>';
   const play = document.createElement('button');
   play.type = 'button';
   play.className = 'play-pill';
   play.setAttribute('aria-label', 'Play');
-  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 9v30l24-15z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg><span>Let’s play</span>';
+  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M19 14.5v19l16-9.5z" fill="#ff8a1f" stroke="#ff8a1f" stroke-width="4" stroke-linejoin="round"/></svg><span>Play</span>';
   play.addEventListener('click', () => {
+    if (play.classList.contains('is-pressed')) return;
+    play.classList.add('is-pressed');
     audio.unlock();
     audio.sfx('success');
     audio.startMusic();
-    burst(play, 22);
     animate('happy');
-    later(() => { skillIndex = 0; startSkill(); }, 280);
+    later(() => { skillIndex = 0; startSkill(); }, 380);
   });
-  stage.append(welcome, play);
+  stage.append(play);
   animate('welcome');
 }
 
@@ -553,19 +584,19 @@ function makeOptions(skill) {
       return { key: `${common}-${odd}`, common, odd, at: rand(4) };
     });
     return {
-      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('different', i === r.at ? r.odd : r.common), correct: i === r.at })),
+      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('items', i === r.at ? r.odd : r.common), correct: i === r.at })),
       shuffle: false,
     };
   }
   if (skill.key === 'biggest') {
     const r = fresh('biggest', () => {
-      const row = rand(8);
+      const row = rand(ASSET_COUNT);
       const sizes = spacedPicks(7, 4, 2);
       return { key: `${row}-${sizes}`, row, sizes };
     });
     return {
       items: r.sizes.map((size, i) => ({
-        src: `./assets/objects/biggest/obj_${r.row}_size_${size}.webp`,
+        src: `./assets/objects/pics/${pad(r.row + 1)}.webp`,
         correct: i === 3, comparisonRatio: [.38, .56, .74, 1][i],
       })),
       shuffle: true,
@@ -578,7 +609,7 @@ function makeOptions(skill) {
   });
   return {
     items: r.lens.map((len, i) => ({
-      src: `./assets/objects/longest/obj_${r.band}_len_${len}.webp`,
+      src: `./assets/objects/long/${r.band + 1}.webp`,
       correct: i === 3, comparisonRatio: [.38, .56, .74, 1][i],
     })),
     shuffle: true,
@@ -589,6 +620,7 @@ function renderChoices(skill) {
   const section = skill.key;
   const { items, shuffle } = makeOptions(skill);
   const list = shuffle ? shuffled(items) : items;
+  const hue = section === 'biggest' ? rand(6) * 60 : 0;
   stage.classList.add(section === 'different' ? 'grid-4' : 'grid-2x2');
   if (section === 'longest') stage.classList.add('is-longest');
   audio.warm(DIALOGUES[section]?.intro);
@@ -602,6 +634,7 @@ function renderChoices(skill) {
     });
     const cls = section === 'different' ? 'art-fit' : section === 'biggest' ? 'art-scaled' : 'art-long';
     const img = pic(item.src, cls);
+    if (hue) img.style.filter = `hue-rotate(${hue}deg)`;
     if (item.comparisonRatio) img.dataset.comparisonRatio = item.comparisonRatio;
     imgs.push(img);
     el.append(img);
@@ -617,7 +650,7 @@ function renderMore(skill) {
     const item = rand(ASSET_COUNT);
     const small = 2 + rand(6);                  // 2-7
     const big = small + 2 + rand(3);            // always at least 2 more, never above 11
-    return { key: `${item}-${small}-${big}`, item, small, big, bigSide: rand(2) };
+    return { key: `${item}-${small}-${big}`, item, small, big, bigSide: rand(2), hue: rand(6) * 60 };
   });
   const bigSide = round.bigSide;
   const counts = bigSide === 0 ? [round.big, round.small] : [round.small, round.big];
@@ -634,11 +667,12 @@ function renderMore(skill) {
     el.style.setProperty('--i', side);
     const pile = document.createElement('div');
     pile.className = 'pile';
+    pile.style.filter = `hue-rotate(${round.hue}deg)`;
     const columns = round.big > 6 ? 3 : 2;
     pile.style.setProperty('--columns', columns);
     pile.style.setProperty('--rows', Math.ceil(round.big / columns));
     for (let i = 0; i < count; i++) {
-      const img = pic(objectSrc('more', round.item), 'pile-item');
+      const img = pic(objectSrc('items', round.item), 'pile-item');
       imgs.push(img);
       pile.append(img);
     }
@@ -690,35 +724,39 @@ function advance() {
    Match the shapes - drag a shape from the tray onto the toy it belongs to
    ========================================================================== */
 const SHAPES = [
-  { name: 'circle',   file: 'shape-circle.svg' },
-  { name: 'triangle', file: 'shape-triangle.svg' },
-  { name: 'square',   file: 'shape-square.svg' },
-  { name: 'star',     file: 'shape-star.svg' },
-  { name: 'heart',    file: 'shape-heart.svg' },
-  { name: 'diamond',  file: 'shape-diamond.svg' },
-  { name: 'oval',     file: 'shape-oval.svg' },
-  { name: 'moon',     file: 'shape-moon.svg' },
+  { name: 'circle',    file: 'shape-circle.svg' },
+  { name: 'triangle',  file: 'shape-triangle.svg' },
+  { name: 'square',    file: 'shape-square.svg' },
+  { name: 'star',      file: 'shape-star.svg' },
+  { name: 'heart',     file: 'shape-heart.svg' },
+  { name: 'diamond',   file: 'shape-diamond.svg' },
+  { name: 'oval',      file: 'shape-oval.svg' },
+  { name: 'moon',      file: 'shape-moon.svg' },
+  { name: 'rectangle', file: 'shape-rectangle.svg' },
+  { name: 'pentagon',  file: 'shape-pentagon.svg' },
+  { name: 'hexagon',   file: 'shape-hexagon.svg' },
+  { name: 'octagon',   file: 'shape-octagon.svg' },
 ];
-// Which pictures in assets/objects/shapes are which shape (checked against the art sheet,
-// 8 per row: circle oval triangle square rectangle diamond heart star moon...). Same order as SHAPES.
-const SHAPE_ASSET_POOLS = [
-  [0, 9, 18, 27, 35],   // circle
-  [2, 11, 20, 29, 37],  // triangle
-  [3, 12, 21, 30, 38],  // square
-  [7, 16, 25, 34],      // star
-  [6, 15, 24, 33],      // heart
-  [5, 14, 23, 32],      // diamond
-  [1, 10, 19, 28, 36],  // oval
-  [8, 17, 26],          // moon
-];
+// Pentagon, hexagon and octagon look alike to young children, so a round never asks for more than one of them.
+const LOOKALIKES = new Set([9, 10, 11]);
+// Which pictures in assets/objects/shapes are which shape, as 0-based picture numbers (picture n is file n+1.webp). Same order as SHAPES.
+// Pictures 0-39 come from the original art sheet (9 per row: circle oval triangle square rectangle diamond heart star moon);
+// 40-51 are drawn by scripts/make-shape-art.mjs.
+const SHAPE_FILES = ['circle', 'triangle', 'square', 'star', 'heart', 'diamond', 'oval', 'moon', 'rectangle', 'pentagon', 'hexagon', 'octagon'];
+const shapePictureSrc = (shape) => `./assets/objects/shapes/${SHAPE_FILES[shape]}.webp`;
 
 function renderShapes(skill) {
   const section = 'shapes';
   const round = fresh('shapes', () => {
-    const order = shuffled([0, 1, 2, 3, 4, 5, 6, 7]);
-    const targets = order.slice(0, 4);
-    const toys = Object.fromEntries(targets.map((s) => [s, rand(SHAPE_ASSET_POOLS[s].length)]));
-    return { key: [...targets].sort().join('') + Object.values(toys).join(''), targets, extra: order[4], toys };
+    const order = shuffled(SHAPES.map((_, index) => index));
+    const targets = [];
+    for (const shape of order) {
+      if (targets.length < 4 && !(LOOKALIKES.has(shape) && targets.some((t) => LOOKALIKES.has(t)))) targets.push(shape);
+    }
+    return {
+      key: `${[...targets].sort((a, b) => a - b).join('-')}`,
+      targets, extra: order.find((s) => !targets.includes(s)),
+    };
   });
   const { targets, extra } = round;                          // one spare piece in the tray
   const tray = shuffled([...targets, extra]);
@@ -736,10 +774,9 @@ function renderShapes(skill) {
   const slots = new Map();
   const imgs = [];
   shuffled(targets).forEach((shape, i) => {
-    const pool = SHAPE_ASSET_POOLS[shape];
     const el = card({ section, extra: 'shape-card' });
     el.style.setProperty('--i', i);
-    const image = pic(objectSrc('shapes', pool[round.toys[shape]]), 'toy');
+    const image = pic(shapePictureSrc(shape), 'toy');
     imgs.push(image);
     el.append(image);
     const slot = document.createElement('button');
@@ -928,7 +965,7 @@ function showMystery() {
         c.classList.add('open', 'correct');
         stage.classList.add('has-answer');
         c.querySelector('.pic').src = './assets/mystery-box-open.svg';
-        c.append(pic(objectSrc('different', rand(ASSET_COUNT)), 'prize'));
+        c.append(pic(objectSrc('items', rand(ASSET_COUNT)), 'prize'));
         animate('wow');
         tell('A surprise just for you!', 'success');
         speak(DIALOGUES.mystery.prize[0], { delay: 400 });

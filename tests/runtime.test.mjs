@@ -118,3 +118,45 @@ test('cached audio ranges return the exact requested bytes without a network req
   assert.equal(response.headers.get('Content-Range'), 'bytes 2-5/10');
   assert.equal(await response.text(), '2345');
 });
+
+/* Run the worker's request handler against a cache that already holds `cached` for every URL. */
+async function serviceWorkerResult(path, { scope = 'https://game.example/' } = {}) {
+  const source = await readFile(new URL('../sw.js', import.meta.url), 'utf8');
+  const request = new Request(new URL(path, scope));
+  const pending = [];
+  let fetched = 0;
+  const response = await runInNewContext(`${source}\nhandle(request, new URL(request.url), event);`, {
+    self: { addEventListener() {}, registration: { scope } },
+    caches: { async open() { return { async match() { return new Response('cached'); }, async put() {} }; } },
+    async fetch() { fetched++; return new Response('fresh'); },
+    console: { warn() {} },
+    event: { waitUntil(promise) { pending.push(promise); } },
+    request, URL, Response,
+  });
+  await Promise.all(pending);
+  return { text: await response.text(), fetched };
+}
+
+test('rig scripts, rig data and media are served from the cache without any refresh request', async () => {
+  for (const path of [
+    'sparky-animations/runtime/vendor/spine-webgl.min.js',
+    'sparky-animations/manifest.json',
+    'sparky-animations/runtime/character-upgrade/12-sparky-final/motion-fit-painted.js',
+    'assets/preload.json',
+    'assets/objects/biggest/01.webp',
+  ]) {
+    assert.deepEqual(await serviceWorkerResult(path), { text: 'cached', fetched: 0 }, path);
+  }
+});
+
+test('the app shell is answered from the cache and refreshed once in the background', async () => {
+  for (const path of ['', 'index.html', 'game.js', 'style.css']) {
+    assert.deepEqual(await serviceWorkerResult(path), { text: 'cached', fetched: 1 }, path || '/');
+  }
+});
+
+test('shell and cache-first routing also work when the game is hosted in a sub-folder', async () => {
+  const scope = 'https://game.example/Carnival/';
+  assert.deepEqual(await serviceWorkerResult('game.js', { scope }), { text: 'cached', fetched: 1 });
+  assert.deepEqual(await serviceWorkerResult('sparky-animations/runtime/vendor/spine-webgl.min.js', { scope }), { text: 'cached', fetched: 0 });
+});

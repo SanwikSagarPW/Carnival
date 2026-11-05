@@ -1,11 +1,11 @@
 /* Sparky's Carnival service worker.
-   - Code (html/js/css/json): serve cached code immediately and refresh it in the background.
-   - Media (images, audio, rig textures, fonts): cache first, so every asset is downloaded once and then works offline.
-   Bump VERSION whenever an existing media file is replaced under the same name. */
-const VERSION = 'sparky-carnival-v6';
+   - App shell (html/js/css): serve cached code immediately and refresh it in the background.
+   - Everything else (images, audio, rig textures, rig scripts and data, fonts): cache first, so each file is downloaded once and then works offline.
+   Bump VERSION whenever an existing non-shell file is replaced under the same name. */
+const VERSION = 'sparky-carnival-v27';
 const SHELL = [
   './', 'index.html', 'style.css', 'game.js', 'audio.js', 'dialogues.js', 'timers.js',
-  'assets/fonts/nunito-latin.woff2', 'assets/sparky-poster.webp',
+  'assets/fonts/nunito-latin.woff2', 'assets/fonts/baloo2-latin.woff2', 'assets/sparky-poster.webp',
   'assets/carnival-midway.webp', 'assets/ui/board.svg', 'assets/ui/button-shell.svg',
   'assets/icon-check.svg',
 ];
@@ -36,7 +36,14 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(handle(req, url, event));
 });
 
-const isCode = (url) => url.pathname.endsWith('/') || /\.(?:html|js|mjs|css|json)$/i.test(url.pathname);
+/* Only the small app shell (html/js/css next to sw.js) is revalidated. Everything under assets/, Dialogues/ and
+   sparky-animations/ is fetched once and then served from the cache, so repeat visits cost almost no bandwidth. */
+const scopePath = () => { try { return new URL(self.registration.scope).pathname; } catch { return '/'; } };
+const isShell = (url) => {
+  const base = scopePath();
+  const rel = url.pathname.startsWith(base) ? url.pathname.slice(base.length) : url.pathname;
+  return rel === '' || /^[^/]+\.(?:html|js|mjs|css)$/i.test(rel);
+};
 // Query strings are cache-busters; one stored copy per path is enough.
 const keyOf = (url) => url.origin + url.pathname;
 
@@ -51,7 +58,7 @@ async function handle(req, url, event) {
     return fetch(req);
   }
 
-  if (isCode(url)) {
+  if (isShell(url)) {
     const network = fetch(req).then((res) => {
       if (res.ok) event.waitUntil(cache.put(key, res.clone()).catch((error) => console.warn('Asset cache failed.', key, error)));
       else if (res.status >= 500 && hit) return hit;
