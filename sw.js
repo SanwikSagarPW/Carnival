@@ -2,7 +2,7 @@
    - App shell (html/js/css): serve cached code immediately and refresh it in the background.
    - Everything else (images, audio, rig textures, rig scripts and data, fonts): cache first, so each file is downloaded once and then works offline.
    Bump VERSION whenever an existing non-shell file is replaced under the same name. */
-const VERSION = 'sparky-carnival-v30';
+const VERSION = 'sparky-carnival-v31';
 const SHELL = [
   './', 'index.html', 'style.css', 'game.js', 'audio.js', 'dialogues.js', 'timers.js',
   'assets/fonts/nunito-latin.woff2', 'assets/fonts/baloo2-latin.woff2', 'assets/sparky-poster.webp?v=2',

@@ -13,7 +13,10 @@
   <link rel="modulepreload" href="audio.js">
   <link rel="modulepreload" href="dialogues.js">
   <link rel="modulepreload" href="timers.js">
-  <link rel="stylesheet" href="style.css?v=carnival-39">
+  <link rel="modulepreload" href="sparky-animations/player.js">
+  <link rel="modulepreload" href="sparky-animations/runtime/character-upgrade/12-sparky-final/player.js">
+  <link rel="modulepreload" href="sparky-animations/runtime/character-upgrade/12-sparky-final/motion-fit-painted.js?gesture-fit=2">
+  <link rel="stylesheet" href="style.css?v=carnival-45">
 </head>
 <body>
   <main class="game" id="game" data-screen="splash" data-theme="meadow" inert>
@@ -104,7 +107,7 @@
     <p>Sparky needs a little more room.<br>Hold your device sideways.</p>
   </section>
   <noscript><p class="no-script">Please enable JavaScript to play with Sparky.</p></noscript>
-  <script id="game-code" type="module" src="game.js?v=carnival-39"></script>
+  <script id="game-code" type="module" src="game.js?v=carnival-45"></script>
   <script>
     document.getElementById('game-code').addEventListener('error', function () {
       document.getElementById('loading-message').textContent = 'The game could not connect. Please try again.';

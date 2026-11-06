@@ -193,6 +193,24 @@ function burst(origin, amount = 14) {
   }
 }
 
+const POP_WORDS = ['Pop!', 'Yay!', 'Boom!', 'Wow!', 'Nice!'];
+function popFx(origin) {
+  if (!origin) return;
+  const box = origin.getBoundingClientRect();
+  const area = game.getBoundingClientRect();
+  const x = `${box.left + box.width / 2 - area.left}px`;
+  const y = `${box.top + box.height * .4 - area.top}px`;
+  const ring = document.createElement('span');
+  ring.className = 'pop-ring';
+  const word = document.createElement('span');
+  word.className = 'pop-word';
+  word.textContent = POP_WORDS[Math.floor(Math.random() * POP_WORDS.length)];
+  word.style.setProperty('--tilt', `${Math.round(Math.random() * 16 - 8)}deg`);
+  for (const el of [ring, word]) { el.style.left = x; el.style.top = y; }
+  fx.append(ring, word);
+  later(() => { ring.remove(); word.remove(); }, 1000);
+}
+
 function addStar() {
   starsWon++;
   starCountEl.textContent = String(starsWon);
@@ -1026,29 +1044,35 @@ function showBalloons() {
   document.querySelector('.board-heading').append(stars);
 
   let spawnTimer = null;
-  function spawn() {
+  function spawn(seedDelay = 0) {
     if (resolved) return;
     const active = [...sky.querySelectorAll('.balloon')];
-    const maxWidth = Math.max(44, Math.min(112, game.clientHeight * .14));
+    const maxWidth = Math.max(52, Math.min(150, game.clientHeight * .19));
     // Reserve the entire pop expansion plus sway and a clear gap between lanes.
     const laneCount = Math.max(1, Math.min(6, Math.floor(sky.clientWidth / (maxWidth * 1.3 + 24))));
-    if (active.length < laneCount) {
+    if (active.length < laneCount * 2) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'balloon';
       b.setAttribute('aria-label', 'Balloon');
       // small / medium / large tiers with slight jitter, so sizes are clearly different
-      const width = Math.max(44, maxWidth * [.68, .84, 1][rand(3)] * (0.95 + Math.random() * 0.1));
+      const tier = rand(3);
+      const width = Math.max(48, maxWidth * [.68, .84, 1][tier] * (0.95 + Math.random() * 0.1));
       b.style.setProperty('--w', `${width}px`);
-      const occupied = new Set(active.map((balloon) => Number(balloon.dataset.lane)));
+      // A lane is free again once its last balloon has risen past the lower half of the sky.
+      const skyBox = sky.getBoundingClientRect();
+      const occupied = new Set(active.filter((balloon) => seedDelay || balloon.getBoundingClientRect().top - skyBox.top > skyBox.height * .5)
+        .map((balloon) => Number(balloon.dataset.lane)));
       const available = Array.from({ length: laneCount }, (_, i) => i).filter((i) => !occupied.has(i));
+      if (!available.length) { if (!seedDelay && !resolved) spawnTimer = later(spawn, 400); return; }
       const lane = available[rand(available.length)];
       b.dataset.lane = String(lane);
       b.style.setProperty('--x', `${(lane + .5) * 100 / laneCount}%`);
-      b.style.setProperty('--lift', `${sky.clientHeight + 260}px`);
+      b.style.setProperty('--lift', `${sky.clientHeight * .8}px`);
       b.style.setProperty('--drift', '0px');
-      b.style.setProperty('--time', `${10 + Math.random() * 3}s`);
+      b.style.setProperty('--time', `${(10 + Math.random() * 3) * [.82, .92, 1][tier]}s`);
       b.style.setProperty('--sway-time', `${2.8 + Math.random() * 1.6}s`);
+      if (seedDelay) b.style.animationDelay = `-${seedDelay}s`;
       b.style.setProperty('--sway-delay', `${-Math.random() * 3}s`);
       b.style.setProperty('--rest-y', `${40 + (lane % 3) * 16}%`);
       const art = balloonImages[rand(balloonImages.length)].cloneNode();
@@ -1064,7 +1088,8 @@ function showBalloons() {
         instruction.textContent = `${popped} of ${GOAL} balloons popped!`;
         tell(`${popped} of ${GOAL} balloons popped!`, 'success');
         audio.sfx('pop', popped);
-        burst(b, 16);
+        burst(b, 18);
+        popFx(b);
         const slot = stars.children[popped - 1];
         if (slot) slot.classList.add('on');
         animate('happy');
@@ -1087,14 +1112,15 @@ function showBalloons() {
       });
       sky.append(b);
     }
-    if (!resolved) spawnTimer = later(spawn, 750);
+    if (!seedDelay && !resolved) spawnTimer = later(spawn, 650);
   }
   resetBalloonLayout = () => {
     clock.clear(spawnTimer);
     sky.replaceChildren();
-    if (roundReady && !resolved) spawn();
+    if (roundReady && !resolved) { [5, 3, 1.5].forEach((d) => spawn(d)); spawn(); }
   };
   whenPicsReady(balloonImages, () => {
+    [5, 3, 1.5].forEach((d) => spawn(d));
     spawn();
     introduce(section);
   });

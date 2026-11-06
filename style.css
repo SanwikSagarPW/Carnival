@@ -234,8 +234,9 @@ button:focus-visible, [role="button"]:focus-visible {
 .game[data-section="balloons"] .eyebrow { display: none; }
 .game[data-section="balloons"] .board-footer {
   display: flex; position: absolute; justify-content: center;
-  left: auto; right: calc(8px + var(--control) / 2); translate: 50% 0; top: calc(var(--control) + 20px); bottom: auto; z-index: 2;
+  left: auto; right: 8px; top: calc(var(--control) + 20px); bottom: auto; z-index: 2;
 }
+.game[data-section="balloons"] .hear-button { width: var(--control); padding: .3em 0 .4em; font-size: clamp(11px, 1.1cqw, 16px); gap: .25em; }
 .game[data-section="balloons"] #feedback {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
@@ -245,18 +246,33 @@ button:focus-visible, [role="button"]:focus-visible {
   --balloon-size: max(44px, var(--w));
   position: absolute; top: 100%;
   left: clamp(0px, calc(var(--x) - var(--balloon-size) / 2), calc(100% - var(--balloon-size)));
-  width: var(--balloon-size); min-height: 44px; padding: 0; pointer-events: auto;
+  width: var(--balloon-size); min-height: 44px; padding: 0; pointer-events: auto; cursor: pointer;
   animation: rise var(--time) linear forwards;
+  filter: drop-shadow(0 8px 6px #1b5a7a33);
+  -webkit-tap-highlight-color: transparent;
 }
 @keyframes rise { to { transform: translate(var(--drift), calc(-1 * var(--lift))); } }
-.balloon-art { width: 100%; height: auto; transform-origin: 50% 100%; animation: sway var(--sway-time, 3s) ease-in-out var(--sway-delay, 0s) infinite alternate; }
-@keyframes sway { from { translate: -4px 0; } to { translate: 4px 0; } }
+.balloon-art { width: 100%; height: auto; transform-origin: 50% 100%; transition: scale 120ms ease-out; animation: sway var(--sway-time, 3s) ease-in-out var(--sway-delay, 0s) infinite alternate; }
+@keyframes sway { from { translate: -5px 0; rotate: -2.5deg; } to { translate: 5px 0; rotate: 2.5deg; } }
+@media (hover: hover) { .balloon:hover .balloon-art { scale: 1.06; } }
+.balloon:active .balloon-art { scale: .92; }
+.balloon:focus-visible { outline-offset: 6px; border-radius: 50%; }
 .balloon.popped { pointer-events: none; }
-.balloon.popped .balloon-art { animation: balloonBurst 280ms ease-out forwards; }
-@keyframes balloonBurst { to { opacity: 0; scale: 1.3; } }
-.star-row { display: flex; justify-content: center; gap: 8px; margin-top: .8cqh; }
-.star-row svg { width: clamp(24px, 4cqh, 40px); aspect-ratio: 1; fill: #c6d8df; stroke: #fff; stroke-width: 3; stroke-linejoin: round; }
-.star-row svg.on { fill: #ffd23f; stroke: #f09a0c; animation: bump 300ms; }
+.balloon.popped .balloon-art { animation: balloonBurst 260ms ease-out forwards; }
+@keyframes balloonBurst { 35% { scale: 1.22 .9; opacity: 1; } to { opacity: 0; scale: 1.5; } }
+.star-row { display: flex; justify-content: center; gap: clamp(6px, 1cqw, 12px); margin-top: .8cqh; }
+.star-row svg { width: clamp(26px, 4.8cqh, 46px); aspect-ratio: 1; fill: #ece6f7; stroke: #cdbfe8; stroke-width: 3; stroke-linejoin: round; transition: fill 200ms; }
+.star-row svg.on { fill: #ffd23f; stroke: #f09a0c; filter: drop-shadow(0 2px 0 #f09a0c66); animation: starPop 420ms cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes starPop { 0% { scale: .3; rotate: -40deg; } 60% { scale: 1.3; rotate: 12deg; } 100% { scale: 1; rotate: 0; } }
+.pop-ring { position: absolute; width: 20px; aspect-ratio: 1; margin: -10px; border-radius: 50%; border: 6px solid #fff; box-shadow: 0 0 12px #ffffffaa; animation: popRing 480ms ease-out forwards; }
+@keyframes popRing { to { transform: scale(9); opacity: 0; border-width: 1px; } }
+.pop-word {
+  position: absolute; translate: -50% -50%; rotate: var(--tilt, 0deg); white-space: nowrap;
+  font-family: 'Baloo 2', Nunito, system-ui, sans-serif; font-weight: 800; font-size: clamp(22px, 3.4cqw, 52px); color: #ff5c8a;
+  -webkit-text-stroke: .22em #fff; paint-order: stroke fill; text-shadow: 0 .08em 0 #b8325a66;
+  animation: popWord 900ms cubic-bezier(.2, .9, .3, 1) forwards;
+}
+@keyframes popWord { 0% { scale: .3; opacity: 0; translate: -50% -30%; } 20% { scale: 1.25; opacity: 1; } 100% { scale: 1; opacity: 0; translate: -50% -230%; } }
 .fx { position: absolute; inset: 0; z-index: 9; pointer-events: none; }
 .fx i { position: absolute; width: 14px; height: 14px; margin: -7px; clip-path: polygon(50% 0, 62% 36%, 100% 38%, 70% 60%, 80% 100%, 50% 76%, 20% 100%, 30% 60%, 0 38%, 38% 36%); animation: fly 700ms ease-out forwards; }
 @keyframes fly { to { transform: translate(var(--dx), var(--dy)) rotate(var(--spin)) scale(.2); opacity: 0; } }
