@@ -1,7 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
-  <defs><linearGradient id="b" x2=".2" y2="1"><stop stop-color="#87d9f7"/><stop offset=".35" stop-color="#59b9eb"/><stop offset="1" stop-color="#2585c8"/></linearGradient></defs>
-  <rect x="5" y="12" width="110" height="103" rx="29" fill="#1c5480" opacity=".3"/>
-  <rect x="5" y="5" width="110" height="105" rx="29" fill="url(#b)" stroke="#2c78a8" stroke-width="4"/>
-  <path d="M15 42V33q0-18 20-18h50q17 0 20 13" fill="none" stroke="#d6f4ff" stroke-width="5" stroke-linecap="round"/>
-  <path d="M15 80q0 19 20 19h50q18 0 20-16" fill="none" stroke="#1b70ad" stroke-width="5" opacity=".55" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="f" x2="0" y2="1"><stop stop-color="#fb7a60"/><stop offset=".55" stop-color="#f25a3f"/><stop offset="1" stop-color="#e44628"/></linearGradient>
+    <linearGradient id="l" x2="0" y2="1"><stop stop-color="#d23a1f"/><stop offset="1" stop-color="#b82b14"/></linearGradient>
+    <clipPath id="c"><rect x="9" y="7" width="102" height="92" rx="36"/></clipPath>
+  </defs>
+  <rect x="6" y="14" width="108" height="102" rx="42" fill="#5a1409" opacity=".28"/>
+  <rect x="2" y="2" width="116" height="110" rx="44" fill="#fff"/>
+  <rect x="9" y="9" width="102" height="98" rx="37" fill="url(#l)"/>
+  <rect x="9" y="7" width="102" height="92" rx="36" fill="url(#f)"/>
+  <g clip-path="url(#c)">
+    <path d="M0 70Q60 96 120 66V110H0z" fill="#d93b20" opacity=".55"/>
+    <path d="M0 0H120V30Q60 44 0 26z" fill="#ffb4a2" opacity=".3"/>
+  </g>
+  <ellipse cx="36" cy="22" rx="15" ry="6" transform="rotate(-20 36 22)" fill="#ffd9ce" opacity=".85"/>
+  <ellipse cx="92" cy="82" rx="7" ry="3.4" transform="rotate(-40 92 82)" fill="#ffa994" opacity=".9"/>
 </svg>

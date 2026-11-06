@@ -36,6 +36,13 @@ let musicStep = 0;
 let musicWanted = false;
 const lastPick = new Map();
 const warmed = new Set();
+let speechListener = null;
+
+/** fn(true) when a dialogue clip starts playing, fn(false) when it ends or is stopped. */
+export function onSpeechChange(fn) { speechListener = fn; }
+const notifySpeech = (on) => {
+  try { speechListener?.(on); } catch (e) { console.error(e); }
+};
 
 /* ---------- setup ---------- */
 
@@ -62,6 +69,7 @@ function ensureVoice() {
   voice = new Audio();
   voice.preload = 'auto';
   voice.addEventListener('ended', () => finish(current?.ticket, true));
+  voice.addEventListener('playing', () => { if (current) notifySpeech(true); });
   voice.addEventListener('error', () => {
     console.warn('Dialogue could not load.', current?.src, voice.error);
     finish(current?.ticket, true);
@@ -155,6 +163,7 @@ function finish(t, natural) {
   clearTimeout(done.watchdog);
   voice?.pause();
   duck(false);
+  notifySpeech(false);
   if (natural && done.onEnd) {
     try { done.onEnd(); } catch (e) { console.error(e); }
   }
@@ -207,6 +216,7 @@ export function stopSpeech(clearPending = true) {
   if (current) {
     clearTimeout(current.watchdog);
     current = null;
+    notifySpeech(false);
   }
   if (voice) {
     try { voice.pause(); } catch { /* ignore */ }

@@ -98,6 +98,7 @@ function newScene(screen, theme = 'meadow') {
   tell(screen === 'splash' ? 'Sparky is here to help.' : 'Take your time. You can do it!');
   stage.className = 'stage';
   stage.textContent = '';
+  document.querySelector('.board-heading .star-row')?.remove();
   syncSuspension();
   return sceneId;
 }
@@ -252,7 +253,7 @@ function loadRig() {
         const { SparkyRigPlayer } = await import('./sparky-animations/player.js');
         const loaded = await SparkyRigPlayer.load();
         // Painted parts already have outlines; the extra silhouette layer produces a displaced shadow.
-        loaded.outline = null;
+        if (!location.search.includes('outline')) loaded.outline = null;
         return loaded;
       } catch (error) {
         console.warn(`Sparky load attempt ${attempt + 1} failed.`, error);
@@ -276,7 +277,6 @@ function loadRig() {
 
 const IDLE_CYCLE = [
   ['idle', '0Final/Idle/Idle'],
-  ['look', 'Sequence/1/Look_Dr_Happy_Loop'],
   ['idleAlt', '0Final/Idle/Idle_EB'],
 ];
 const HAPPY = [
@@ -293,9 +293,10 @@ const CLIPS = {
   welcome: '0Final/Appreciation/Hurray',
   dance: '0Final/Woohoo',
   laugh: '0Final/Super_Happy',
-  try: 'Sequence/1/Lookaround_Sad',
+  try: '0Final/Idle/Lookaround_Wow',
 };
 const MIX_SECONDS = 0.25;
+let talking = false;
 
 async function animate(name = 'idle') {
   clock.clear(idleTimer);
@@ -311,6 +312,7 @@ async function animate(name = 'idle') {
     if (view) view.setAnimation(clipName, { loop: looping, mixSeconds: reducedMotion ? 0 : MIX_SECONDS });
     else {
       view = rig.add($('#sparky'), clipName, { loop: looping });
+      view.setSpeech(talking);
       // Two frames later the canvas holds Sparky, so the poster can go without a flash.
       requestAnimationFrame(() => requestAnimationFrame(() => {
         characterEl.classList.add('rig-on');
@@ -332,6 +334,12 @@ async function animate(name = 'idle') {
   }
 }
 
+// Only the mouth is animated while dialogue plays; the body keeps its current clip so gloves never pop.
+audio.onSpeechChange((on) => {
+  talking = on;
+  view?.setSpeech(on);
+});
+
 $('#character').addEventListener('click', () => {
   rigWanted = true;
   audio.sfx('giggle');
@@ -347,7 +355,7 @@ $('#character').addEventListener('keydown', (e) => {
    ========================================================================== */
 const pad = (n) => String(n).padStart(2, '0');
 
-const IMAGE_RETRIES = 3;
+const IMAGE_RETRIES = 2;
 
 /** Keep cards non-interactive until their pictures load; failed downloads expose a retry instead of blank answers. */
 function pic(src, cls = '') {
@@ -396,8 +404,10 @@ function pic(src, cls = '') {
   return img;
 }
 
-function whenPicsReady(imgs, fn) {
+let picsRun = 0;
+function whenPicsReady(imgs, fn, auto = 0) {
   const id = sceneId;
+  const run = ++picsRun;
   roundReady = false;
   loading.hidden = false;
   loadingMessage.textContent = 'Finding your pictures...';
@@ -405,8 +415,9 @@ function whenPicsReady(imgs, fn) {
   game.setAttribute('aria-busy', 'true');
   syncSuspension();
   Promise.all(imgs.map((img) => img.ready)).then((results) => {
-    if (id !== sceneId) return;
+    if (id !== sceneId || run !== picsRun) return;
     if (results.every(Boolean)) {
+      retryRound = null;
       fitComparisonImages();
       roundReady = true;
       loading.hidden = true;
@@ -415,12 +426,19 @@ function whenPicsReady(imgs, fn) {
       syncSuspension();
       later(() => { if (!resolved) fn(); }, 0);
     } else {
+      const retryAll = (attempt) => {
+        imgs.forEach((img) => { if (!img.complete || !img.naturalWidth) img.retry(); });
+        whenPicsReady(imgs, fn, attempt);
+      };
+      retryRound = () => retryAll(0);
+      if (auto < 1) {
+        // Quiet background retries first; the button only appears when they are exhausted.
+        loadingMessage.textContent = 'Still finding your pictures...';
+        later(() => retryAll(auto + 1), 2500);
+        return;
+      }
       loadingMessage.textContent = 'Your pictures could not load. Let’s try again.';
       retryButton.hidden = false;
-      retryRound = () => {
-        imgs.forEach((img) => { if (!img.complete || !img.naturalWidth) img.retry(); });
-        whenPicsReady(imgs, fn);
-      };
     }
 
   });
@@ -505,7 +523,7 @@ function showSplash() {
   play.type = 'button';
   play.className = 'play-pill';
   play.setAttribute('aria-label', 'Play');
-  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M19 14.5v19l16-9.5z" fill="#ff8a1f" stroke="#ff8a1f" stroke-width="4" stroke-linejoin="round"/></svg><span>Play</span>';
+  play.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path class="ic" d="M15 8v32l26-16z"/></svg><span>Play</span>';
   play.addEventListener('click', () => {
     if (play.classList.contains('is-pressed')) return;
     play.classList.add('is-pressed');
@@ -513,7 +531,7 @@ function showSplash() {
     audio.sfx('success');
     audio.startMusic();
     animate('happy');
-    later(() => { skillIndex = 0; startSkill(); }, 380);
+    later(() => { skillIndex = 0; starsWon = 0; starCountEl.textContent = '0'; startSkill(); }, 380);
   });
   stage.append(play);
   animate('welcome');
@@ -1004,7 +1022,8 @@ function showBalloons() {
   stars.className = 'star-row';
   stars.innerHTML = Array.from({ length: GOAL }, () =>
     '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 5 5.6 12.2 13.4 1.4-10 9 2.9 13.2L24 34 12.1 40.8 15 27.6l-10-9 13.4-1.4z"/></svg>').join('');
-  stage.append(sky, stars);
+  stage.append(sky);
+  document.querySelector('.board-heading').append(stars);
 
   let spawnTimer = null;
   function spawn() {
@@ -1127,6 +1146,7 @@ $('#btn-start').addEventListener('click', () => {
   showSplash();
 });
 retryButton.addEventListener('click', () => retryRound?.());
+addEventListener('online', () => retryRound?.());
 hearButton.addEventListener('click', () => {
   if (!currentSection || !roundReady || suspended()) return;
   audio.unlock();
