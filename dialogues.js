@@ -137,7 +137,6 @@ export const DIALOGUES = {
   welcome: {
     intro:   [`${D}/Welcome - Start Playing/T60 Welcome_introduction.mp3`],
     guide:   [
-      `${D}/Welcome - Start Playing/T61 Choose_game.mp3`,
       `${D}/Welcome - Start Playing/T62 follow_instructions_and_tap.mp3`,
       `${D}/Welcome - Start Playing/T63 start_game.mp3`,
     ],

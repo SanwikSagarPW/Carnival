@@ -576,39 +576,8 @@ function showSplash() {
     animate('happy');
     later(() => { skillIndex = 0; starsWon = 0; starCountEl.textContent = '0'; startSkill(); }, 380);
   });
-  stage.append(play, menuGames());
+  stage.append(play);
   animate('welcome');
-}
-
-const MENU_GAMES = [
-  ['different', 'Odd one', '<circle cx="14" cy="14" r="8" fill="#3aaef2"/><circle cx="34" cy="14" r="8" fill="#3aaef2"/><circle cx="14" cy="34" r="8" fill="#3aaef2"/><path d="m34 25 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2-4.5-4.4 6.2-.9z" fill="#ff9a2e" stroke="#c9671a" stroke-width="1.5" stroke-linejoin="round"/>'],
-  ['biggest', 'Biggest', '<circle cx="19" cy="27" r="15" fill="#ff5c8a"/><circle cx="39" cy="36" r="7" fill="#ffc52e"/><circle cx="14" cy="21" r="4" fill="#fff" opacity=".5"/>'],
-  ['more', 'Which more', '<g fill="#3fc96b"><circle cx="9" cy="14" r="4.5"/><circle cx="21" cy="14" r="4.5"/><circle cx="9" cy="27" r="4.5"/><circle cx="21" cy="27" r="4.5"/><circle cx="15" cy="39" r="4.5"/></g><g fill="#a45cf0"><circle cx="37" cy="24" r="4.5"/><circle cx="37" cy="36" r="4.5"/></g>'],
-  ['longest', 'Longest', '<rect x="6" y="10" width="14" height="8" rx="4" fill="#ff9a2e"/><rect x="6" y="21" width="26" height="8" rx="4" fill="#3aaef2"/><rect x="6" y="32" width="38" height="8" rx="4" fill="#3fc96b"/>'],
-  ['shapes', 'Shapes', '<path d="M13 9 25 31H1z" fill="#ffc52e" stroke="#c98d00" stroke-width="1.5" stroke-linejoin="round"/><rect x="27" y="19" width="17" height="17" rx="4" fill="#ff5c8a"/><circle cx="14" cy="40" r="5" fill="#3aaef2"/>'],
-];
-
-/** One tile per game so a child (or parent) can jump straight in. */
-function menuGames() {
-  const row = document.createElement('div');
-  row.className = 'menu-games';
-  MENU_GAMES.forEach(([key, label, art]) => {
-    const index = SKILLS.findIndex((s) => s.key === key);
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'menu-chip';
-    chip.setAttribute('aria-label', `Play ${SKILLS[index].title}`);
-    chip.innerHTML = `<span class="menu-icon"><svg viewBox="0 0 48 48" aria-hidden="true">${art}</svg></span><span class="menu-label">${label}</span>`;
-    chip.addEventListener('click', () => {
-      audio.unlock();
-      audio.sfx('success');
-      audio.startMusic();
-      skillIndex = index;
-      startSkill();
-    });
-    row.append(chip);
-  });
-  return row;
 }
 
 /* ==========================================================================

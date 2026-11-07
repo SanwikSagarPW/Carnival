@@ -15,7 +15,6 @@
 :root {
   font-family: Nunito, 'Trebuchet MS', system-ui, sans-serif;
   color: #2b2560;
-  background: #27c3f0;
   -webkit-tap-highlight-color: transparent;
 }
 *, *::before, *::after { box-sizing: border-box; }
@@ -271,20 +270,7 @@ button:focus-visible, [role="button"]:focus-visible {
 .word-bottom span:nth-child(5n) { color: #a45cf0; }
 @keyframes letterPop { from { opacity: 0; transform: translateY(.5em) scale(.4); } to { opacity: 1; transform: none; } }
 .stage.is-splash { position: absolute; margin: 0; top: 53%; bottom: 5%; left: 22%; right: 22%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3.4cqh; }
-.menu-games { display: flex; justify-content: center; gap: clamp(8px, 1.6cqw, 26px); }
-.menu-chip { display: flex; flex-direction: column; align-items: center; gap: .5cqh; min-width: 44px; transition: transform 140ms; }
-.menu-icon {
-  display: grid; place-items: center; width: clamp(44px, 6.2cqw, 84px); aspect-ratio: 1; border-radius: 26%;
-  background: #fff; border: 3px solid #a9d8f7; box-shadow: 0 4px 0 #7fbde6, 0 8px 10px #3b0a1030;
-}
-.menu-icon svg { width: 68%; height: 68%; }
-.menu-label {
-  font-family: 'Baloo 2', Nunito, system-ui, sans-serif; font-weight: 800; font-size: clamp(12px, 1.5cqw, 22px); line-height: 1.1; color: #fff;
-  text-shadow: 0 2px 0 #4c1d78, 0 0 8px #2a147066; white-space: nowrap;
-}
-.menu-chip:active { transform: translateY(3px); }
-@media (hover: hover) { .menu-chip:hover { transform: translateY(-4px); } }
-@media (max-height: 480px) { .menu-label { display: none; } .stage.is-splash { top: 52%; gap: 2.4cqh; } }
+@media (max-height: 480px) { .stage.is-splash { top: 52%; gap: 2.4cqh; } }
 .play-pill {
   position: relative; display: flex; align-items: center; justify-content: center; gap: .26em; padding: .12em .78em .2em .2em;
   border-radius: 99px; background: linear-gradient(#fb7a60, #e44628); color: #fff; border: .07em solid #fff;
