@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -16,7 +16,7 @@
   <link rel="modulepreload" href="sparky-animations/player.js">
   <link rel="modulepreload" href="sparky-animations/runtime/character-upgrade/12-sparky-final/player.js">
   <link rel="modulepreload" href="sparky-animations/runtime/character-upgrade/12-sparky-final/motion-fit-painted.js?gesture-fit=2">
-  <link rel="stylesheet" href="style.css?v=carnival-45">
+  <link rel="stylesheet" href="style.css?v=carnival-95">
 </head>
 <body>
   <main class="game" id="game" data-screen="splash" data-theme="meadow" inert>
@@ -54,6 +54,106 @@
 
     <!-- activity -->
     <section class="puzzle-frame" aria-labelledby="ribbon">
+      <div class="tent-interior" aria-hidden="true"></div>
+      <svg class="valance" viewBox="0 0 900 160" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="tent-red" x2="0" y2="1">
+            <stop stop-color="#ff827e"/><stop offset=".55" stop-color="#ef5263"/><stop offset="1" stop-color="#ce354e"/>
+          </linearGradient>
+          <linearGradient id="tent-cream" x2="0" y2="1">
+            <stop stop-color="#fffef4"/><stop offset=".7" stop-color="#fff7df"/><stop offset="1" stop-color="#f4dfb6"/>
+          </linearGradient>
+          <linearGradient id="tent-gold" x2="0" y2="1">
+            <stop stop-color="#ffe9a0"/><stop offset=".5" stop-color="#ffc75b"/><stop offset="1" stop-color="#d89135"/>
+          </linearGradient>
+          <linearGradient id="tent-roof-side" x2="1" y2="0">
+            <stop stop-color="#5a1030" stop-opacity=".34"/><stop offset=".3" stop-color="#5a1030" stop-opacity="0"/>
+            <stop offset=".7" stop-color="#5a1030" stop-opacity="0"/><stop offset="1" stop-color="#5a1030" stop-opacity=".34"/>
+          </linearGradient>
+          <linearGradient id="tent-roof-top" x2="0" y2="1">
+            <stop offset=".15" stop-color="#fff" stop-opacity=".42"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="tent-roof-clip">
+            <path d="M0 114C230 108 380 68 450 22C520 68 670 108 900 114V128H0Z"/>
+          </clipPath>
+          <path id="tent-scallop" d="M0 116H90V127C90 150 0 150 0 127Z"/>
+        </defs>
+        <g clip-path="url(#tent-roof-clip)">
+          <path d="M0 0H900V130H0Z" fill="url(#tent-cream)"/>
+          <g fill="url(#tent-red)">
+            <path d="M450 22 405 130H495Z"/>
+            <path d="M450 22 225 130H315Z"/>
+            <path d="M450 22 585 130H675Z"/>
+            <path d="M450 22 45 130H135Z"/>
+            <path d="M450 22 765 130H855Z"/>
+          </g>
+          <path d="M0 0H900V130H0Z" fill="url(#tent-roof-side)"/>
+          <path d="M0 0H900V130H0Z" fill="url(#tent-roof-top)"/>
+        </g>
+        <path d="M0 114C230 108 380 68 450 22C520 68 670 108 900 114" fill="none" stroke="#b9780a" stroke-width="8" stroke-linecap="round"/>
+        <path d="M0 114C230 108 380 68 450 22C520 68 670 108 900 114" fill="none" stroke="url(#tent-gold)" stroke-width="4.5" stroke-linecap="round"/>
+        <g stroke="#ba4050" stroke-width="1.5">
+          <use href="#tent-scallop" fill="url(#tent-red)"/>
+          <use href="#tent-scallop" x="90" fill="url(#tent-cream)"/>
+          <use href="#tent-scallop" x="180" fill="url(#tent-red)"/>
+          <use href="#tent-scallop" x="270" fill="url(#tent-cream)"/>
+          <use href="#tent-scallop" x="360" fill="url(#tent-red)"/>
+          <use href="#tent-scallop" x="450" fill="url(#tent-cream)"/>
+          <use href="#tent-scallop" x="540" fill="url(#tent-red)"/>
+          <use href="#tent-scallop" x="630" fill="url(#tent-cream)"/>
+          <use href="#tent-scallop" x="720" fill="url(#tent-red)"/>
+          <use href="#tent-scallop" x="810" fill="url(#tent-cream)"/>
+        </g>
+        <path d="M3 117Q450 124 897 117" fill="none" stroke="#a83b48" stroke-width="8" stroke-linecap="round"/>
+        <path d="M3 115Q450 122 897 115" fill="none" stroke="url(#tent-gold)" stroke-width="5" stroke-linecap="round"/>
+        <g fill="url(#tent-gold)" stroke="#b9780a" stroke-width="1.5">
+          <circle cx="90" cy="128" r="4.5"/><circle cx="180" cy="128" r="4.5"/><circle cx="270" cy="128" r="4.5"/>
+          <circle cx="360" cy="128" r="4.5"/><circle cx="450" cy="128" r="4.5"/><circle cx="540" cy="128" r="4.5"/>
+          <circle cx="630" cy="128" r="4.5"/><circle cx="720" cy="128" r="4.5"/><circle cx="810" cy="128" r="4.5"/>
+        </g>
+      </svg>
+      <svg class="tent-flag" viewBox="0 0 40 62" aria-hidden="true">
+        <rect x="12.6" y="9" width="2.8" height="42" rx="1.4" fill="#9a5a39"/>
+        <circle cx="14" cy="7" r="3" fill="url(#tent-gold)" stroke="#b9780a" stroke-width="1"/>
+        <g class="flag-cloth">
+          <path d="M15.4 10Q27 6 39 11L33 17.5L39 24Q27 28 15.4 25Z" fill="url(#tent-red)" stroke="#a83b48" stroke-width="1" stroke-linejoin="round"/>
+          <path d="M15.4 15.5Q27 12 36 15.6L34.5 18.5Q26 15.5 15.4 19.5Z" fill="#fffef4" opacity=".9"/>
+        </g>
+        <path d="M3 62C3 52 7 47 14 47s11 5 11 15Z" fill="url(#tent-gold)" stroke="#b9780a" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M8 58Q9 52 13 50" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="tent-bulbs" aria-hidden="true"></div>
+      <svg class="tent-curtain tent-curtain-left" viewBox="0 0 100 560" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="tent-fabric">
+            <stop stop-color="#a92e46"/><stop offset=".2" stop-color="#f66b78"/><stop offset=".4" stop-color="#d9425e"/>
+            <stop offset=".6" stop-color="#ff8790"/><stop offset=".8" stop-color="#df4c65"/><stop offset="1" stop-color="#b6324b"/>
+          </linearGradient>
+          <path id="tent-drape-outline" d="M0 0H100C96 74 68 128 39 184C20 222 25 292 46 384L69 542Q42 559 0 550Z"/>
+          <clipPath id="tent-drape-clip"><use href="#tent-drape-outline"/></clipPath>
+          <g id="tent-drape">
+            <use href="#tent-drape-outline" fill="url(#tent-fabric)" stroke="#a53248" stroke-width="2"/>
+            <g clip-path="url(#tent-drape-clip)" fill="none" stroke-linecap="round">
+              <path d="M24 0Q38 112 22 211Q9 367 21 555M61 0Q55 123 29 211Q27 352 46 555" stroke="#8e2644" stroke-opacity=".28" stroke-width="5"/>
+              <path d="M35 0Q46 115 27 206M78 0Q64 130 35 210M30 240Q34 388 58 540" stroke="#ffb0ac" stroke-opacity=".55" stroke-width="3"/>
+            </g>
+          </g>
+        </defs>
+        <use href="#tent-drape"/>
+      </svg>
+      <svg class="tent-curtain tent-curtain-right" viewBox="0 0 100 560" preserveAspectRatio="none" aria-hidden="true"><use href="#tent-drape"/></svg>
+      <svg class="tent-tie tent-tie-left" viewBox="0 0 40 68" aria-hidden="true"><use href="#tent-tie-art"/></svg>
+      <svg class="tent-tie tent-tie-right" viewBox="0 0 40 68" aria-hidden="true"><use href="#tent-tie-art"/></svg>
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <g id="tent-tie-art">
+          <path d="M20 14C23 24 23 30 20 36" fill="none" stroke="#b97a2e" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M20 14C23 24 23 30 20 36" fill="none" stroke="#ffd45f" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M2 8Q20 0 38 9L36 19Q20 12 4 18Z" fill="url(#tent-gold)" stroke="#b97a2e" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="20" cy="40" r="5.5" fill="url(#tent-gold)" stroke="#b97a2e" stroke-width="1.5"/>
+          <path d="M14 44h12l3.5 20Q20 68 10.5 64Z" fill="url(#tent-gold)" stroke="#b97a2e" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M16 48l-2 15M20 48v18M24 48l2 15" stroke="#b97a2e" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/>
+        </g>
+      </svg>
       <header class="board-heading">
         <p class="eyebrow" id="eyebrow">Play, discover, grow</p>
         <h1 class="ribbon" id="ribbon">Sparky's Carnival</h1>
@@ -83,17 +183,11 @@
   </main>
 
   <dialog class="pause-dialog" id="pause-dialog" aria-labelledby="pause-title">
-    <p class="eyebrow">Take your time</p>
-    <h2 id="pause-title">A little pause</h2>
-    <p>Your game will be right here.</p>
+    <h2 id="pause-title">Game paused</h2>
     <div class="pause-actions">
       <button id="btn-resume" type="button" autofocus>
         <span class="dialog-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="ic" d="M15 8v32l26-16z"/></svg></span>
         Keep playing
-      </button>
-      <button id="btn-restart" type="button">
-        <span class="dialog-icon"><svg viewBox="1 3 40 40" aria-hidden="true"><path d="M24 12A13 13 0 1 1 12.7 18.5" fill="none" stroke="#b9301a" stroke-width="11" stroke-linecap="round"/><path d="M24 12A13 13 0 1 1 12.7 18.5" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path class="ic" d="M17.6 10 20.1 22.8 5.3 14.2z"/></svg></span>
-        Try again
       </button>
       <button id="btn-start" type="button">
         <span class="dialog-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="ic" d="M24 7 6 23h5v17h26V23h5z"/><path d="M20 28h8v12h-8z" fill="#b9301a" stroke="none"/></svg></span>
@@ -107,7 +201,7 @@
     <p>Sparky needs a little more room.<br>Hold your device sideways.</p>
   </section>
   <noscript><p class="no-script">Please enable JavaScript to play with Sparky.</p></noscript>
-  <script id="game-code" type="module" src="game.js?v=carnival-45"></script>
+  <script id="game-code" type="module" src="game.js?v=carnival-80"></script>
   <script>
     document.getElementById('game-code').addEventListener('error', function () {
       document.getElementById('loading-message').textContent = 'The game could not connect. Please try again.';

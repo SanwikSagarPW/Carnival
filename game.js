@@ -8,9 +8,9 @@ import { GameTimers } from './timers.js';
 const SKILLS = [
   { key: 'different', title: 'Find the different one', instruction: 'Which picture does not belong?', theme: 'meadow' },
   { key: 'biggest',   title: 'Find the biggest one', instruction: 'Tap the biggest object.', theme: 'meadow' },
-  { key: 'more',      title: 'Which group has more?', instruction: 'Look carefully. Tap the group with more.', theme: 'meadow' },
-  { key: 'longest',   title: 'Find the longest one', instruction: 'Tap the object that reaches the farthest.', theme: 'meadow' },
-  { key: 'shapes',    title: 'Match the shapes', instruction: 'Pick a shape, then tap its matching space.', theme: 'meadow' },
+  { key: 'more',      title: 'Which group has more?', instruction: 'Tap the group with more.', theme: 'meadow' },
+  { key: 'longest',   title: 'Find the longest one', instruction: 'Tap the longest object.', theme: 'meadow' },
+  { key: 'shapes',    title: 'Match the shapes', instruction: 'Drag each shape to its match.', theme: 'meadow' },
 ];
 const ASSET_COUNT = 40;
 const PRAISE_DELAY = 750;       // how long a right answer sparkles before the arrow appears
@@ -84,6 +84,13 @@ function newScene(screen, theme = 'meadow') {
   fx.textContent = '';
   game.dataset.screen = screen;
   game.dataset.theme = theme;
+  // Close and re-open the curtains so every new round starts like a new act.
+  const frame = $('.puzzle-frame');
+  frame.classList.remove('curtain-open');
+  if (screen === 'play') {
+    void frame.offsetWidth;
+    frame.classList.add('curtain-open');
+  }
   currentSection = null;
   resetBalloonLayout = null;
   delete game.dataset.section;
@@ -315,16 +322,28 @@ const CLIPS = {
 };
 const MIX_SECONDS = 0.25;
 let talking = false;
+let currentName = 'idle';
+let lastTalkClip = null;
+
+/** Sparky's authored speaking clips move his whole body: head, arms and gloves. */
+function pickTalkClip() {
+  const clips = (rig?.manifest.animations || []).map((c) => c.name).filter((n) => n.startsWith('0Final/Vocal/') && n !== lastTalkClip);
+  lastTalkClip = clips[Math.floor(Math.random() * clips.length)] || null;
+  return lastTalkClip;
+}
 
 async function animate(name = 'idle') {
   clock.clear(idleTimer);
   const token = ++runToken;
-  const clipName = name === 'happy' ? HAPPY[Math.floor(Math.random() * HAPPY.length)] : (CLIPS[name] || CLIPS.idle);
-  const looping = IDLE_CYCLE.some(([key]) => key === name);
-
+  const looping = name === 'talk' || IDLE_CYCLE.some(([key]) => key === name);
   try {
     rig = await loadRig();
     if (!rig || token !== runToken) return;
+    // A talking Sparky never settles back into a still idle until the voice stops.
+    if (name === 'idle' && talking && !reducedMotion) name = 'talk';
+    currentName = name;
+    const clipName = name === 'happy' ? HAPPY[Math.floor(Math.random() * HAPPY.length)]
+      : name === 'talk' ? (pickTalkClip() || CLIPS.idle) : (CLIPS[name] || CLIPS.idle);
     rig.setPaused(suspended() || reducedMotion);
     characterEl.classList.toggle('airborne', name === 'jump' || name === 'dance');
     if (view) view.setAnimation(clipName, { loop: looping, mixSeconds: reducedMotion ? 0 : MIX_SECONDS });
@@ -339,11 +358,14 @@ async function animate(name = 'idle') {
       }));
     }
 
-    if (looping) {
+    const seconds = rig.manifest.animations.find((c) => c.name === clipName)?.duration ?? 2;
+    if (name === 'talk') {
+      // Chain different speaking gestures for as long as the voice keeps going.
+      idleTimer = later(() => { if (token === runToken) animate(talking ? 'talk' : 'idle'); }, Math.max(seconds, 1.5) * 1000);
+    } else if (looping) {
       const i = IDLE_CYCLE.findIndex(([key]) => key === name);
       idleTimer = later(() => animate(IDLE_CYCLE[(i + 1) % IDLE_CYCLE.length][0]), 4400);
     } else {
-      const seconds = rig.manifest.animations.find((c) => c.name === clipName)?.duration ?? 2;
       idleTimer = later(() => { if (token === runToken) animate('idle'); }, seconds * 1000 + 160);
     }
   } catch (error) {
@@ -352,10 +374,13 @@ async function animate(name = 'idle') {
   }
 }
 
-// Only the mouth is animated while dialogue plays; the body keeps its current clip so gloves never pop.
+// The mouth follows the voice, and while Sparky is calmly idling his whole body gestures along with it.
+// Celebrations and "try again" reactions finish first, then he carries on gesturing if the voice is still going.
 audio.onSpeechChange((on) => {
   talking = on;
   view?.setSpeech(on);
+  if (on && !reducedMotion && IDLE_CYCLE.some(([key]) => key === currentName)) animate('talk');
+  else if (!on && currentName === 'talk') animate('idle');
 });
 
 $('#character').addEventListener('click', () => {
@@ -551,8 +576,39 @@ function showSplash() {
     animate('happy');
     later(() => { skillIndex = 0; starsWon = 0; starCountEl.textContent = '0'; startSkill(); }, 380);
   });
-  stage.append(play);
+  stage.append(play, menuGames());
   animate('welcome');
+}
+
+const MENU_GAMES = [
+  ['different', 'Odd one', '<circle cx="14" cy="14" r="8" fill="#3aaef2"/><circle cx="34" cy="14" r="8" fill="#3aaef2"/><circle cx="14" cy="34" r="8" fill="#3aaef2"/><path d="m34 25 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2-4.5-4.4 6.2-.9z" fill="#ff9a2e" stroke="#c9671a" stroke-width="1.5" stroke-linejoin="round"/>'],
+  ['biggest', 'Biggest', '<circle cx="19" cy="27" r="15" fill="#ff5c8a"/><circle cx="39" cy="36" r="7" fill="#ffc52e"/><circle cx="14" cy="21" r="4" fill="#fff" opacity=".5"/>'],
+  ['more', 'Which more', '<g fill="#3fc96b"><circle cx="9" cy="14" r="4.5"/><circle cx="21" cy="14" r="4.5"/><circle cx="9" cy="27" r="4.5"/><circle cx="21" cy="27" r="4.5"/><circle cx="15" cy="39" r="4.5"/></g><g fill="#a45cf0"><circle cx="37" cy="24" r="4.5"/><circle cx="37" cy="36" r="4.5"/></g>'],
+  ['longest', 'Longest', '<rect x="6" y="10" width="14" height="8" rx="4" fill="#ff9a2e"/><rect x="6" y="21" width="26" height="8" rx="4" fill="#3aaef2"/><rect x="6" y="32" width="38" height="8" rx="4" fill="#3fc96b"/>'],
+  ['shapes', 'Shapes', '<path d="M13 9 25 31H1z" fill="#ffc52e" stroke="#c98d00" stroke-width="1.5" stroke-linejoin="round"/><rect x="27" y="19" width="17" height="17" rx="4" fill="#ff5c8a"/><circle cx="14" cy="40" r="5" fill="#3aaef2"/>'],
+];
+
+/** One tile per game so a child (or parent) can jump straight in. */
+function menuGames() {
+  const row = document.createElement('div');
+  row.className = 'menu-games';
+  MENU_GAMES.forEach(([key, label, art]) => {
+    const index = SKILLS.findIndex((s) => s.key === key);
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'menu-chip';
+    chip.setAttribute('aria-label', `Play ${SKILLS[index].title}`);
+    chip.innerHTML = `<span class="menu-icon"><svg viewBox="0 0 48 48" aria-hidden="true">${art}</svg></span><span class="menu-label">${label}</span>`;
+    chip.addEventListener('click', () => {
+      audio.unlock();
+      audio.sfx('success');
+      audio.startMusic();
+      skillIndex = index;
+      startSkill();
+    });
+    row.append(chip);
+  });
+  return row;
 }
 
 /* ==========================================================================
@@ -639,13 +695,14 @@ function makeOptions(skill) {
     };
   }
   const r = fresh('longest', () => {
-    const band = rand(7);
+    // Pencil, brush, ribbon, rope and crayon read as "long"; the train and curly ribbon do not.
+    const band = [1, 2, 3, 5, 7][rand(5)];
     const lens = spacedPicks(7, 4, 2);
     return { key: `${band}-${lens}`, band, lens };
   });
   return {
     items: r.lens.map((len, i) => ({
-      src: `./assets/objects/long/${r.band + 1}.webp`,
+      src: `./assets/objects/long/${r.band}.webp`,
       correct: i === 3, comparisonRatio: [.38, .56, .74, 1][i],
     })),
     shuffle: true,
@@ -1160,18 +1217,16 @@ pauseDialog.addEventListener('cancel', (event) => {
   closePause();
 });
 $('#btn-resume').addEventListener('click', closePause);
-$('#btn-restart').addEventListener('click', () => {
-  closePause();
-  if (currentSection === 'mystery') showMystery();
-  else if (currentSection === 'balloons') showBalloons();
-  else if (game.dataset.screen === 'splash') showSplash();
-  else startSkill();
-});
 $('#btn-start').addEventListener('click', () => {
   closePause();
   showSplash();
 });
 retryButton.addEventListener('click', () => retryRound?.());
+// Browsers only allow sound after a first tap, so start the music on whatever the player touches first.
+['pointerdown', 'keydown'].forEach((type) => addEventListener(type, () => {
+  audio.unlock();
+  audio.startMusic();
+}, { once: true, capture: true }));
 addEventListener('online', () => retryRound?.());
 hearButton.addEventListener('click', () => {
   if (!currentSection || !roundReady || suspended()) return;

@@ -5,20 +5,28 @@
  *                 unlocked after the first tap). Every request gets a ticket; a stale
  *                 clip can never fire a callback after something newer has started.
  * Sound effects : small Web Audio synth (marimba, chime, pop, wobble).
- * Music         : very quiet lullaby that ducks while Sparky talks.
+ * Music         : upbeat synth groove for kids that ducks while Sparky talks.
  */
 
 const MASTER_VOLUME = 0.85;
-const MUSIC_VOLUME = 0.02;
-const MUSIC_DUCKED = 0.004;
+const MUSIC_VOLUME = 0.1;
+const MUSIC_DUCKED = 0.03;
 const SILENT_WAV =
   'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=';
 
-const MELODY = [
-  523.25, null, 659.25, null, 783.99, null, 659.25, null,
-  523.25, 523.25, 659.25, 783.99, 1046.5, null, null, null,
-  880, null, 1046.5, null, 783.99, null, 659.25, null,
-  587.33, null, 659.25, null, 523.25, null, null, null,
+/* Upbeat C-Am-F-G loop at 116 bpm: bass, marimba stabs, a bouncy pentatonic hook and light percussion. */
+const STEP_SECONDS = 60 / 116 / 2;
+const CHORDS = [
+  { root: 130.81, triad: [261.63, 329.63, 392] },
+  { root: 110, triad: [220, 261.63, 329.63] },
+  { root: 174.61, triad: [220, 261.63, 349.23] },
+  { root: 196, triad: [246.94, 293.66, 392] },
+];
+const HOOK = [
+  659.25, 0, 783.99, 659.25, 523.25, 0, 587.33, 659.25,
+  880, 0, 783.99, 659.25, 659.25, 0, 523.25, 587.33,
+  880, 783.99, 0, 659.25, 783.99, 0, 880, 1046.5,
+  783.99, 0, 659.25, 587.33, 659.25, 783.99, 0, 0,
 ];
 
 let enabled = true;
@@ -354,14 +362,77 @@ export function sfx(kind = 'tap', n = 0) {
 
 /* ---------- background music ---------- */
 
+let noiseBuffer = null;
+let musicNext = 0;
+
+function noiseBurst(delay, { dur = 0.04, vol = 0.02, freq = 7000, type = 'highpass' } = {}) {
+  const c = ctx;
+  if (!c || !musicBus) return;
+  noiseBuffer ??= (() => {
+    const buf = c.createBuffer(1, Math.floor(c.sampleRate * 0.2), c.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    return buf;
+  })();
+  const t0 = c.currentTime + delay;
+  const src = c.createBufferSource();
+  const filter = c.createBiquadFilter();
+  const g = c.createGain();
+  src.buffer = noiseBuffer;
+  filter.type = type;
+  filter.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter);
+  filter.connect(g);
+  g.connect(musicBus);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+}
+
+function kick(delay, vol) {
+  const c = ctx;
+  if (!c || !musicBus) return;
+  const t0 = c.currentTime + delay;
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.frequency.setValueAtTime(140, t0);
+  o.frequency.exponentialRampToValueAtTime(48, t0 + 0.12);
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+  o.connect(g);
+  g.connect(musicBus);
+  o.start(t0);
+  o.stop(t0 + 0.2);
+}
+
+function playMusicStep(step, delay) {
+  const s = step % 32;
+  const k = s % 8;
+  const chord = CHORDS[Math.floor(s / 8)];
+  const bass = { 0: chord.root, 3: chord.root, 4: chord.root * 1.5, 7: chord.root * 1.5 }[k];
+  if (bass) tone(bass, { delay, dur: 0.22, vol: MUSIC_VOLUME * 0.55, type: 'triangle', bus: musicBus });
+  if (k === 2 || k === 6) chord.triad.forEach((hz) => tone(hz, { delay, dur: 0.16, vol: MUSIC_VOLUME * 0.16, bus: musicBus, overtone: 0.3 }));
+  const hook = HOOK[s];
+  if (hook) tone(hook, { delay, dur: 0.24, vol: MUSIC_VOLUME * 0.45, bus: musicBus, overtone: 0.4 });
+  if (k === 0 || k === 4) kick(delay, MUSIC_VOLUME * 0.9);
+  if (k === 2 || k === 6) noiseBurst(delay, { dur: 0.09, vol: MUSIC_VOLUME * 0.2, freq: 1800, type: 'bandpass' });
+  noiseBurst(delay, { dur: 0.03, vol: MUSIC_VOLUME * (k % 2 ? 0.14 : 0.07) });
+}
+
 function stepMusic() {
   clearTimeout(musicTimer);
-  if (!enabled || !musicWanted || paused || document.hidden) return;
-  const note = MELODY[musicStep++ % MELODY.length];
-  if (note && ctx?.state === 'running') {
-    tone(note, { dur: 0.28, vol: MUSIC_VOLUME, bus: musicBus, overtone: 0.35 });
+  if (!enabled || !musicWanted || paused || document.hidden) { musicNext = 0; return; }
+  if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+  if (ctx?.state === 'running') {
+    // Schedule slightly ahead on the audio clock so the beat stays steady even if the page is busy.
+    if (!musicNext || musicNext < ctx.currentTime) musicNext = ctx.currentTime + 0.05;
+    while (musicNext < ctx.currentTime + 0.35) {
+      playMusicStep(musicStep++, musicNext - ctx.currentTime);
+      musicNext += STEP_SECONDS;
+    }
   }
-  musicTimer = setTimeout(stepMusic, 420);
+  musicTimer = setTimeout(stepMusic, 100);
 }
 
 export function startMusic() {
@@ -385,3 +456,8 @@ export function stopMusic() {
     if (!paused && (ctx?.state === 'suspended' || ctx?.state === 'interrupted')) ctx.resume().catch(() => {});
   }, { passive: true })
 );
+
+// The music loop stops itself while the tab is hidden, so restart it when the player comes back.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && musicWanted) startMusic();
+});
