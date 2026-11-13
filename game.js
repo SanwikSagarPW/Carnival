@@ -84,13 +84,6 @@ function newScene(screen, theme = 'meadow') {
   fx.textContent = '';
   game.dataset.screen = screen;
   game.dataset.theme = theme;
-  // Close and re-open the curtains so every new round starts like a new act.
-  const frame = $('.puzzle-frame');
-  frame.classList.remove('curtain-open');
-  if (screen === 'play') {
-    void frame.offsetWidth;
-    frame.classList.add('curtain-open');
-  }
   currentSection = null;
   resetBalloonLayout = null;
   delete game.dataset.section;
