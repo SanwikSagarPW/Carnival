@@ -19,8 +19,8 @@
 }
 *, *::before, *::after { box-sizing: border-box; }
 body, h1, h2, p { margin: 0; }
-html, body { width: 100%; height: 100%; overflow: hidden; }
-body { display: grid; place-items: center; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+html, body { width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; }
+body { height: 100vh; height: 100dvh; display: grid; place-items: center; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; touch-action: manipulation; }
 img, svg { display: block; }
 [hidden] { display: none !important; }
@@ -267,7 +267,11 @@ button:focus-visible, [role="button"]:focus-visible {
   display: flex; position: absolute; justify-content: center;
   left: auto; right: 8px; top: calc(var(--control) + 20px); bottom: auto; z-index: 2;
 }
-.game[data-section="balloons"] .hear-button { width: var(--control); padding: .3em 0 .4em; font-size: clamp(11px, 1.1cqw, 16px); gap: .25em; }
+.game[data-section="balloons"] .hear-button { width: auto; min-width: var(--control); padding: .3em .7em .4em; font-size: clamp(11px, 1.1cqw, 16px); gap: .25em; }
+@media (max-width: 700px) and (orientation: landscape) {
+  .game[data-section="balloons"] .hear-button { width: var(--hear-w, 36px); min-width: 0; padding: 0; font-size: 0; }
+  .game[data-section="balloons"] .puzzle-frame { --hear-w: 36px; }
+}
 .game[data-section="balloons"] #feedback {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }

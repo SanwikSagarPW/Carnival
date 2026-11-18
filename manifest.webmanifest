@@ -1,0 +1,12 @@
+{
+  "name": "Sparky's Carnival",
+  "short_name": "Carnival",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#f5dce2",
+  "theme_color": "#f5dce2",
+  "icons": [
+    { "src": "assets/sparky-poster.webp?v=2", "sizes": "512x640", "type": "image/webp" }
+  ]
+}

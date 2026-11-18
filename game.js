@@ -499,10 +499,10 @@ function fitComparisonImages() {
     img.style.height = `${dimensions[i].height * scale}px`;
   });
 }
-addEventListener('resize', () => requestAnimationFrame(() => {
+['resize', 'orientationchange'].forEach((type) => addEventListener(type, () => requestAnimationFrame(() => {
   fitComparisonImages();
   resetBalloonLayout?.();
-}));
+})));
 
 const objectSrc = (key, n) => `./assets/objects/pics/${pad((n % ASSET_COUNT) + 1)}.webp`;
 
