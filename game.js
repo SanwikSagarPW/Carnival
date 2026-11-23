@@ -16,6 +16,7 @@ const ASSET_COUNT = 40;
 const PRAISE_DELAY = 750;       // how long a right answer sparkles before the arrow appears
 const NUDGE_AFTER_MS = 9000;    // quiet time before Sparky repeats the question
 const NUDGE_TIMES = 3;
+const SFX_ONLY_SECTIONS = new Set(['memory', 'whack', 'cups', 'spinner', 'lights']);
 
 const $ = (s) => document.querySelector(s);
 const game = $('#game');
@@ -126,6 +127,7 @@ function showNext(handler) {
 }
 /* ---------- voice helpers ---------- */
 function speak(src, opts = {}) {
+  if (SFX_ONLY_SECTIONS.has(currentSection)) return;
   const id = sceneId;
   const token = ++speechToken;
   const answered = resolved;
@@ -145,6 +147,7 @@ function introduce(section) {
 }
 
 function armNudge(section, tries) {
+  if (SFX_ONLY_SECTIONS.has(section)) return;
   clock.clear(nudgeTimer);
   if (tries <= 0) return;
   const id = sceneId;
@@ -162,6 +165,7 @@ function touched(section) {
 }
 
 function cheerUp(section) {
+  if (SFX_ONLY_SECTIONS.has(section)) return;
   // Don't pile a second "try again" on top of one that is still playing.
   const pool = DIALOGUES[section]?.cheerup?.length ? DIALOGUES[section].cheerup : DIALOGUES.welcome.cheerup;
   speak(audio.pick(pool), { ifIdle: true, delay: 200 });
