@@ -508,27 +508,16 @@ const objectSrc = (key, n) => `./assets/objects/pics/${pad((n % ASSET_COUNT) + 1
 function card({ section, extra = '', onPick, label }) {
   const el = document.createElement('div');
   el.className = `card ${extra}`.trim();
-  el.tabIndex = 0;
   if (onPick) {
+    el.tabIndex = 0;
     el.setAttribute('role', 'button');
     if (label) el.setAttribute('aria-label', label);
     el.addEventListener('click', () => onPick(el));
     el.addEventListener('keydown', (e) => {
+      if (e.target !== el || e.repeat) return;
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(el); }
     });
   }
-  const hint = document.createElement('button');
-  hint.type = 'button';
-  hint.className = 'hint';
-  hint.setAttribute('aria-label', 'Hear the question again');
-  hint.textContent = '?';
-  hint.addEventListener('click', (e) => {
-    e.stopPropagation();
-    audio.sfx('tap');
-    speak(audio.pick(DIALOGUES[section]?.guide));
-    touched(section);
-  });
-  el.append(hint);
   return el;
 }
 
@@ -1201,6 +1190,8 @@ function miniScene(section, title, text, theme = 'meadow') {
   root.className = 'mg';
   stage.append(root);
   roundReady = true;
+  game.setAttribute('aria-busy', 'false');
+  syncSuspension();
   later(() => introduce(section), 0);
   const btn = (cls, html, label, onClick) => {
     const b = document.createElement('button');
@@ -1220,44 +1211,47 @@ function miniScene(section, title, text, theme = 'meadow') {
     animate('jump');
     instruction.textContent = msg;
     tell(msg, 'success');
-    speak(DIALOGUES[section].win[0], { delay: 300 });
+    const winClip = DIALOGUES[section]?.win?.[0];
+    if (winClip) speak(winClip, { delay: 300 });
     later(() => showNext(() => { audio.sfx('transition'); startSkill(); }), 800);
   };
   return { root, btn, win };
 }
 
-const EMOJI = ['🍎', '🍌', '🍇', '🍓', '🍉', '🍒', '🐶', '🐱', '🦊', '🐸', '🦄', '🚀'];
 const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 function showMemory() {
   const { root, btn, win } = miniScene('memory', 'Memory match', 'Flip two cards. Find the matching pair!');
   root.classList.add('mg-grid');
   root.style.setProperty('--cols', 4);
-  const faces = shuffle([...EMOJI]).slice(0, 4);
+  const faces = shuffle(Array.from({ length: ASSET_COUNT }, (_, i) => objectSrc('items', i))).slice(0, 4);
   let open = [];
   let found = 0;
   let busy = false;
   shuffle([...faces, ...faces]).forEach((f) => {
-    const b = btn('mg-tile', '<span>❓</span>', 'Hidden card', () => {
+    const back = '<span class="mg-card-back" aria-hidden="true"></span>';
+    const b = btn('mg-tile', back, 'Hidden card', () => {
       if (busy || b.classList.contains('up')) return;
       b.classList.add('up');
-      b.firstChild.textContent = f;
+      b.dataset.face = f;
+      b.replaceChildren(pic(f, 'mg-art'));
       audio.sfx('tap');
       open.push(b);
       if (open.length < 2) return;
       busy = true;
       const [x, y] = open;
       open = [];
-      if (x.firstChild.textContent === y.firstChild.textContent) {
+      if (x.dataset.face === y.dataset.face) {
         found++;
         x.classList.add('done'); y.classList.add('done');
+        audio.sfx('match');
         burst(x, 10); burst(y, 10);
         busy = false;
         if (found === faces.length) win('You found them all!');
       } else {
-        cheerUp('memory');
+        audio.sfx('wrong');
         later(() => {
-          [x, y].forEach((t) => { t.classList.remove('up'); t.firstChild.textContent = '❓'; });
+          [x, y].forEach((t) => { t.classList.remove('up'); delete t.dataset.face; t.innerHTML = back; });
           busy = false;
         }, 900);
       }
@@ -1267,7 +1261,7 @@ function showMemory() {
 }
 
 function showWhack() {
-  const { root, btn, win } = miniScene('whack', 'Pop-up pals', 'Tap the pals when they pop up! Catch 5.', 'candy');
+  const { root, btn, win } = miniScene('whack', 'Pop-up pictures', 'Tap a picture when it pops up! Catch 5.', 'candy');
   root.classList.add('mg-grid');
   const GOAL = 5;
   let caught = 0;
@@ -1275,7 +1269,7 @@ function showWhack() {
     const b = btn('mg-hole', '<span></span>', 'Hole', () => {
       if (!b.classList.contains('up')) return;
       b.classList.remove('up');
-      b.firstChild.textContent = '';
+      b.firstChild.replaceChildren();
       caught++;
       audio.sfx('pop', caught);
       burst(b, 14);
@@ -1285,14 +1279,19 @@ function showWhack() {
     root.append(b);
     return b;
   });
-  const pals = ['🐹', '🐰', '🐻', '🐼', '🐥'];
+  const pals = shuffle(Array.from({ length: ASSET_COUNT }, (_, i) => objectSrc('items', i))).slice(0, 5);
   const tick = () => {
     if (resolved) return;
     const h = holes[rand(holes.length)];
     if (!h.classList.contains('up')) {
-      h.firstChild.textContent = pals[rand(pals.length)];
+      const image = document.createElement('img');
+      image.className = 'mg-art';
+      image.src = pals[rand(pals.length)];
+      image.alt = '';
+      image.draggable = false;
+      h.firstChild.replaceChildren(image);
       h.classList.add('up');
-      later(() => { h.classList.remove('up'); h.firstChild.textContent = ''; }, 1400);
+      later(() => { h.classList.remove('up'); h.firstChild.replaceChildren(); }, 1400);
     }
     later(tick, 700);
   };
@@ -1305,16 +1304,15 @@ function showCups() {
   const ball = rand(3);
   let ready = false;
   const cups = [0, 1, 2].map((i) => {
-    const b = btn('mg-cup', '<span class="mg-ball"></span><span class="mg-cover">🥤</span>', `Cup ${i + 1}`, () => {
-      if (!ready) return;
+    const b = btn('mg-cup', '<span class="mg-ball" aria-hidden="true"></span><span class="mg-cover" aria-hidden="true"></span>', `Cup ${i + 1}`, () => {
+      if (!ready) { tell('Watch the cups first!'); return; }
       ready = false;
       b.classList.add('lift');
       if (b === cups[ball]) {
-        b.querySelector('.mg-ball').textContent = '⚽';
         win('You found the ball!');
       } else {
         tell('Not that one. Try again!', 'error');
-        cheerUp('cups');
+        audio.sfx('wrong');
         later(() => { b.classList.remove('lift'); ready = true; }, 900);
       }
     });
@@ -1324,36 +1322,37 @@ function showCups() {
   });
   // order[i] = which visual slot cup i currently sits in
   const order = [0, 1, 2];
-  cups[ball].querySelector('.mg-ball').textContent = '⚽';
   cups[ball].classList.add('lift');
   let swaps = 0;
   const swap = () => {
-    if (swaps++ >= 6) { ready = true; instruction.textContent = 'Which cup has the ball?'; return; }
+    if (swaps++ >= 4) { ready = true; instruction.textContent = 'Which cup has the ball?'; return; }
     const a = rand(3);
     const c = (a + 1 + rand(2)) % 3;
     [order[a], order[c]] = [order[c], order[a]];
     cups.forEach((cup, i) => { cup.style.order = order[i]; });
-    later(swap, 650);
+    audio.sfx('whoosh');
+    later(swap, 550);
   };
-  later(() => { cups[ball].classList.remove('lift'); cups[ball].querySelector('.mg-ball').textContent = ''; swap(); }, 1500);
+  later(() => { cups[ball].classList.remove('lift'); instruction.textContent = 'Watch the cups...'; swap(); }, 1200);
 }
 
 function showSpinner() {
   const { root, btn, win } = miniScene('spinner', 'Lucky wheel', 'Tap the wheel and spin it!');
-  const prizes = ['🍭', '🎈', '⭐', '🍦', '🎁', '🧸'];
+  const prizes = shuffle(Array.from({ length: ASSET_COUNT }, (_, i) => objectSrc('items', i))).slice(0, 6);
   const wrap = document.createElement('div');
   wrap.className = 'mg-wheel-wrap';
   root.append(wrap);
-  const wheel = btn('mg-wheel', prizes.map((p, i) => `<i style="--a:${i * 60}deg">${p}</i>`).join(''), 'Spin the wheel', () => {
+  const wheel = btn('mg-wheel', prizes.map((src, i) => `<i style="--a:${i * 60}deg"><img class="mg-art" src="${src}" alt=""></i>`).join(''), 'Spin the wheel', () => {
     resolved = true;
     audio.sfx('tap');
+    audio.sfx('whoosh');
     const k = rand(prizes.length);
     const turn = 1080 - (30 + 60 * k) + rand(41) - 20;
     wheel.style.transform = `rotate(${turn}deg)`;
     wheel.disabled = true;
-    later(() => { resolved = false; win(`You won ${prizes[k]}! Hooray!`); }, reducedMotion ? 300 : 3200);
+    later(() => { resolved = false; win('You won a carnival surprise! Hooray!'); }, reducedMotion ? 300 : 3200);
   });
-  wrap.append(btn('mg-pointer', '▼', 'Pointer', () => {}), wheel);
+  wrap.append(btn('mg-pointer', '<span class="mg-pointer-art" aria-hidden="true"></span>', 'Pointer', () => {}), wheel);
 }
 
 function showLights() {
@@ -1364,15 +1363,15 @@ function showLights() {
   let pos = 0;
   let listening = false;
   const ROUNDS = 3;
-  const flash = (p) => { p.classList.add('lit'); audio.sfx('tap'); later(() => p.classList.remove('lit'), 400); };
+  const flash = (p, index) => { p.classList.add('lit'); audio.sfx('light', index); later(() => p.classList.remove('lit'), 400); };
   const pads = colors.map((c, i) => {
     const p = btn('mg-pad', '', `Light ${i + 1}`, () => {
       if (!listening) return;
-      flash(p);
+      flash(p, i);
       if (i !== seq[pos]) {
         listening = false;
         tell('Oops! Watch again.', 'error');
-        cheerUp('lights');
+        audio.sfx('wrong');
         later(play, 1000);
         return;
       }
@@ -1389,7 +1388,7 @@ function showLights() {
   function play() {
     pos = 0; listening = false;
     instruction.textContent = 'Watch the lights...';
-    seq.forEach((n, k) => later(() => flash(pads[n]), 600 + k * 700));
+    seq.forEach((n, k) => later(() => flash(pads[n], n), 600 + k * 700));
     later(() => { listening = true; instruction.textContent = 'Your turn!'; }, 600 + seq.length * 700);
   }
   function grow() { seq.push(rand(4)); play(); }

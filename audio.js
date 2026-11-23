@@ -309,6 +309,7 @@ function sweep(from, to, dur, vol) {
 }
 
 const TAP_NOTES = [523.25, 587.33, 659.25, 783.99, 880];
+const LIGHT_NOTES = [523.25, 659.25, 783.99, 1046.5];
 
 export function sfx(kind = 'tap', n = 0) {
   if (!enabled) return;
@@ -334,6 +335,12 @@ export function sfx(kind = 'tap', n = 0) {
       marimba(880, 0.08, 0.28, 0.08);
       chime(1318.5, 0.08, 0.32, 0.04);
       break;
+    case 'light': {
+      const note = LIGHT_NOTES[n % LIGHT_NOTES.length];
+      marimba(note, 0, 0.2, 0.07);
+      chime(note * 2, 0.015, 0.24, 0.03);
+      break;
+    }
     case 'fanfare':
       [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98].forEach((hz, i) => {
         const t = [0, 0.08, 0.16, 0.24, 0.36, 0.48][i];
