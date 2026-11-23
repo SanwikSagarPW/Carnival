@@ -14,7 +14,7 @@ Open [http://localhost:8000/](http://localhost:8000/). The server uses gzip for 
 
 ## Continuous play
 
-The five learning booths repeat forever. The object games share a set of 40 distinct item pictures, plus 7 long objects and 12 shape pictures. Images are reused for scale and colour variations instead of loading separate files for each size:
+The five learning booths repeat forever, but the order is shuffled: the next booth is random and never one of the last two played. A bonus round appears after a random 1-3 booths, drawn from a shuffled bag of seven games (mystery box, balloon pop, memory match, pop-up pals, find the ball, lucky wheel, copy the lights) so none repeats until all have played. Difficulty adapts on a 0-3 scale: two clean (no-miss) answers in a row raise it, and any miss lowers it. Easier levels show 3 pictures in Different One, a wide gap between groups in Which one has more (harder levels use bigger piles with a smaller gap), and no look-alike polygons in Match the shapes (allowed from level 2). The object games share a set of 40 distinct item pictures, plus 7 long objects and 12 shape pictures. Images are reused for scale and colour variations instead of loading separate files for each size:
 
 1. Different One
 2. Biggest one
@@ -24,7 +24,7 @@ The five learning booths repeat forever. The object games share a set of 40 dist
 
 The home screen is deliberately minimal: a stacked "Sparky's / Carnival" wordmark in Baloo 2 (self-hosted, `assets/fonts/baloo2-latin.woff2`) with white outlines, a plum extruded shadow, and multicoloured letters that bounce in (static in reduced-motion mode), over the carnival backdrop, one borderless orange pill **Play** button (solid colour, one raised edge, white play badge, a slow breathing pulse, and a squish-pop with a soft ring when tapped; both motions stay still in reduced-motion mode), and Sparky. Pause, sound, stars, and hints appear only once play begins.
 
-After Play, the five booths run in order with no game-selection menu or finish line. The mystery-box surprise appears between booths 2 and 3. Balloon pop appears between booths 4 and 5, without a board or bordered playfield: balloons rise from below the screen until five have been popped. All seven balloon pictures load before play starts. Reduced-motion mode uses stationary balloons. Neither bonus uses a time limit or wrong-answer penalty.
+After Play, the booths run with no game-selection menu or finish line. The mystery-box surprise and balloon pop appear between booths on the schedule above. Balloon pop appears without a board or bordered playfield: balloons rise from below the screen until five have been popped. All seven balloon pictures load before play starts. Reduced-motion mode uses stationary balloons. No bonus uses a time limit or wrong-answer penalty. The five newer bonuses reuse the general voice lines and can be opened directly with `?mini=memory|whack|cups|spinner|lights`.
 
 Balloon lanes adapt to the available width and reserve room for the full pop expansion, gentle side-to-side sway, and a gap. Each lane holds only one balloon, including one still popping. Resizing restarts the floating balloons in new lanes without changing the pop count.
 

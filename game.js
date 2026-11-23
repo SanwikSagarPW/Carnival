@@ -21,12 +21,10 @@ const $ = (s) => document.querySelector(s);
 const game = $('#game');
 const stage = $('#stage');
 const ribbon = $('#ribbon');
-const btnNext = $('#btn-next');
 const btnPause = $('#btn-pause');
 const pauseDialog = $('#pause-dialog');
 const instruction = $('#instruction');
 const feedback = $('#feedback');
-const hearButton = $('#btn-hear');
 const loading = $('#round-loading');
 const loadingMessage = $('#loading-message');
 const retryButton = $('#btn-retry');
@@ -79,8 +77,6 @@ function newScene(screen, theme = 'meadow') {
   audio.stopSpeech();
   resolved = false;
   onNext = null;
-  btnNext.hidden = true;
-  btnNext.classList.remove('pop-in');
   fx.textContent = '';
   game.dataset.screen = screen;
   game.dataset.theme = theme;
@@ -91,8 +87,6 @@ function newScene(screen, theme = 'meadow') {
   retryRound = null;
   loading.hidden = true;
   retryButton.hidden = true;
-  hearButton.hidden = screen === 'splash';
-  hearButton.disabled = !roundReady;
   game.setAttribute('aria-busy', String(!roundReady));
   $('#eyebrow').textContent = screen === 'splash' ? 'Play, discover, grow' : 'A little learning adventure';
   tell(screen === 'splash' ? 'Sparky is here to help.' : 'Take your time. You can do it!');
@@ -116,15 +110,20 @@ function setTitle(text) {
   ribbon.classList.add('ribbon-in');
 }
 
-function showNext(handler, label = 'Next') {
+// Rounds move on by themselves once the praise has finished playing; there is no Next button to press.
+function showNext(handler) {
   onNext = handler;
-  btnNext.setAttribute('aria-label', label);
-  btnNext.hidden = false;
-  btnNext.classList.remove('pop-in');
-  void btnNext.offsetWidth;
-  btnNext.classList.add('pop-in');
+  const SETTLE = 1800;
+  const MAX_WAIT = 9000;
+  let waited = 0;
+  const step = () => {
+    if (onNext !== handler) return;
+    if ((suspended() || audio.isSpeaking()) && waited < MAX_WAIT) { waited += 400; later(step, 400); return; }
+    onNext = null;
+    handler();
+  };
+  later(step, SETTLE);
 }
-
 /* ---------- voice helpers ---------- */
 function speak(src, opts = {}) {
   const id = sceneId;
@@ -457,7 +456,6 @@ function whenPicsReady(imgs, fn, auto = 0) {
       fitComparisonImages();
       roundReady = true;
       loading.hidden = true;
-      hearButton.disabled = false;
       game.setAttribute('aria-busy', 'false');
       syncSuspension();
       later(() => { if (!resolved) fn(); }, 0);
@@ -567,7 +565,7 @@ function showSplash() {
     audio.sfx('success');
     audio.startMusic();
     animate('happy');
-    later(() => { skillIndex = 0; starsWon = 0; starCountEl.textContent = '0'; startSkill(); }, 380);
+    later(() => { resetRun(); startSkill(); }, 380);
   });
   stage.append(play);
   animate('welcome');
@@ -581,11 +579,9 @@ function startSkill() {
   newScene('play', skill.theme);
   setTitle(skill.title);
   currentSection = skill.key;
+  missed = false;
   instruction.textContent = skill.instruction;
   animate('idle');
-  // pre-fetch the next game's voice lines so the hand-over is instant
-  const next = SKILLS[(skillIndex + 1) % SKILLS.length].key;
-  audio.warm([...(DIALOGUES[next]?.intro || [])]);
 
   if (skill.key === 'shapes') return renderShapes(skill);
   if (skill.key === 'more') return renderMore(skill);
@@ -632,13 +628,14 @@ KINDS.forEach((list, k) => list.forEach((n) => kindOf.set(n, k)));
 function makeOptions(skill) {
   if (skill.key === 'different') {
     const r = fresh('different', () => {
+      const count = level === 0 ? 3 : 4;
       const common = rand(ASSET_COUNT);
       let odd;
       do { odd = rand(ASSET_COUNT); } while (kindOf.get(odd) === kindOf.get(common));
-      return { key: `${common}-${odd}`, common, odd, at: rand(4) };
+      return { key: `${common}-${odd}`, common, odd, count, at: rand(count) };
     });
     return {
-      items: Array.from({ length: 4 }, (_, i) => ({ src: objectSrc('items', i === r.at ? r.odd : r.common), correct: i === r.at })),
+      items: Array.from({ length: r.count }, (_, i) => ({ src: objectSrc('items', i === r.at ? r.odd : r.common), correct: i === r.at })),
       shuffle: false,
     };
   }
@@ -676,7 +673,7 @@ function renderChoices(skill) {
   const { items, shuffle } = makeOptions(skill);
   const list = shuffle ? shuffled(items) : items;
   const hue = section === 'biggest' ? rand(6) * 60 : 0;
-  stage.classList.add(section === 'different' ? 'grid-4' : 'grid-2x2');
+  stage.classList.add(section === 'different' ? (items.length === 3 ? 'grid-3' : 'grid-4') : 'grid-2x2');
   if (section === 'longest') stage.classList.add('is-longest');
   audio.warm(DIALOGUES[section]?.intro);
 
@@ -703,9 +700,11 @@ function renderMore(skill) {
   const section = 'more';
   const round = fresh('more', () => {
     const item = rand(ASSET_COUNT);
-    const small = 2 + rand(6);                  // 2-7
-    const big = small + 2 + rand(3);            // always at least 2 more, never above 11
-    return { key: `${item}-${small}-${big}`, item, small, big, bigSide: rand(2), hue: rand(6) * 60 };
+    // easy rounds have a wide gap between the groups; harder ones use bigger piles with a smaller gap
+    const gap = [4, 3, 2, 2][level];
+    const small = (level === MAX_LEVEL ? 4 : 2) + rand(level === MAX_LEVEL ? 4 : 5);
+    const big = small + gap + (gap > 2 ? rand(2) : rand(3));
+    return { key: `${item}-${small}-${big}`, item, small, big: Math.min(big, 11), bigSide: rand(2), hue: rand(6) * 60 };
   });
   const bigSide = round.bigSide;
   const counts = bigSide === 0 ? [round.big, round.small] : [round.small, round.big];
@@ -749,9 +748,11 @@ function answer(section, correct, el) {
     tell('Not quite. Have another look!', 'retry');
     cheerUp(section);
     touched(section);
+    missed = true;
     return;
   }
   resolved = true;
+  grade();
   clock.clear(nudgeTimer);
   audio.stopSpeech();
   audio.sfx('success');
@@ -763,15 +764,51 @@ function answer(section, correct, el) {
   tell('You found it! Ready for the next game?', 'success');
   later(() => {
     audio.sfx('fanfare');
-    showNext(advance, 'Next game');
+    showNext(advance);
   }, PRAISE_DELAY);
+}
+
+/* ---------- run order and adaptive difficulty ----------
+   Booths come in a shuffled order (never one of the last two played), and a bonus round turns up after a random
+   2-4 booths. Difficulty (0-3) rises after two clean answers in a row and eases off after a miss. */
+const MAX_LEVEL = 3;
+let level = 0;
+let cleanStreak = 0;
+let missed = false;
+let recentSkills = [];
+let boothsSinceBonus = 0;
+let boothsUntilBonus = 2 + rand(3);
+let lastBonus = '';
+
+function resetRun() {
+  skillIndex = 0; starsWon = 0; starCountEl.textContent = '0';
+  level = 0; cleanStreak = 0; recentSkills = []; boothsSinceBonus = 0; boothsUntilBonus = 2 + rand(3); lastBonus = '';
+}
+
+function grade() {
+  if (missed) {
+    cleanStreak = 0;
+    level = Math.max(0, level - 1);
+  } else if (++cleanStreak >= 2) {
+    cleanStreak = 0;
+    level = Math.min(MAX_LEVEL, level + 1);
+  }
+}
+
+function nextSkillIndex() {
+  const choices = SKILLS.map((_, i) => i).filter((i) => !recentSkills.includes(i));
+  return choices[rand(choices.length)];
 }
 
 function advance() {
   audio.sfx('transition');
-  skillIndex = (skillIndex + 1) % SKILLS.length;
-  if (skillIndex === 2) return showMystery();
-  if (skillIndex === 4) return showBalloons();
+  recentSkills = [...recentSkills, skillIndex].slice(-2);
+  skillIndex = nextSkillIndex();
+  if (++boothsSinceBonus >= boothsUntilBonus) {
+    boothsSinceBonus = 0;
+    boothsUntilBonus = 1 + rand(3);
+    return nextBonus();
+  }
   startSkill();
 }
 
@@ -806,7 +843,7 @@ function renderShapes(skill) {
     const order = shuffled(SHAPES.map((_, index) => index));
     const targets = [];
     for (const shape of order) {
-      if (targets.length < 4 && !(LOOKALIKES.has(shape) && targets.some((t) => LOOKALIKES.has(t)))) targets.push(shape);
+      if (targets.length < 4 && !(LOOKALIKES.has(shape) && (level < 2 || targets.some((t) => LOOKALIKES.has(t))))) targets.push(shape);
     }
     return {
       key: `${[...targets].sort((a, b) => a - b).join('-')}`,
@@ -828,10 +865,12 @@ function renderShapes(skill) {
 
   const slots = new Map();
   const imgs = [];
+  const shadowRound = level >= 2 && (level === MAX_LEVEL || Math.random() < .5);   // match by silhouette
   shuffled(targets).forEach((shape, i) => {
     const el = card({ section, extra: 'shape-card' });
     el.style.setProperty('--i', i);
     const image = pic(shapePictureSrc(shape), 'toy');
+    image.style.filter = shadowRound ? 'brightness(0) opacity(.75)' : `hue-rotate(${rand(6) * 60}deg)`;
     imgs.push(image);
     el.append(image);
     const slot = document.createElement('button');
@@ -863,6 +902,7 @@ function renderShapes(skill) {
       animate('try');
       tell('Try a different space.', 'retry');
       cheerUp(section);
+      missed = true;
       const m = (misses.get(shape) || 0) + 1;
       misses.set(shape, m);
       if (m >= 2) hintSlot(shape, true);         // after two misses, show where it goes
@@ -877,6 +917,7 @@ function renderShapes(skill) {
     held = null;
     hintSlot(shape, false);
     slot.classList.add('filled');
+    if (shadowRound) slot.parentElement.querySelector('.toy').style.filter = '';
     slot.disabled = true;
     slot.setAttribute('aria-label', `${SHAPES[shape].name} matched`);
     slot.classList.remove('glow');
@@ -891,6 +932,7 @@ function renderShapes(skill) {
       animate('happy');
     } else {
       resolved = true;
+      grade();
       clock.clear(nudgeTimer);
       addStar();
       audio.sfx('fanfare');
@@ -898,7 +940,7 @@ function renderShapes(skill) {
       speak(DIALOGUES.shapes.matchAll[0], { delay: 500 });
       animate('jump');
       tell('All the shapes match! Well done.', 'success');
-      later(() => showNext(advance, 'Next game'), 1100);
+      later(() => showNext(advance), 1100);
     }
   }
 
@@ -1024,7 +1066,7 @@ function showMystery() {
         animate('wow');
         tell('A surprise just for you!', 'success');
         speak(DIALOGUES.mystery.prize[0], { delay: 400 });
-        later(() => showNext(() => { audio.sfx('transition'); startSkill(); }, 'Next game'), 1200);
+        later(() => showNext(() => { audio.sfx('transition'); startSkill(); }), 1200);
       },
     });
     el.style.setProperty('--i', i);
@@ -1125,7 +1167,7 @@ function showBalloons() {
             tell('You popped them all! Let’s keep playing.', 'success');
             instruction.textContent = 'You popped them all! Let’s keep playing.';
             speak(DIALOGUES.balloons.allPopped[0], { delay: 300 });
-            showNext(() => { audio.sfx('transition'); startSkill(); }, 'Next game');
+            showNext(() => { audio.sfx('transition'); startSkill(); });
           }, 400);
         }
       });
@@ -1146,19 +1188,257 @@ function showBalloons() {
 }
 
 /* ==========================================================================
+   Bonus mini-games: memory match, whack-a-critter, cup shuffle, lucky spinner, copy the lights
+   ========================================================================== */
+function miniScene(section, title, text, theme = 'meadow') {
+  newScene('play', theme);
+  setTitle(title);
+  instruction.textContent = text;
+  animate('idle');
+  currentSection = section;
+  game.dataset.section = section;
+  const root = document.createElement('div');
+  root.className = 'mg';
+  stage.append(root);
+  roundReady = true;
+  later(() => introduce(section), 0);
+  const btn = (cls, html, label, onClick) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = cls;
+    b.innerHTML = html;
+    b.setAttribute('aria-label', label);
+    b.addEventListener('click', () => { audio.unlock(); if (resolved || suspended()) return; touched(section); onClick(b); });
+    return b;
+  };
+  const win = (msg) => {
+    resolved = true;
+    clock.clear(nudgeTimer);
+    addStar();
+    audio.sfx('fanfare');
+    burst(root, 26);
+    animate('jump');
+    instruction.textContent = msg;
+    tell(msg, 'success');
+    speak(DIALOGUES[section].win[0], { delay: 300 });
+    later(() => showNext(() => { audio.sfx('transition'); startSkill(); }), 800);
+  };
+  return { root, btn, win };
+}
+
+const EMOJI = ['🍎', '🍌', '🍇', '🍓', '🍉', '🍒', '🐶', '🐱', '🦊', '🐸', '🦄', '🚀'];
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function showMemory() {
+  const { root, btn, win } = miniScene('memory', 'Memory match', 'Flip two cards. Find the matching pair!');
+  root.classList.add('mg-grid');
+  root.style.setProperty('--cols', 4);
+  const faces = shuffle([...EMOJI]).slice(0, 4);
+  let open = [];
+  let found = 0;
+  let busy = false;
+  shuffle([...faces, ...faces]).forEach((f) => {
+    const b = btn('mg-tile', '<span>❓</span>', 'Hidden card', () => {
+      if (busy || b.classList.contains('up')) return;
+      b.classList.add('up');
+      b.firstChild.textContent = f;
+      audio.sfx('tap');
+      open.push(b);
+      if (open.length < 2) return;
+      busy = true;
+      const [x, y] = open;
+      open = [];
+      if (x.firstChild.textContent === y.firstChild.textContent) {
+        found++;
+        x.classList.add('done'); y.classList.add('done');
+        burst(x, 10); burst(y, 10);
+        busy = false;
+        if (found === faces.length) win('You found them all!');
+      } else {
+        cheerUp('memory');
+        later(() => {
+          [x, y].forEach((t) => { t.classList.remove('up'); t.firstChild.textContent = '❓'; });
+          busy = false;
+        }, 900);
+      }
+    });
+    root.append(b);
+  });
+}
+
+function showWhack() {
+  const { root, btn, win } = miniScene('whack', 'Pop-up pals', 'Tap the pals when they pop up! Catch 5.', 'candy');
+  root.classList.add('mg-grid');
+  const GOAL = 5;
+  let caught = 0;
+  const holes = Array.from({ length: 6 }, () => {
+    const b = btn('mg-hole', '<span></span>', 'Hole', () => {
+      if (!b.classList.contains('up')) return;
+      b.classList.remove('up');
+      b.firstChild.textContent = '';
+      caught++;
+      audio.sfx('pop', caught);
+      burst(b, 14);
+      instruction.textContent = `${caught} of ${GOAL} caught!`;
+      if (caught >= GOAL) win('You caught them all!');
+    });
+    root.append(b);
+    return b;
+  });
+  const pals = ['🐹', '🐰', '🐻', '🐼', '🐥'];
+  const tick = () => {
+    if (resolved) return;
+    const h = holes[rand(holes.length)];
+    if (!h.classList.contains('up')) {
+      h.firstChild.textContent = pals[rand(pals.length)];
+      h.classList.add('up');
+      later(() => { h.classList.remove('up'); h.firstChild.textContent = ''; }, 1400);
+    }
+    later(tick, 700);
+  };
+  later(tick, 500);
+}
+
+function showCups() {
+  const { root, btn, win } = miniScene('cups', 'Find the ball', 'Watch the ball, then pick the right cup!', 'candy');
+  root.classList.add('mg-cups');
+  const ball = rand(3);
+  let ready = false;
+  const cups = [0, 1, 2].map((i) => {
+    const b = btn('mg-cup', '<span class="mg-ball"></span><span class="mg-cover">🥤</span>', `Cup ${i + 1}`, () => {
+      if (!ready) return;
+      ready = false;
+      b.classList.add('lift');
+      if (b === cups[ball]) {
+        b.querySelector('.mg-ball').textContent = '⚽';
+        win('You found the ball!');
+      } else {
+        tell('Not that one. Try again!', 'error');
+        cheerUp('cups');
+        later(() => { b.classList.remove('lift'); ready = true; }, 900);
+      }
+    });
+    b.style.order = i;
+    root.append(b);
+    return b;
+  });
+  // order[i] = which visual slot cup i currently sits in
+  const order = [0, 1, 2];
+  cups[ball].querySelector('.mg-ball').textContent = '⚽';
+  cups[ball].classList.add('lift');
+  let swaps = 0;
+  const swap = () => {
+    if (swaps++ >= 6) { ready = true; instruction.textContent = 'Which cup has the ball?'; return; }
+    const a = rand(3);
+    const c = (a + 1 + rand(2)) % 3;
+    [order[a], order[c]] = [order[c], order[a]];
+    cups.forEach((cup, i) => { cup.style.order = order[i]; });
+    later(swap, 650);
+  };
+  later(() => { cups[ball].classList.remove('lift'); cups[ball].querySelector('.mg-ball').textContent = ''; swap(); }, 1500);
+}
+
+function showSpinner() {
+  const { root, btn, win } = miniScene('spinner', 'Lucky wheel', 'Tap the wheel and spin it!');
+  const prizes = ['🍭', '🎈', '⭐', '🍦', '🎁', '🧸'];
+  const wrap = document.createElement('div');
+  wrap.className = 'mg-wheel-wrap';
+  root.append(wrap);
+  const wheel = btn('mg-wheel', prizes.map((p, i) => `<i style="--a:${i * 60}deg">${p}</i>`).join(''), 'Spin the wheel', () => {
+    resolved = true;
+    audio.sfx('tap');
+    const k = rand(prizes.length);
+    const turn = 1080 - (30 + 60 * k) + rand(41) - 20;
+    wheel.style.transform = `rotate(${turn}deg)`;
+    wheel.disabled = true;
+    later(() => { resolved = false; win(`You won ${prizes[k]}! Hooray!`); }, reducedMotion ? 300 : 3200);
+  });
+  wrap.append(btn('mg-pointer', '▼', 'Pointer', () => {}), wheel);
+}
+
+function showLights() {
+  const { root, btn, win } = miniScene('lights', 'Copy the lights', 'Watch the lights, then copy them!', 'candy');
+  root.classList.add('mg-lights');
+  const colors = ['#ff5c8a', '#4cc3ff', '#5be37d', '#ffd23f'];
+  let seq = [];
+  let pos = 0;
+  let listening = false;
+  const ROUNDS = 3;
+  const flash = (p) => { p.classList.add('lit'); audio.sfx('tap'); later(() => p.classList.remove('lit'), 400); };
+  const pads = colors.map((c, i) => {
+    const p = btn('mg-pad', '', `Light ${i + 1}`, () => {
+      if (!listening) return;
+      flash(p);
+      if (i !== seq[pos]) {
+        listening = false;
+        tell('Oops! Watch again.', 'error');
+        cheerUp('lights');
+        later(play, 1000);
+        return;
+      }
+      if (++pos === seq.length) {
+        listening = false;
+        if (seq.length >= ROUNDS + 1) win('Great memory!');
+        else later(grow, 700);
+      }
+    });
+    p.style.setProperty('--c', c);
+    root.append(p);
+    return p;
+  });
+  function play() {
+    pos = 0; listening = false;
+    instruction.textContent = 'Watch the lights...';
+    seq.forEach((n, k) => later(() => flash(pads[n]), 600 + k * 700));
+    later(() => { listening = true; instruction.textContent = 'Your turn!'; }, 600 + seq.length * 700);
+  }
+  function grow() { seq.push(rand(4)); play(); }
+  seq = [rand(4)];
+  later(play, 600);
+}
+
+const BONUSES = [showMystery, showBalloons, showMemory, showWhack, showCups, showSpinner, showLights];
+let bonusBag = [];
+function nextBonus() {
+  // Shuffled bag: every bonus appears once per cycle, and a new cycle never opens with the last one played.
+  if (!bonusBag.length) {
+    bonusBag = shuffle([...BONUSES]);
+    if (bonusBag[bonusBag.length - 1].name === lastBonus) bonusBag.unshift(bonusBag.pop());
+  }
+  const fn = bonusBag.pop();
+  lastBonus = fn.name;
+  return fn();
+}
+
+/* ==========================================================================
    Shared controls
    ========================================================================== */
+/* One speaker button: a tap replays the question (turning sound back on if needed);
+   on the home screen a tap toggles sound; a long press toggles sound anywhere. */
 const soundBtn = $('#btn-sound');
-soundBtn.addEventListener('click', () => {
-  audio.unlock();
-  const on = !audio.isEnabled();
+function setSound(on) {
   audio.setEnabled(on);
   soundBtn.classList.toggle('is-off', !on);
   soundBtn.setAttribute('aria-pressed', String(on));
-  soundBtn.setAttribute('aria-label', on ? 'Sound on' : 'Sound off');
+  soundBtn.setAttribute('aria-label', on ? 'Sound on. Tap to hear the question again' : 'Sound off. Tap to turn on');
   if (on) { audio.sfx('tap'); audio.startMusic(); }
+}
+let pressTimer = null;
+let longPressed = false;
+soundBtn.addEventListener('pointerdown', () => {
+  longPressed = false;
+  clearTimeout(pressTimer);
+  pressTimer = setTimeout(() => { longPressed = true; audio.unlock(); setSound(!audio.isEnabled()); }, 600);
 });
-
+['pointerup', 'pointerleave', 'pointercancel'].forEach((type) => soundBtn.addEventListener(type, () => clearTimeout(pressTimer)));
+soundBtn.addEventListener('click', () => {
+  audio.unlock();
+  if (longPressed) { longPressed = false; return; }
+  const inRound = currentSection && roundReady && !suspended();
+  if (!inRound) { setSound(!audio.isEnabled()); return; }
+  if (!audio.isEnabled()) setSound(true);
+  speak(DIALOGUES[currentSection]?.intro?.[0]);
+});
 function openPause() {
   pausedByUser = true;
   pauseDialog.showModal();
@@ -1190,15 +1470,6 @@ retryButton.addEventListener('click', () => retryRound?.());
   audio.startMusic();
 }, { once: true, capture: true }));
 addEventListener('online', () => retryRound?.());
-hearButton.addEventListener('click', () => {
-  if (!currentSection || !roundReady || suspended()) return;
-  audio.unlock();
-  if (!audio.isEnabled()) {
-    tell('Sound is off. Tap the sound button to hear the question.');
-    return;
-  }
-  speak(DIALOGUES[currentSection]?.intro?.[0]);
-});
 portrait.addEventListener('change', () => {
   if (portrait.matches && pauseDialog.open) pauseDialog.close();
   else if (!portrait.matches && pausedByUser && !pauseDialog.open) pauseDialog.showModal();
@@ -1209,15 +1480,6 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !pauseDialog.open && !portrait.matches) {
     openPause();
   }
-});
-
-btnNext.addEventListener('click', () => {
-  audio.unlock();
-  if (suspended() || !roundReady) return;
-  const go = onNext;
-  if (!go) return;
-  btnNext.hidden = true;
-  go();
 });
 
 document.addEventListener('pointerdown', () => audio.unlock(), { once: true, capture: true });
@@ -1279,8 +1541,8 @@ loadRig().then(() => wait(1500)).then(prefetchEverything);
    ========================================================================== */
 const params = new URLSearchParams(location.search);
 const wantSkill = SKILLS.findIndex((s) => s.key === params.get('skill'));
-if (params.get('mini') === 'mystery') showMystery();
-else if (params.get('mini') === 'balloons') showBalloons();
+const wantMini = BONUSES.find((f) => f.name.slice(4).toLowerCase() === params.get('mini'));
+if (wantMini) wantMini();
 else if (wantSkill >= 0) { skillIndex = wantSkill; startSkill(); }
 else showSplash();
 syncSuspension();

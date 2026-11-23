@@ -148,3 +148,13 @@ export const DIALOGUES = {
     ],
   },
 };
+
+// The newer bonus games have no recordings of their own yet, so they reuse the general voice lines.
+for (const key of ['memory', 'whack', 'cups', 'spinner', 'lights']) {
+  DIALOGUES[key] = {
+    intro:   [DIALOGUES.welcome.guide[0]],
+    guide:   DIALOGUES.welcome.guide,
+    cheerup: DIALOGUES.welcome.cheerup,
+    win:     DIALOGUES.balloons.allPopped,
+  };
+}
